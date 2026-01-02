@@ -993,21 +993,69 @@ const HeroSection = () => {
           </motion.span>
         </motion.div>
 
-        {/* Description with Typing Animation */}
+        {/* Interactive Code Block - Unique Element */}
+        <motion.div
+          className="max-w-xl mx-auto mb-8 rounded-xl overflow-hidden border border-platinum/10 bg-obsidian/80 backdrop-blur-sm"
+          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.8, delay: 1.0, ease: [0.25, 0.46, 0.45, 0.94] }}
+        >
+          {/* Code header */}
+          <div className="flex items-center gap-2 px-4 py-2 border-b border-platinum/10 bg-smoke/50">
+            <div className="flex gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-red-500/80" />
+              <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+              <div className="w-3 h-3 rounded-full bg-green-500/80" />
+            </div>
+            <span className="text-xs font-body text-mercury ml-2">suganthan.ts</span>
+          </div>
+          {/* Code content */}
+          <div className="p-4 font-mono text-sm text-left">
+            <div className="text-mercury/60">// Building the future of healthcare tech</div>
+            <div className="mt-2">
+              <span className="text-purple-400">const</span>{' '}
+              <span className="text-ember">suganthan</span>{' '}
+              <span className="text-platinum">=</span>{' '}
+              <span className="text-platinum">{'{'}</span>
+            </div>
+            <div className="ml-4">
+              <span className="text-blue-400">role</span>
+              <span className="text-platinum">:</span>{' '}
+              <span className="text-green-400">"Associate Director"</span>
+              <span className="text-platinum">,</span>
+            </div>
+            <div className="ml-4">
+              <span className="text-blue-400">passion</span>
+              <span className="text-platinum">:</span>{' '}
+              <span className="text-platinum">[</span>
+              <span className="text-green-400">"</span>
+              <TypingAnimation
+                words={['scalable platforms', 'AI integration', 'clean architecture', 'zero downtime']}
+                className="text-green-400"
+              />
+              <span className="text-green-400">"</span>
+              <span className="text-platinum">]</span>
+              <span className="text-platinum">,</span>
+            </div>
+            <div className="ml-4">
+              <span className="text-blue-400">impact</span>
+              <span className="text-platinum">:</span>{' '}
+              <span className="text-gold">1600</span>
+              <span className="text-platinum">% </span>
+              <span className="text-mercury/60">// user growth</span>
+            </div>
+            <div className="text-platinum">{'}'}</div>
+          </div>
+        </motion.div>
+
+        {/* Description */}
         <motion.div
           className="max-w-2xl mx-auto text-lg text-mercury font-body leading-relaxed mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
-          <p className="mb-2">Engineering leader transforming healthcare through technology.</p>
-          <p>
-            I build{' '}
-            <TypingAnimation
-              words={['scalable platforms', 'innovative solutions', 'impactful systems', 'the future']}
-              className="text-ember font-bold"
-            />
-          </p>
+          <p>Engineering leader transforming healthcare through technology.</p>
         </motion.div>
 
         {/* CTA Buttons - Liquid hover effects */}
@@ -1232,6 +1280,105 @@ const AboutSection = () => {
             </StaggerContainer>
           </motion.div>
         </div>
+      </div>
+    </section>
+  )
+}
+
+// Innovation Philosophy Section - Unique to Suganthan
+const InnovationSection = () => {
+  const philosophies = [
+    {
+      icon: '🔬',
+      title: 'Build, Don\'t Buy',
+      description: 'When off-the-shelf solutions don\'t fit, we engineer custom solutions. From rewriting platforms in 30 days to building real-time analytics engines.',
+    },
+    {
+      icon: '🎯',
+      title: 'Zero Tolerance for Downtime',
+      description: '99.9% uptime isn\'t a metric—it\'s a promise. Every system I architect is designed for resilience, not just functionality.',
+    },
+    {
+      icon: '🧠',
+      title: 'AI-First Thinking',
+      description: 'Integrating GPT-4o for medical terminology isn\'t futuristic—it\'s current. I bring AI capabilities into production, not just prototypes.',
+    },
+    {
+      icon: '📈',
+      title: 'Growth Through Craft',
+      description: 'From 1 user to 1600% growth. Clean architecture, proper abstractions, and obsessive attention to user experience drive exponential results.',
+    },
+  ]
+
+  return (
+    <section className="py-24 relative overflow-hidden">
+      {/* Animated background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-void via-obsidian/50 to-void" />
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <TextReveal className="text-center mb-16">
+          <div className="font-body text-ember text-sm mb-4 tracking-widest uppercase">My Approach</div>
+          <h2 className="text-4xl md:text-5xl font-display font-black mb-4">
+            Engineering <span className="gradient-text">Philosophy</span>
+          </h2>
+          <p className="text-mercury font-body max-w-2xl mx-auto">
+            Not just writing code—building systems that scale, evolve, and never break at 2 AM.
+          </p>
+        </TextReveal>
+
+        <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-4 gap-6" staggerDelay={0.1}>
+          {philosophies.map((item, i) => (
+            <StaggerItem key={item.title}>
+              <motion.div
+                className="relative p-6 bg-smoke/50 rounded-2xl border border-platinum/10 h-full group"
+                whileHover={{
+                  y: -8,
+                  borderColor: 'rgba(255, 77, 0, 0.3)',
+                  boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)'
+                }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              >
+                {/* Icon with glow */}
+                <motion.div
+                  className="text-4xl mb-4"
+                  whileHover={{ scale: 1.2, rotate: 10 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+                >
+                  {item.icon}
+                </motion.div>
+
+                <h3 className="text-lg font-display font-bold text-platinum mb-3 group-hover:text-ember transition-colors">
+                  {item.title}
+                </h3>
+
+                <p className="text-mercury font-body text-sm leading-relaxed">
+                  {item.description}
+                </p>
+
+                {/* Hover accent */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-ember to-gold rounded-b-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+              </motion.div>
+            </StaggerItem>
+          ))}
+        </StaggerContainer>
+
+        {/* Unique signature quote */}
+        <motion.div
+          className="mt-16 text-center"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          <blockquote className="text-2xl md:text-3xl font-display font-bold text-platinum/80 italic">
+            "Great software isn't just built—it's <span className="text-ember">engineered</span>."
+          </blockquote>
+          <div className="mt-4 flex items-center justify-center gap-3">
+            <div className="w-12 h-px bg-ember" />
+            <span className="font-body text-ember text-sm">Suganthan Arulvelan</span>
+            <div className="w-12 h-px bg-ember" />
+          </div>
+        </motion.div>
       </div>
     </section>
   )
@@ -1812,7 +1959,7 @@ const ContactSection = () => {
                         value={formData[field]}
                         onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
                         className="w-full px-4 py-3 bg-void border border-platinum/20 rounded-xl font-body text-platinum focus:border-ember focus:outline-none transition-all resize-none"
-                        placeholder="Tell me about your project..."
+                        placeholder="What challenge can we solve together?"
                         whileFocus={{ borderColor: 'rgb(255, 77, 0)', boxShadow: '0 0 20px rgba(255, 77, 0, 0.1)' }}
                       />
                     ) : (
@@ -1822,7 +1969,7 @@ const ContactSection = () => {
                         value={formData[field]}
                         onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
                         className="w-full px-4 py-3 bg-void border border-platinum/20 rounded-xl font-body text-platinum focus:border-ember focus:outline-none transition-all"
-                        placeholder={field === 'email' ? 'john@example.com' : 'John Doe'}
+                        placeholder={field === 'email' ? 'you@company.com' : 'Your name'}
                         whileFocus={{ borderColor: 'rgb(255, 77, 0)', boxShadow: '0 0 20px rgba(255, 77, 0, 0.1)' }}
                       />
                     )}
@@ -1933,6 +2080,7 @@ export default function Home() {
         <HeroSection />
         <StatsSection />
         <AboutSection />
+        <InnovationSection />
         <ExperienceSection />
         <ProjectsSection />
         <SkillsSection />
