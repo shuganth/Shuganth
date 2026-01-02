@@ -2115,3 +2115,25 @@ body {
 .text-gold {
   color: var(--gold);
 }
+
+/* Apple-style gradient animation for SA reveal */
+.animate-gradient {
+  animation: gradient-flow 4s ease infinite;
+}
+
+@keyframes gradient-flow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* SA Reveal section specific */
+.sa-glow {
+  text-shadow:
+    0 0 40px rgba(255, 77, 0, 0.5),
+    0 0 80px rgba(255, 77, 0, 0.3),
+    0 0 120px rgba(255, 77, 0, 0.2);
+}

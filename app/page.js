@@ -1120,6 +1120,141 @@ const HeroSection = () => {
   )
 }
 
+// Apple-style SA Reveal Section (like M5 chip reveal)
+const SARevealSection = () => {
+  const sectionRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end end']
+  })
+
+  // SA text animations
+  const saScale = useTransform(scrollYProgress, [0, 0.3, 0.5], [0.3, 1, 1.2])
+  const saOpacity = useTransform(scrollYProgress, [0, 0.2, 0.5, 0.8], [0, 1, 1, 0])
+  const saY = useTransform(scrollYProgress, [0, 0.3, 0.5], [100, 0, -50])
+  const saBlur = useTransform(scrollYProgress, [0, 0.2, 0.4], [20, 0, 0])
+
+  // Full name reveal
+  const nameOpacity = useTransform(scrollYProgress, [0.3, 0.5, 0.8], [0, 1, 0])
+  const nameY = useTransform(scrollYProgress, [0.3, 0.5], [50, 0])
+
+  // Tagline reveal
+  const taglineOpacity = useTransform(scrollYProgress, [0.45, 0.6, 0.8], [0, 1, 0])
+
+  // Background effects
+  const bgScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.1, 1.2])
+  const glowOpacity = useTransform(scrollYProgress, [0.2, 0.4, 0.6], [0, 1, 0])
+
+  // Smooth springs
+  const smoothSaScale = useSpring(saScale, { stiffness: 100, damping: 30 })
+  const smoothSaY = useSpring(saY, { stiffness: 100, damping: 30 })
+  const smoothNameY = useSpring(nameY, { stiffness: 100, damping: 30 })
+
+  return (
+    <section
+      ref={sectionRef}
+      className="relative h-[300vh]"
+    >
+      {/* Sticky container */}
+      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-void">
+        {/* Animated background glow */}
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center"
+          style={{ scale: bgScale }}
+        >
+          <motion.div
+            className="w-[800px] h-[800px] rounded-full"
+            style={{
+              opacity: glowOpacity,
+              background: 'radial-gradient(circle, rgba(255, 77, 0, 0.3) 0%, rgba(255, 77, 0, 0.1) 30%, transparent 70%)',
+              filter: 'blur(60px)',
+            }}
+          />
+        </motion.div>
+
+        {/* Grid background */}
+        <div className="absolute inset-0 grid-bg opacity-10" />
+
+        {/* Main content */}
+        <div className="relative z-10 text-center">
+          {/* Large SA letters */}
+          <motion.div
+            className="relative"
+            style={{
+              scale: smoothSaScale,
+              y: smoothSaY,
+              opacity: saOpacity,
+              filter: useTransform(saBlur, (v) => `blur(${v}px)`),
+            }}
+          >
+            <h2 className="text-[20vw] md:text-[25vw] font-display font-black leading-none tracking-tighter">
+              <span className="bg-gradient-to-r from-ember via-gold to-ember bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
+                SA
+              </span>
+            </h2>
+            {/* Reflection effect */}
+            <div
+              className="absolute top-full left-0 right-0 text-[20vw] md:text-[25vw] font-display font-black leading-none tracking-tighter opacity-20"
+              style={{
+                transform: 'scaleY(-1)',
+                maskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 50%)',
+                WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 50%)',
+              }}
+            >
+              <span className="bg-gradient-to-r from-ember via-gold to-ember bg-clip-text text-transparent">
+                SA
+              </span>
+            </div>
+          </motion.div>
+
+          {/* Full name reveal */}
+          <motion.div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap"
+            style={{
+              opacity: nameOpacity,
+              y: smoothNameY,
+            }}
+          >
+            <h3 className="text-4xl md:text-6xl lg:text-8xl font-display font-black text-platinum">
+              SUGANTHAN
+            </h3>
+            <h3 className="text-4xl md:text-6xl lg:text-8xl font-display font-black gradient-text">
+              ARULVELAN
+            </h3>
+          </motion.div>
+
+          {/* Tagline */}
+          <motion.div
+            className="absolute top-[60%] left-1/2 -translate-x-1/2 mt-8"
+            style={{ opacity: taglineOpacity }}
+          >
+            <p className="text-xl md:text-2xl font-body text-mercury">
+              Engineering Excellence. <span className="text-ember">Delivered.</span>
+            </p>
+          </motion.div>
+        </div>
+
+        {/* Scroll indicator at bottom */}
+        <motion.div
+          className="absolute bottom-10 left-1/2 -translate-x-1/2"
+          style={{ opacity: useTransform(scrollYProgress, [0, 0.1, 0.3], [1, 1, 0]) }}
+        >
+          <motion.div
+            className="flex flex-col items-center gap-2"
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <span className="text-xs font-body text-mercury/50 uppercase tracking-widest">Scroll to reveal</span>
+            <svg className="w-6 h-6 text-ember/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
 // Stats Section with smooth counter animations
 const StatsSection = () => {
   const stats = [
@@ -2078,6 +2213,7 @@ export default function Home() {
       <main className="relative overflow-x-hidden">
         <Navigation />
         <HeroSection />
+        <SARevealSection />
         <StatsSection />
         <AboutSection />
         <InnovationSection />
