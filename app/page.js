@@ -1,0 +1,1664 @@
+'use client'
+
+import { useState, useEffect, useRef } from 'react'
+import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion'
+
+// Preloader Component
+const Preloader = ({ onComplete }) => {
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+      onComplete()
+    }, 2000)
+    return () => clearTimeout(timer)
+  }, [onComplete])
+
+  return (
+    <AnimatePresence>
+      {isLoading && (
+        <motion.div
+          className="preloader"
+          exit={{ opacity: 0, scale: 1.1 }}
+          transition={{ duration: 0.5, ease: 'easeInOut' }}
+        >
+          <motion.div
+            className="preloader-logo font-display"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            SA
+          </motion.div>
+          <div className="preloader-bar">
+            <div className="preloader-progress" />
+          </div>
+          <motion.p
+            className="text-mercury text-sm font-body"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            Loading experience...
+          </motion.p>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+
+// Custom Cursor Component
+const CustomCursor = () => {
+  const [position, setPosition] = useState({ x: 0, y: 0 })
+  const [isHovering, setIsHovering] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setPosition({ x: e.clientX, y: e.clientY })
+      setIsVisible(true)
+    }
+
+    const handleMouseEnter = () => setIsVisible(true)
+    const handleMouseLeave = () => setIsVisible(false)
+
+    const handleHoverStart = () => setIsHovering(true)
+    const handleHoverEnd = () => setIsHovering(false)
+
+    window.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseenter', handleMouseEnter)
+    document.addEventListener('mouseleave', handleMouseLeave)
+
+    // Add hover listeners to interactive elements
+    const interactiveElements = document.querySelectorAll('a, button, .magnetic-btn, .project-card')
+    interactiveElements.forEach((el) => {
+      el.addEventListener('mouseenter', handleHoverStart)
+      el.addEventListener('mouseleave', handleHoverEnd)
+    })
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseenter', handleMouseEnter)
+      document.removeEventListener('mouseleave', handleMouseLeave)
+      interactiveElements.forEach((el) => {
+        el.removeEventListener('mouseenter', handleHoverStart)
+        el.removeEventListener('mouseleave', handleHoverEnd)
+      })
+    }
+  }, [])
+
+  return (
+    <>
+      <div
+        className={`custom-cursor hidden lg:block ${isHovering ? 'hover' : ''}`}
+        style={{
+          left: position.x,
+          top: position.y,
+          opacity: isVisible ? 1 : 0,
+        }}
+      />
+      <div
+        className="cursor-dot hidden lg:block"
+        style={{
+          left: position.x,
+          top: position.y,
+          opacity: isVisible ? 1 : 0,
+        }}
+      />
+    </>
+  )
+}
+
+// Scroll Progress Indicator
+const ScrollProgress = () => {
+  const [progress, setProgress] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight
+      const scrollProgress = (window.scrollY / totalHeight) * 100
+      setProgress(scrollProgress)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  return <div className="scroll-progress" style={{ width: `${progress}%` }} />
+}
+
+// Social Sidebar Component
+const SocialSidebar = () => {
+  return (
+    <motion.div
+      className="social-sidebar"
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.8, delay: 1.5 }}
+    >
+      <a href="https://github.com/suganthan" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+        </svg>
+      </a>
+      <a href="https://www.linkedin.com/in/suganthan-arulvelan-a9356073/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+        </svg>
+      </a>
+      <a href="https://twitter.com/suganthan" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+      </a>
+    </motion.div>
+  )
+}
+
+// Email Sidebar Component
+const EmailSidebar = () => {
+  return (
+    <motion.div
+      className="email-sidebar"
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.8, delay: 1.5 }}
+    >
+      <a href="mailto:suganthan94@yahoo.com" className="font-body">
+        suganthan94@yahoo.com
+      </a>
+    </motion.div>
+  )
+}
+
+// Back to Top Button
+const BackToTop = () => {
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsVisible(window.scrollY > 500)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  return (
+    <motion.button
+      className={`back-to-top ${isVisible ? 'visible' : ''}`}
+      onClick={scrollToTop}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      aria-label="Back to top"
+    >
+      <svg className="w-6 h-6 text-void" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+      </svg>
+    </motion.button>
+  )
+}
+
+// Typing Animation Component
+const TypingAnimation = ({ words, className }) => {
+  const [currentWordIndex, setCurrentWordIndex] = useState(0)
+  const [currentText, setCurrentText] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  useEffect(() => {
+    const word = words[currentWordIndex]
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        if (currentText.length < word.length) {
+          setCurrentText(word.slice(0, currentText.length + 1))
+        } else {
+          setTimeout(() => setIsDeleting(true), 2000)
+        }
+      } else {
+        if (currentText.length > 0) {
+          setCurrentText(word.slice(0, currentText.length - 1))
+        } else {
+          setIsDeleting(false)
+          setCurrentWordIndex((prev) => (prev + 1) % words.length)
+        }
+      }
+    }, isDeleting ? 50 : 100)
+
+    return () => clearTimeout(timeout)
+  }, [currentText, isDeleting, currentWordIndex, words])
+
+  return (
+    <span className={className}>
+      {currentText}
+      <span className="typing-text">&nbsp;</span>
+    </span>
+  )
+}
+
+// Animated Counter Component
+const AnimatedCounter = ({ value, suffix = '', duration = 2000 }) => {
+  const [count, setCount] = useState(0)
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true })
+
+  useEffect(() => {
+    if (!isInView) return
+
+    const numValue = parseInt(value.replace(/[^0-9]/g, ''))
+    const increment = numValue / (duration / 16)
+    let current = 0
+
+    const timer = setInterval(() => {
+      current += increment
+      if (current >= numValue) {
+        setCount(numValue)
+        clearInterval(timer)
+      } else {
+        setCount(Math.floor(current))
+      }
+    }, 16)
+
+    return () => clearInterval(timer)
+  }, [isInView, value, duration])
+
+  const prefix = value.match(/^[^0-9]*/)?.[0] || ''
+  const originalSuffix = value.match(/[^0-9]*$/)?.[0] || ''
+
+  return (
+    <span ref={ref} className="counter">
+      {prefix}{count}{originalSuffix}{suffix}
+    </span>
+  )
+}
+
+// Text Scramble Effect Component
+const TextScramble = ({ text, className }) => {
+  const [displayText, setDisplayText] = useState('')
+  const chars = '!<>-_\\/[]{}—=+*^?#________'
+
+  useEffect(() => {
+    let iteration = 0
+    const interval = setInterval(() => {
+      setDisplayText(
+        text.split('').map((char, index) => {
+          if (index < iteration) return text[index]
+          return chars[Math.floor(Math.random() * chars.length)]
+        }).join('')
+      )
+
+      if (iteration >= text.length) {
+        clearInterval(interval)
+      }
+      iteration += 1 / 3
+    }, 30)
+
+    return () => clearInterval(interval)
+  }, [text])
+
+  return <span className={className}>{displayText}</span>
+}
+
+// Subtle Cursor Glow Effect (removed trail dots)
+const MouseGlow = () => {
+  const [position, setPosition] = useState({ x: 0, y: 0 })
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setPosition({ x: e.clientX, y: e.clientY })
+    }
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [])
+
+  return (
+    <div
+      className="fixed pointer-events-none z-0 hidden lg:block"
+      style={{
+        left: position.x,
+        top: position.y,
+        width: '500px',
+        height: '500px',
+        background: 'radial-gradient(circle, rgba(255, 77, 0, 0.08) 0%, transparent 60%)',
+        transform: 'translate(-50%, -50%)',
+        transition: 'left 0.1s ease-out, top 0.1s ease-out',
+      }}
+    />
+  )
+}
+
+// Interactive 3D Tilt Card Component
+const Tilt3DCard = ({ children, className = '' }) => {
+  const cardRef = useRef(null)
+  const [transform, setTransform] = useState({ rotateX: 0, rotateY: 0 })
+
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return
+    const rect = cardRef.current.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    const centerX = rect.width / 2
+    const centerY = rect.height / 2
+    const rotateX = (y - centerY) / 10
+    const rotateY = (centerX - x) / 10
+    setTransform({ rotateX, rotateY })
+  }
+
+  const handleMouseLeave = () => {
+    setTransform({ rotateX: 0, rotateY: 0 })
+  }
+
+  return (
+    <div
+      ref={cardRef}
+      className={`${className}`}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        transform: `perspective(1000px) rotateX(${transform.rotateX}deg) rotateY(${transform.rotateY}deg)`,
+        transition: 'transform 0.1s ease-out',
+        transformStyle: 'preserve-3d',
+      }}
+    >
+      {children}
+    </div>
+  )
+}
+
+// Interactive Particle Constellation
+const ParticleConstellation = () => {
+  const canvasRef = useRef(null)
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext('2d')
+    let animationId
+    let particles = []
+    let mouse = { x: null, y: null, radius: 150 }
+
+    const resize = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+      setDimensions({ width: canvas.width, height: canvas.height })
+    }
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width
+        this.y = Math.random() * canvas.height
+        this.vx = (Math.random() - 0.5) * 0.5
+        this.vy = (Math.random() - 0.5) * 0.5
+        this.radius = Math.random() * 2 + 1
+      }
+
+      update() {
+        // Mouse interaction
+        if (mouse.x && mouse.y) {
+          const dx = mouse.x - this.x
+          const dy = mouse.y - this.y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+          if (dist < mouse.radius) {
+            const force = (mouse.radius - dist) / mouse.radius
+            this.vx -= (dx / dist) * force * 0.5
+            this.vy -= (dy / dist) * force * 0.5
+          }
+        }
+
+        this.x += this.vx
+        this.y += this.vy
+
+        // Boundaries
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1
+
+        // Damping
+        this.vx *= 0.99
+        this.vy *= 0.99
+      }
+
+      draw() {
+        ctx.beginPath()
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+        ctx.fillStyle = 'rgba(255, 77, 0, 0.8)'
+        ctx.fill()
+      }
+    }
+
+    const init = () => {
+      particles = []
+      const numParticles = Math.min(100, (canvas.width * canvas.height) / 15000)
+      for (let i = 0; i < numParticles; i++) {
+        particles.push(new Particle())
+      }
+    }
+
+    const drawConnections = () => {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x
+          const dy = particles[i].y - particles[j].y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+
+          if (dist < 120) {
+            ctx.beginPath()
+            ctx.moveTo(particles[i].x, particles[i].y)
+            ctx.lineTo(particles[j].x, particles[j].y)
+            ctx.strokeStyle = `rgba(255, 77, 0, ${0.3 * (1 - dist / 120)})`
+            ctx.lineWidth = 0.5
+            ctx.stroke()
+          }
+        }
+      }
+    }
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      particles.forEach(p => {
+        p.update()
+        p.draw()
+      })
+
+      drawConnections()
+      animationId = requestAnimationFrame(animate)
+    }
+
+    const handleMouseMove = (e) => {
+      mouse.x = e.clientX
+      mouse.y = e.clientY
+    }
+
+    const handleMouseLeave = () => {
+      mouse.x = null
+      mouse.y = null
+    }
+
+    resize()
+    init()
+    animate()
+
+    window.addEventListener('resize', resize)
+    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mouseleave', handleMouseLeave)
+
+    return () => {
+      cancelAnimationFrame(animationId)
+      window.removeEventListener('resize', resize)
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseleave', handleMouseLeave)
+    }
+  }, [])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 pointer-events-none z-0"
+      style={{ opacity: 0.6 }}
+    />
+  )
+}
+
+// Magnetic Element Component
+const MagneticElement = ({ children, className = '', strength = 0.3 }) => {
+  const ref = useRef(null)
+  const [position, setPosition] = useState({ x: 0, y: 0 })
+
+  const handleMouseMove = (e) => {
+    if (!ref.current) return
+    const rect = ref.current.getBoundingClientRect()
+    const centerX = rect.left + rect.width / 2
+    const centerY = rect.top + rect.height / 2
+    const x = (e.clientX - centerX) * strength
+    const y = (e.clientY - centerY) * strength
+    setPosition({ x, y })
+  }
+
+  const handleMouseLeave = () => {
+    setPosition({ x: 0, y: 0 })
+  }
+
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      animate={{ x: position.x, y: position.y }}
+      transition={{ type: 'spring', stiffness: 150, damping: 15 }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+// Glowing Orbs Background
+const GlowingOrbs = () => {
+  const orbs = [
+    { size: 300, color: 'rgba(255, 77, 0, 0.15)', top: '10%', left: '10%', delay: 0 },
+    { size: 400, color: 'rgba(255, 215, 0, 0.1)', top: '60%', right: '5%', delay: 2 },
+    { size: 250, color: 'rgba(255, 77, 0, 0.12)', bottom: '20%', left: '30%', delay: 4 },
+    { size: 350, color: 'rgba(255, 0, 255, 0.08)', top: '30%', right: '20%', delay: 1 },
+  ]
+
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+      {orbs.map((orb, i) => (
+        <motion.div
+          key={i}
+          className="glowing-orb"
+          style={{
+            width: orb.size,
+            height: orb.size,
+            background: orb.color,
+            top: orb.top,
+            left: orb.left,
+            right: orb.right,
+            bottom: orb.bottom,
+          }}
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.5, 0.8, 0.5],
+          }}
+          transition={{
+            duration: 8,
+            delay: orb.delay,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+// Letter by Letter Text Reveal
+const LetterReveal = ({ text, className = '', delay = 0 }) => {
+  return (
+    <span className={className}>
+      {text.split('').map((letter, i) => (
+        <motion.span
+          key={i}
+          initial={{ opacity: 0, y: 50, rotateX: -90 }}
+          animate={{ opacity: 1, y: 0, rotateX: 0 }}
+          transition={{
+            duration: 0.5,
+            delay: delay + i * 0.05,
+            ease: [0.16, 1, 0.3, 1],
+          }}
+          style={{ display: 'inline-block' }}
+        >
+          {letter === ' ' ? '\u00A0' : letter}
+        </motion.span>
+      ))}
+    </span>
+  )
+}
+
+// Reveal on Scroll Component
+const RevealOnScroll = ({ children, className = '', direction = 'up' }) => {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, margin: '-100px' })
+
+  const variants = {
+    hidden: {
+      opacity: 0,
+      y: direction === 'up' ? 100 : direction === 'down' ? -100 : 0,
+      x: direction === 'left' ? 100 : direction === 'right' ? -100 : 0,
+      scale: 0.8,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      x: 0,
+      scale: 1,
+    },
+  }
+
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      initial="hidden"
+      animate={isInView ? 'visible' : 'hidden'}
+      variants={variants}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+// Profile Image Component with Fallback
+const ProfileImage = () => {
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const [imageError, setImageError] = useState(false)
+
+  return (
+    <>
+      {!imageError && (
+        <img
+          src="/profile.jpg"
+          alt="Suganthan Arulvelan"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+          onLoad={() => setImageLoaded(true)}
+          onError={() => setImageError(true)}
+        />
+      )}
+      {(imageError || !imageLoaded) && (
+        <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${imageLoaded && !imageError ? 'opacity-0' : 'opacity-100'}`}>
+          <div className="text-center">
+            <motion.div
+              className="text-8xl md:text-9xl font-display font-black gradient-text mb-4"
+              animate={{
+                textShadow: [
+                  '0 0 20px rgba(255, 77, 0, 0.5)',
+                  '0 0 40px rgba(255, 77, 0, 0.8)',
+                  '0 0 20px rgba(255, 77, 0, 0.5)'
+                ]
+              }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              SA
+            </motion.div>
+            <motion.div
+              className="px-6 py-2 bg-ember/10 rounded-full border border-ember/30"
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <span className="font-body text-ember text-sm">Technical Leader</span>
+            </motion.div>
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
+
+// Enhanced Floating Particles
+const EnhancedParticles = () => {
+  const particles = [...Array(30)].map((_, i) => ({
+    id: i,
+    size: Math.random() * 6 + 2,
+    left: Math.random() * 100,
+    delay: Math.random() * 10,
+    duration: Math.random() * 10 + 10,
+    color: Math.random() > 0.5 ? 'var(--ember)' : 'var(--gold)',
+  }))
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map((particle) => (
+        <div
+          key={particle.id}
+          className="particle-enhanced"
+          style={{
+            width: particle.size,
+            height: particle.size,
+            left: `${particle.left}%`,
+            background: particle.color,
+            animationDelay: `${particle.delay}s`,
+            animationDuration: `${particle.duration}s`,
+            boxShadow: `0 0 ${particle.size * 2}px ${particle.color}`,
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+// Navigation Component
+const Navigation = () => {
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [activeSection, setActiveSection] = useState('hero')
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const navItems = ['About', 'Experience', 'Projects', 'Skills', 'Contact']
+
+  return (
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        isScrolled ? 'bg-void/90 backdrop-blur-xl border-b border-ember/10' : ''
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <motion.a
+          href="#"
+          className="text-2xl font-display font-bold gradient-text"
+          whileHover={{ scale: 1.05 }}
+        >
+          SA
+        </motion.a>
+        <div className="hidden md:flex items-center gap-8">
+          {navItems.map((item, i) => (
+            <motion.a
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              className="relative text-sm font-body text-mercury hover:text-platinum transition-colors group"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 + 0.3 }}
+            >
+              <span className="glitch" data-text={item}>{item}</span>
+              <span className="absolute -bottom-1 left-0 w-0 h-px bg-ember group-hover:w-full transition-all duration-300" />
+            </motion.a>
+          ))}
+        </div>
+        <MagneticElement strength={0.3}>
+          <motion.a
+            href="#contact"
+            className="cyber-button px-6 py-2 bg-ember text-void font-body text-sm font-bold rounded-full"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Let's Talk
+          </motion.a>
+        </MagneticElement>
+      </div>
+    </motion.nav>
+  )
+}
+
+// Hero Section
+const HeroSection = () => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const heroRef = useRef(null)
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePosition({ x: e.clientX, y: e.clientY })
+    }
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [])
+
+  return (
+    <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden grid-bg">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0">
+        <motion.div
+          className="morph-bg"
+          style={{ top: '10%', left: '10%' }}
+          animate={{
+            x: mousePosition.x * 0.02,
+            y: mousePosition.y * 0.02,
+          }}
+        />
+        <motion.div
+          className="morph-bg"
+          style={{ bottom: '10%', right: '10%' }}
+          animate={{
+            x: mousePosition.x * -0.02,
+            y: mousePosition.y * -0.02,
+          }}
+        />
+      </div>
+
+      {/* Enhanced Floating Particles */}
+      <EnhancedParticles />
+
+      {/* Cursor Glow */}
+      <div
+        className="cursor-glow hidden lg:block"
+        style={{
+          left: mousePosition.x,
+          top: mousePosition.y,
+        }}
+      />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
+        {/* Status Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full border border-ember/30 bg-ember/5"
+        >
+          <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+          <span className="text-sm font-body text-mercury">Available for Strategic Projects</span>
+        </motion.div>
+
+        {/* Main Title - Clean & Professional */}
+        <motion.h1
+          className="hero-title text-5xl md:text-7xl lg:text-8xl font-display font-black leading-none mb-6"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          <span className="block text-platinum">
+            SUGANTHAN
+          </span>
+          <span className="block gradient-text">
+            ARULVELAN
+          </span>
+        </motion.h1>
+
+        {/* Subtitle */}
+        <motion.div
+          className="flex flex-wrap justify-center items-center gap-4 mb-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          <span className="px-4 py-2 bg-obsidian rounded-lg font-body text-ember border border-ember/20 glow-pulse">
+            Associate Director
+          </span>
+          <span className="text-mercury">@</span>
+          <span className="px-4 py-2 bg-obsidian rounded-lg font-body text-platinum border border-platinum/20">
+            Syneos Health
+          </span>
+          <span className="hidden md:block text-mercury">|</span>
+          <span className="px-4 py-2 bg-obsidian rounded-lg font-body text-gold border border-gold/20">
+            AI & Enterprise Architecture
+          </span>
+        </motion.div>
+
+        {/* Description with Typing Animation */}
+        <motion.div
+          className="max-w-2xl mx-auto text-lg text-mercury font-body leading-relaxed mb-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+        >
+          <p className="mb-2">Engineering leader transforming healthcare through technology.</p>
+          <p>
+            I build{' '}
+            <TypingAnimation
+              words={['scalable platforms', 'innovative solutions', 'impactful systems', 'the future']}
+              className="text-ember font-bold"
+            />
+          </p>
+        </motion.div>
+
+        {/* CTA Buttons with Magnetic Attraction */}
+        <motion.div
+          className="flex flex-col sm:flex-row justify-center gap-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1.5 }}
+        >
+          <MagneticElement strength={0.4}>
+            <motion.a
+              href="#projects"
+              className="cyber-button group px-8 py-4 bg-ember text-void font-body font-bold rounded-lg flex items-center justify-center gap-2 relative overflow-hidden"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                View My Work
+                <svg className="w-5 h-5 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-gold to-ember opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </motion.a>
+          </MagneticElement>
+          <MagneticElement strength={0.4}>
+            <motion.a
+              href="/Suganthan_Arulvelan_Resume.html"
+              target="_blank"
+              className="glass-card px-8 py-4 border border-ember/30 text-platinum font-body font-bold rounded-lg hover:border-ember hover:text-ember transition-all relative overflow-hidden group"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="relative z-10">View Resume</span>
+              <div className="absolute inset-0 bg-ember/5 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            </motion.a>
+          </MagneticElement>
+        </motion.div>
+
+        {/* Scroll Indicator */}
+        <motion.div
+          className="absolute bottom-10 left-1/2 -translate-x-1/2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 1.5 }}
+        >
+          <div className="w-6 h-10 rounded-full border-2 border-mercury/30 flex justify-center pt-2">
+            <div className="w-1.5 h-3 bg-ember rounded-full animate-bounce" />
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
+// Stats Section with 3D Tilt Cards
+const StatsSection = () => {
+  const stats = [
+    { value: '7+', label: 'Years Experience', icon: '⚡', color: 'ember' },
+    { value: '20+', label: 'Engineers Led', icon: '👥', color: 'gold' },
+    { value: '1600%', label: 'User Growth Achieved', icon: '📈', color: 'ember' },
+    { value: '3001%', label: 'Engagement Increase', icon: '🔢', color: 'gold' },
+  ]
+
+  return (
+    <section className="py-24 bg-obsidian relative overflow-hidden">
+      <div className="absolute inset-0 cyber-grid opacity-30" />
+      <div className="absolute inset-0 aurora-bg" />
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          {stats.map((stat, i) => (
+            <RevealOnScroll key={stat.label} direction="up">
+              <Tilt3DCard>
+                <motion.div
+                  className="text-center p-6 rounded-2xl bg-void/50 backdrop-blur-sm border border-platinum/10 breathing-glow group"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <motion.div
+                    className="text-5xl mb-4"
+                    animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.1, 1] }}
+                    transition={{ duration: 3, repeat: Infinity, delay: i * 0.2 }}
+                  >
+                    {stat.icon}
+                  </motion.div>
+                  <div className={`text-4xl md:text-5xl font-display font-black mb-2 ${stat.color === 'ember' ? 'gradient-text' : 'text-gold'}`}>
+                    <AnimatedCounter value={stat.value} />
+                  </div>
+                  <div className="text-sm font-body text-mercury group-hover:text-platinum transition-colors">{stat.label}</div>
+                </motion.div>
+              </Tilt3DCard>
+            </RevealOnScroll>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// About Section
+const AboutSection = () => {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, margin: '-100px' })
+
+  return (
+    <section id="about" ref={ref} className="py-32 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left - Visual */}
+          <motion.div
+            className="relative"
+            initial={{ opacity: 0, x: -50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="relative w-full aspect-square max-w-md mx-auto">
+              {/* Decorative Elements */}
+              <div className="absolute inset-0 border-2 border-ember/20 rounded-3xl transform rotate-6" />
+              <div className="absolute inset-0 border-2 border-gold/20 rounded-3xl transform -rotate-3" />
+
+              {/* Main Container with Profile Image */}
+              <div className="relative w-full h-full bg-gradient-to-br from-obsidian to-smoke rounded-3xl overflow-hidden border border-ember/20 glow-pulse">
+                {/* Profile Image with fallback */}
+                <ProfileImage />
+
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-void/80 via-transparent to-transparent" />
+
+                {/* Floating Tech Icons */}
+                <motion.div
+                  className="absolute top-4 left-4 px-3 py-1 bg-obsidian/80 backdrop-blur-sm rounded-full border border-platinum/20 text-xs font-body"
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                >
+                  .NET Core
+                </motion.div>
+                <motion.div
+                  className="absolute top-4 right-4 px-3 py-1 bg-obsidian/80 backdrop-blur-sm rounded-full border border-platinum/20 text-xs font-body"
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
+                >
+                  Azure
+                </motion.div>
+                <motion.div
+                  className="absolute bottom-4 left-4 px-3 py-1 bg-obsidian/80 backdrop-blur-sm rounded-full border border-platinum/20 text-xs font-body"
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, delay: 1 }}
+                >
+                  Snowflake
+                </motion.div>
+                <motion.div
+                  className="absolute bottom-4 right-4 px-3 py-1 bg-obsidian/80 backdrop-blur-sm rounded-full border border-platinum/20 text-xs font-body"
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
+                >
+                  React
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Right - Content */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <div className="font-body text-ember text-sm mb-4 tracking-widest">ABOUT ME</div>
+            <h2 className="text-4xl md:text-5xl font-display font-black mb-6">
+              Engineering the <span className="gradient-text">Future of Healthcare</span>
+            </h2>
+            <div className="space-y-4 text-mercury font-body leading-relaxed">
+              <p>
+                From programming microcontrollers to leading enterprise platform teams—my journey
+                has been about solving progressively harder problems. As Associate Director at
+                Syneos Health, I lead 10+ engineers building healthcare analytics platforms used
+                by pharmaceutical companies worldwide.
+              </p>
+              <p>
+                Our work sits at the intersection of complex medical data, enterprise architecture,
+                and emerging AI capabilities. I care deeply about craft—clean architecture, proper
+                abstractions, systems that don't break at 2 AM.
+              </p>
+              <p>
+                Equally passionate about people—helping engineers grow from writing code to thinking
+                in systems. My background in embedded systems gives me an appreciation for constraints
+                and efficiency that shapes how I approach enterprise software.
+              </p>
+            </div>
+
+            {/* Key Highlights */}
+            <div className="mt-8 grid grid-cols-2 gap-4">
+              {[
+                { label: 'Leadership', value: 'Team of 20+' },
+                { label: 'Domain', value: 'Healthcare Analytics' },
+                { label: 'Location', value: 'Salem, Tamil Nadu' },
+                { label: 'Focus', value: 'AI & Architecture' },
+              ].map((item, i) => (
+                <div key={item.label} className="p-4 bg-obsidian rounded-xl border border-platinum/10 hover-lift">
+                  <div className="text-xs font-body text-mercury mb-1">{item.label}</div>
+                  <div className="font-body text-platinum">{item.value}</div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// Experience Section
+const ExperienceSection = () => {
+  const experiences = [
+    {
+      period: 'Nov 2025 - Present',
+      role: 'Associate Director',
+      company: 'Syneos Health',
+      location: 'Salem, Tamil Nadu',
+      description: 'Leading Technical Delivery Center with 20 engineers across UI, middleware, data, and QA. Delivered Precision Targeting with 1,600% user growth and 3,001% engagement increase. Zero production incidents across all releases.',
+      highlights: ['Team Leadership', 'Azure Kubernetes', 'AI Integration', 'Enterprise Architecture'],
+    },
+    {
+      period: 'Jul 2024 - Nov 2025',
+      role: 'Principal Engineer',
+      company: 'Syneos Health',
+      location: 'Salem, Tamil Nadu',
+      description: 'Led 8-10 engineers delivering three major platforms with 99.9%+ uptime. Rewrote AIP from Node.js to .NET Core in 30 days. Integrated GPT-4o mini for medical terminology.',
+      highlights: ['Svelte', '.NET Core', 'Snowflake', 'KEDA Autoscaling'],
+    },
+    {
+      period: 'Jun 2023 - Jun 2024',
+      role: 'Senior Full Stack Developer',
+      company: 'Syneos Health',
+      location: 'Salem, Tamil Nadu',
+      description: 'Built KDB IDE with spreadsheet functionality and SSH views. Created Diversity Equity Index reports tool. Designed Excel add-ins using Excel-DNA for complex operations.',
+      highlights: ['WPF', 'Excel-DNA', 'Plotly', 'Syncfusion'],
+    },
+    {
+      period: 'Jul 2018 - Mar 2021',
+      role: 'Embedded Design Engineer',
+      company: 'SUGUS',
+      location: 'Salem, Tamil Nadu',
+      description: 'Developed TDS Meter for Bosch Groups and counter meter for TVS Tires. Built HMI automation device for RO plants using Python. Designed home security systems.',
+      highlights: ['Embedded C', 'MicroPython', 'Industrial HMI', 'IoT'],
+    },
+  ]
+
+  return (
+    <section id="experience" className="py-32 bg-obsidian relative">
+      <div className="absolute inset-0 grid-bg opacity-30" />
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="font-body text-ember text-sm mb-4 tracking-widest">CAREER JOURNEY</div>
+          <h2 className="text-4xl md:text-5xl font-display font-black">
+            A Decade of <span className="gradient-text">Building & Leading</span>
+          </h2>
+        </motion.div>
+
+        <div className="relative">
+          {/* Timeline Line */}
+          <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-ember via-gold to-ember" />
+
+          {experiences.map((exp, i) => (
+            <motion.div
+              key={exp.role + exp.company}
+              className={`relative mb-16 md:mb-24 ${i % 2 === 0 ? 'md:pr-1/2' : 'md:pl-1/2 md:ml-auto'}`}
+              initial={{ opacity: 0, x: i % 2 === 0 ? -50 : 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ duration: 0.6 }}
+            >
+              {/* Timeline Dot */}
+              <div className={`absolute top-0 ${i % 2 === 0 ? 'left-0 md:right-0 md:left-auto md:translate-x-1/2' : 'left-0 md:-translate-x-1/2'} w-4 h-4`}>
+                <div className="w-4 h-4 bg-ember rounded-full animate-pulse" />
+                <div className="absolute inset-0 bg-ember rounded-full animate-ping opacity-20" />
+              </div>
+
+              <div className={`ml-8 md:ml-0 ${i % 2 === 0 ? 'md:mr-12' : 'md:ml-12'}`}>
+                <div className="project-card p-8 rounded-2xl">
+                  <div className="flex flex-wrap items-center gap-4 mb-4">
+                    <span className="px-3 py-1 bg-ember/10 text-ember text-sm font-body rounded-full">
+                      {exp.period}
+                    </span>
+                    <span className="text-mercury text-sm font-body">{exp.location}</span>
+                  </div>
+                  <h3 className="text-2xl font-display font-bold text-platinum mb-1">{exp.role}</h3>
+                  <p className="text-ember font-body mb-4">{exp.company}</p>
+                  <p className="text-mercury font-body leading-relaxed mb-6">{exp.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {exp.highlights.map((highlight) => (
+                      <span
+                        key={highlight}
+                        className="px-3 py-1 bg-smoke border border-platinum/10 rounded-full text-xs font-body text-platinum"
+                      >
+                        {highlight}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// Projects Section - Professional Design
+const ProjectsSection = () => {
+  const projects = [
+    {
+      title: 'Precision Targeting Platform',
+      category: 'Healthcare Analytics',
+      description: 'First fully enterprise-standard application built end-to-end by TDC team. Serving 150+ users across Commercial StratOps and Deployment Solutions with zero production incidents.',
+      impact: '1600%',
+      impactLabel: 'User Growth',
+      tech: ['Svelte', '.NET Core', 'Snowflake', 'Auth0'],
+      icon: '🎯',
+    },
+    {
+      title: 'KOL Analytics Platform',
+      category: 'AI-Powered Analytics',
+      description: 'Architected distributed processing for 1-4 hour analytical queries with Kubernetes workers, KEDA autoscaling, and Azure Service Bus event-driven architecture.',
+      impact: 'GPT-4o',
+      impactLabel: 'AI Integration',
+      tech: ['Kubernetes', 'KEDA', 'Azure Service Bus', 'OpenAI'],
+      icon: '🤖',
+    },
+    {
+      title: 'AIP Platform Modernization',
+      category: 'Enterprise Migration',
+      description: 'Rewrote legacy Node.js platform to .NET Core in just 30 days with zero downtime migration. Enabled multi-database support including Snowflake, KDB+, and Databricks.',
+      impact: '30%',
+      impactLabel: 'Faster Performance',
+      tech: ['.NET Core', 'Snowflake', 'KDB+', 'Databricks'],
+      icon: '⚡',
+    },
+    {
+      title: 'KDB IDE Desktop App',
+      category: 'Developer Tools',
+      description: 'Native desktop application integrating spreadsheet functionality, SSH views, and autocomplete. Successfully deployed to production with SSO enabled.',
+      impact: '100%',
+      impactLabel: 'Enterprise Ready',
+      tech: ['.NET Framework', 'WinForms', 'SSH', 'API Integration'],
+      icon: '💻',
+    },
+  ]
+
+  return (
+    <section id="projects" className="py-32 relative bg-obsidian">
+      <div className="absolute inset-0 grid-bg opacity-30" />
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <motion.div
+          className="text-center mb-20"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="font-body text-ember text-sm mb-4 tracking-widest uppercase">Featured Work</div>
+          <h2 className="text-4xl md:text-5xl font-display font-black">
+            Projects That <span className="gradient-text">Made Impact</span>
+          </h2>
+        </motion.div>
+
+        <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+          {projects.map((project, i) => (
+            <motion.div
+              key={project.title}
+              className="group relative"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+            >
+              {/* Card */}
+              <div className="relative h-full p-8 rounded-2xl bg-void border border-platinum/10 overflow-hidden transition-all duration-500 group-hover:border-ember/50 group-hover:shadow-2xl group-hover:shadow-ember/10">
+
+                {/* Hover gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-ember/5 via-transparent to-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                {/* Top row: Icon + Category */}
+                <div className="flex items-center justify-between mb-6 relative z-10">
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">{project.icon}</span>
+                    <span className="text-xs font-body text-ember uppercase tracking-wider">
+                      {project.category}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-xl md:text-2xl font-display font-bold text-platinum mb-4 group-hover:text-white transition-colors relative z-10">
+                  {project.title}
+                </h3>
+
+                {/* Description */}
+                <p className="text-mercury font-body text-sm leading-relaxed mb-6 relative z-10">
+                  {project.description}
+                </p>
+
+                {/* Impact Metric */}
+                <div className="flex items-baseline gap-2 mb-6 relative z-10">
+                  <span className="text-4xl font-display font-black text-ember">
+                    {project.impact}
+                  </span>
+                  <span className="text-sm font-body text-mercury">
+                    {project.impactLabel}
+                  </span>
+                </div>
+
+                {/* Tech Stack */}
+                <div className="flex flex-wrap gap-2 relative z-10">
+                  {project.tech.map((tech) => (
+                    <span
+                      key={tech}
+                      className="px-3 py-1.5 bg-obsidian border border-platinum/20 rounded-lg text-xs font-body text-platinum/80 group-hover:border-ember/30 group-hover:text-platinum transition-all"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Bottom accent line */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-ember via-gold to-ember transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// Skills Section
+const SkillsSection = () => {
+  const skillCategories = [
+    {
+      title: 'Backend & Cloud',
+      skills: [
+        { name: '.NET Core', level: 95 },
+        { name: 'Azure (AKS, Service Bus)', level: 92 },
+        { name: 'Python', level: 85 },
+        { name: 'Node.js', level: 80 },
+      ],
+    },
+    {
+      title: 'Data & Analytics',
+      skills: [
+        { name: 'Snowflake', level: 95 },
+        { name: 'KDB+', level: 85 },
+        { name: 'Databricks', level: 82 },
+        { name: 'SQL Server', level: 90 },
+      ],
+    },
+    {
+      title: 'Frontend & UI',
+      skills: [
+        { name: 'Svelte', level: 90 },
+        { name: 'WPF / WinForms', level: 88 },
+        { name: 'React', level: 82 },
+        { name: 'Excel-DNA', level: 85 },
+      ],
+    },
+    {
+      title: 'DevOps & Architecture',
+      skills: [
+        { name: 'Kubernetes / KEDA', level: 90 },
+        { name: 'Azure DevOps', level: 92 },
+        { name: 'OpenAI Integration', level: 85 },
+        { name: 'Auth0', level: 88 },
+      ],
+    },
+  ]
+
+  return (
+    <section id="skills" className="py-32 bg-obsidian relative overflow-hidden">
+      <div className="absolute inset-0 grid-bg opacity-30" />
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="font-body text-ember text-sm mb-4 tracking-widest">TECHNICAL EXPERTISE</div>
+          <h2 className="text-4xl md:text-5xl font-display font-black">
+            Skills That <span className="gradient-text">Deliver Results</span>
+          </h2>
+        </motion.div>
+
+        <div className="grid md:grid-cols-2 gap-8">
+          {skillCategories.map((category, catIndex) => (
+            <RevealOnScroll key={category.title} direction={catIndex % 2 === 0 ? 'left' : 'right'}>
+              <Tilt3DCard>
+                <div className="p-8 bg-smoke rounded-2xl border border-platinum/10 neon-border relative overflow-hidden group">
+                  {/* Animated background gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-ember/5 via-transparent to-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  <h3 className="text-xl font-display font-bold text-platinum mb-6 relative z-10">{category.title}</h3>
+                  <div className="space-y-5 relative z-10">
+                    {category.skills.map((skill, skillIndex) => (
+                      <div key={skill.name} className="group/skill">
+                        <div className="flex justify-between mb-2">
+                          <span className="font-body text-mercury group-hover/skill:text-platinum transition-colors">{skill.name}</span>
+                          <span className="font-body text-ember">{skill.level}%</span>
+                        </div>
+                        <div className="h-2 bg-void rounded-full overflow-hidden relative">
+                          <motion.div
+                            className="h-full bg-gradient-to-r from-ember to-gold rounded-full relative"
+                            initial={{ width: 0 }}
+                            whileInView={{ width: `${skill.level}%` }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1.2, delay: catIndex * 0.1 + skillIndex * 0.15, ease: [0.16, 1, 0.3, 1] }}
+                          >
+                            {/* Shimmer effect */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-shimmer" />
+                          </motion.div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Tilt3DCard>
+            </RevealOnScroll>
+          ))}
+        </div>
+
+        {/* Tech Stack Marquee */}
+        <div className="mt-16 overflow-hidden">
+          <div className="marquee">
+            {[...Array(2)].map((_, setIndex) => (
+              <div key={setIndex} className="flex gap-8 mx-4">
+                {['.NET', 'Azure', 'React', 'Snowflake', 'Docker', 'Kubernetes', 'TypeScript', 'Python', 'SQL Server', 'Power BI', 'Git', 'CI/CD'].map((tech) => (
+                  <span
+                    key={tech + setIndex}
+                    className="px-6 py-3 bg-void border border-platinum/10 rounded-full font-body text-mercury whitespace-nowrap hover:border-ember hover:text-ember transition-colors"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// Contact Section
+const ContactSection = () => {
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    // Simulate submission
+    setTimeout(() => {
+      setIsSubmitting(false)
+      setFormData({ name: '', email: '', message: '' })
+      alert('Message sent successfully!')
+    }, 1000)
+  }
+
+  return (
+    <section id="contact" className="py-32 relative overflow-hidden">
+      <div className="absolute inset-0">
+        <div className="morph-bg" style={{ top: '-20%', right: '-20%' }} />
+      </div>
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-16">
+          {/* Left - Info */}
+          <RevealOnScroll direction="left">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+          >
+            <div className="font-body text-ember text-sm mb-4 tracking-widest">GET IN TOUCH</div>
+            <h2 className="text-4xl md:text-5xl font-display font-black mb-6">
+              Let's Build <span className="gradient-text">Something Great</span>
+            </h2>
+            <p className="text-mercury font-body leading-relaxed mb-8">
+              Whether you're looking for technical leadership, architecture consulting, 
+              or want to discuss the future of healthcare technology—I'd love to hear from you.
+            </p>
+
+            <div className="space-y-6">
+              <a href="mailto:suganthan94@yahoo.com" className="flex items-center gap-4 group">
+                <div className="w-12 h-12 bg-ember/10 rounded-xl flex items-center justify-center group-hover:bg-ember/20 transition-colors">
+                  <svg className="w-6 h-6 text-ember" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-sm font-body text-mercury">Email</div>
+                  <div className="font-body text-platinum group-hover:text-ember transition-colors">suganthan94@yahoo.com</div>
+                </div>
+              </a>
+
+              <a href="https://www.linkedin.com/in/suganthan-arulvelan-a9356073/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group">
+                <div className="w-12 h-12 bg-ember/10 rounded-xl flex items-center justify-center group-hover:bg-ember/20 transition-colors">
+                  <svg className="w-6 h-6 text-ember" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-sm font-body text-mercury">LinkedIn</div>
+                  <div className="font-body text-platinum group-hover:text-ember transition-colors">linkedin.com/in/suganthan-arulvelan</div>
+                </div>
+              </a>
+
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-ember/10 rounded-xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-ember" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-sm font-body text-mercury">Location</div>
+                  <div className="font-body text-platinum">Salem, Tamil Nadu, India</div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+          </RevealOnScroll>
+
+          {/* Right - Form */}
+          <RevealOnScroll direction="right">
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+          >
+            <form onSubmit={handleSubmit} className="bg-obsidian p-8 rounded-2xl border border-platinum/10 neon-border">
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-body text-mercury mb-2">Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-4 py-3 bg-void border border-platinum/20 rounded-xl font-body text-platinum focus:border-ember focus:outline-none transition-colors"
+                    placeholder="John Doe"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-body text-mercury mb-2">Email</label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full px-4 py-3 bg-void border border-platinum/20 rounded-xl font-body text-platinum focus:border-ember focus:outline-none transition-colors"
+                    placeholder="john@example.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-body text-mercury mb-2">Message</label>
+                  <textarea
+                    required
+                    rows={5}
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    className="w-full px-4 py-3 bg-void border border-platinum/20 rounded-xl font-body text-platinum focus:border-ember focus:outline-none transition-colors resize-none"
+                    placeholder="Tell me about your project..."
+                  />
+                </div>
+                <MagneticElement strength={0.2}>
+                  <motion.button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full cyber-button py-4 bg-ember text-void font-body font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 relative overflow-hidden group"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {isSubmitting ? (
+                      <div className="w-6 h-6 border-2 border-void border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <span className="relative z-10">Send Message</span>
+                        <svg className="w-5 h-5 relative z-10 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                        <div className="absolute inset-0 bg-gradient-to-r from-gold to-ember opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </>
+                    )}
+                  </motion.button>
+                </MagneticElement>
+              </div>
+            </form>
+          </motion.div>
+          </RevealOnScroll>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// Footer
+const Footer = () => {
+  return (
+    <footer className="py-8 border-t border-platinum/10">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="font-body text-mercury text-sm">
+            © {new Date().getFullYear()} Suganthan Arulvelan. Crafted with precision.
+          </div>
+          <div className="flex items-center gap-6">
+            <a href="https://www.linkedin.com/in/suganthan-arulvelan-a9356073/" target="_blank" rel="noopener noreferrer" className="text-mercury hover:text-ember transition-colors">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+              </svg>
+            </a>
+            <a href="https://github.com/shuganth" target="_blank" rel="noopener noreferrer" className="text-mercury hover:text-ember transition-colors">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+              </svg>
+            </a>
+            <a href="mailto:suganthan94@yahoo.com" className="text-mercury hover:text-ember transition-colors">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  )
+}
+
+// Main Page Component
+export default function Home() {
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  return (
+    <>
+      <Preloader onComplete={() => setIsLoaded(true)} />
+      <CustomCursor />
+      <MouseGlow />
+      <ScrollProgress />
+
+      {/* Stunning Background Effects */}
+      <ParticleConstellation />
+      <GlowingOrbs />
+
+      {isLoaded && (
+        <>
+          <SocialSidebar />
+          <EmailSidebar />
+        </>
+      )}
+
+      <main className="relative z-10">
+        <Navigation />
+        <HeroSection />
+        <StatsSection />
+        <AboutSection />
+        <ExperienceSection />
+        <ProjectsSection />
+        <SkillsSection />
+        <ContactSection />
+        <Footer />
+      </main>
+
+      <BackToTop />
+    </>
+  )
+}

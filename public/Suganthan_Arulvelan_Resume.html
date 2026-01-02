@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suganthan Arulvelan - Resume</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fff;
+            font-size: 10pt;
+        }
+
+        .resume {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 30px 40px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #ff4d00;
+        }
+
+        .name {
+            font-size: 28pt;
+            font-weight: 700;
+            color: #0a0a0a;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .title {
+            font-size: 12pt;
+            color: #ff4d00;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .contact {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 9pt;
+            color: #444;
+        }
+
+        .contact a {
+            color: #444;
+            text-decoration: none;
+        }
+
+        .contact a:hover {
+            color: #ff4d00;
+        }
+
+        /* Sections */
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #ff4d00;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        /* Summary */
+        .summary {
+            font-size: 9.5pt;
+            color: #333;
+            text-align: justify;
+        }
+
+        /* Experience */
+        .experience-item {
+            margin-bottom: 16px;
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 4px;
+        }
+
+        .job-title {
+            font-size: 11pt;
+            font-weight: 600;
+            color: #0a0a0a;
+        }
+
+        .job-company {
+            font-size: 10pt;
+            color: #ff4d00;
+            font-weight: 500;
+        }
+
+        .job-location {
+            font-size: 9pt;
+            color: #666;
+            font-style: italic;
+        }
+
+        .job-date {
+            font-size: 9pt;
+            color: #666;
+            white-space: nowrap;
+            text-align: right;
+        }
+
+        .job-description {
+            margin-top: 6px;
+            padding-left: 15px;
+        }
+
+        .job-description li {
+            font-size: 9pt;
+            color: #333;
+            margin-bottom: 3px;
+            text-align: justify;
+        }
+
+        /* Skills */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .skill-category {
+            margin-bottom: 8px;
+        }
+
+        .skill-category-title {
+            font-size: 9pt;
+            font-weight: 600;
+            color: #0a0a0a;
+            margin-bottom: 3px;
+        }
+
+        .skill-list {
+            font-size: 9pt;
+            color: #444;
+        }
+
+        /* Education */
+        .education-item {
+            margin-bottom: 10px;
+        }
+
+        .degree {
+            font-size: 10pt;
+            font-weight: 600;
+            color: #0a0a0a;
+        }
+
+        .school {
+            font-size: 9pt;
+            color: #ff4d00;
+        }
+
+        .edu-date {
+            font-size: 9pt;
+            color: #666;
+        }
+
+        /* Achievements */
+        .achievements-list {
+            padding-left: 15px;
+        }
+
+        .achievements-list li {
+            font-size: 9pt;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        /* Languages */
+        .languages {
+            display: flex;
+            gap: 20px;
+            font-size: 9pt;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                font-size: 9pt;
+            }
+            .resume {
+                padding: 15px 25px;
+            }
+            .name {
+                font-size: 24pt;
+            }
+        }
+
+        @page {
+            margin: 0.4in;
+        }
+    </style>
+</head>
+<body>
+    <div class="resume">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="name">SUGANTHAN ARULVELAN</h1>
+            <p class="title">Associate Director | Building Healthcare Analytics Platforms | Enterprise Architecture & AI Integration</p>
+            <div class="contact">
+                <span>Salem, Tamil Nadu, India</span>
+                <span>|</span>
+                <span>9080704073</span>
+                <span>|</span>
+                <a href="mailto:suganthan94@yahoo.com">suganthan94@yahoo.com</a>
+                <span>|</span>
+                <a href="https://www.linkedin.com/in/suganthan-arulvelan-a9356073/" target="_blank">LinkedIn</a>
+            </div>
+        </header>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">Professional Summary</h2>
+            <p class="summary">
+                From programming microcontrollers to leading enterprise platform teams—my journey has been about solving progressively harder problems. As Associate Director at Syneos Health, I lead 10+ engineers building healthcare analytics platforms used by pharmaceutical companies worldwide. Our work sits at the intersection of complex medical data, enterprise architecture, and emerging AI capabilities. I care deeply about craft—clean architecture, proper abstractions, systems that don't break at 2 AM. Equally passionate about people—helping engineers grow from writing code to thinking in systems. Background in embedded systems gives me an appreciation for constraints and efficiency that shapes how I approach enterprise software.
+            </p>
+        </section>
+
+        <!-- Experience -->
+        <section class="section">
+            <h2 class="section-title">Professional Experience</h2>
+
+            <div class="experience-item">
+                <div class="job-header">
+                    <div>
+                        <div class="job-title">Associate Director</div>
+                        <div class="job-company">Syneos Health</div>
+                        <div class="job-location">Salem, Tamil Nadu, India</div>
+                    </div>
+                    <div class="job-date">Nov 2025 - Present</div>
+                </div>
+                <ul class="job-description">
+                    <li>Leading team of 20 engineers across UI, middleware, data, and QA disciplines in the Technical Delivery Center</li>
+                    <li>Delivered Precision Targeting Phase 1 with <strong>1,600% user growth</strong> and <strong>3,001% login engagement increase</strong></li>
+                    <li>Led AIP platform modernization from Node.js to .NET Core, achieving 30% performance improvement</li>
+                    <li>Established enterprise architecture standards and AI integration capabilities using internal OpenAI services</li>
+                    <li>Maintained <strong>zero production incidents</strong> across all platform releases</li>
+                    <li><em>Tech: .NET Core, Azure Kubernetes, Snowflake, Azure Service Bus, KEDA</em></li>
+                </ul>
+            </div>
+
+            <div class="experience-item">
+                <div class="job-header">
+                    <div>
+                        <div class="job-title">Principal Engineer</div>
+                        <div class="job-company">Syneos Health</div>
+                        <div class="job-location">Salem, Tamil Nadu, India</div>
+                    </div>
+                    <div class="job-date">Jul 2024 - Nov 2025</div>
+                </div>
+                <ul class="job-description">
+                    <li>Led 8-10 engineers delivering three major healthcare analytics platforms with 99.9%+ uptime</li>
+                    <li><strong>Precision Targeting:</strong> First enterprise-standard app built end-to-end, serving 150+ users across Commercial StratOps</li>
+                    <li><strong>AIP Modernization:</strong> Rewrote Node.js to .NET Core in 30 days with 30% performance gain, zero downtime migration</li>
+                    <li><strong>KOL Analytics:</strong> Architected distributed processing with Kubernetes, KEDA autoscaling, integrated GPT-4o mini for medical terminology</li>
+                    <li>Established reusable .NET Core patterns reducing future dev time by 30-40%</li>
+                </ul>
+            </div>
+
+            <div class="experience-item">
+                <div class="job-header">
+                    <div>
+                        <div class="job-title">Senior Full Stack Developer</div>
+                        <div class="job-company">Syneos Health</div>
+                        <div class="job-location">Salem, Tamil Nadu, India</div>
+                    </div>
+                    <div class="job-date">Jun 2023 - Jun 2024</div>
+                </div>
+                <ul class="job-description">
+                    <li>Developed KDB IDE—native desktop app with spreadsheet functionality, SSH views, and autocomplete using .NET Framework</li>
+                    <li>Created Diversity Equity Index reports tool using .NET Core, Plotly, and Syncfusion for automated PowerPoint generation</li>
+                    <li>Designed Excel add-in using Excel-DNA, integrating API interactions and complex logical operations</li>
+                </ul>
+            </div>
+
+            <div class="experience-item">
+                <div class="job-header">
+                    <div>
+                        <div class="job-title">Senior Software Engineer</div>
+                        <div class="job-company">Syneos Health</div>
+                    </div>
+                    <div class="job-date">Aug 2022 - Jun 2023</div>
+                </div>
+            </div>
+
+            <div class="experience-item">
+                <div class="job-header">
+                    <div>
+                        <div class="job-title">Project Development Engineer</div>
+                        <div class="job-company">Open Systems International</div>
+                        <div class="job-location">Bengaluru, Karnataka, India</div>
+                    </div>
+                    <div class="job-date">Mar 2021 - Jul 2022</div>
+                </div>
+                <ul class="job-description">
+                    <li>Developed Web Forms using ASP.NET, C#, XML, ADO.NET with secure access and user validation</li>
+                    <li>Deployed web services for online transactions, developed SQL stored procedures for reporting</li>
+                </ul>
+            </div>
+
+            <div class="experience-item">
+                <div class="job-header">
+                    <div>
+                        <div class="job-title">Embedded Design Engineer</div>
+                        <div class="job-company">SUGUS</div>
+                        <div class="job-location">Salem, Tamil Nadu, India</div>
+                    </div>
+                    <div class="job-date">Jul 2018 - Mar 2021</div>
+                </div>
+                <ul class="job-description">
+                    <li>Developed TDS Meter for Bosch Groups and counter meter for TVS Tires</li>
+                    <li>Built complete HMI automation device for RO plants using Python</li>
+                    <li>Designed hardware for home security systems and offline GPS recorder</li>
+                    <li><em>Expertise: Embedded C, MicroPython</em></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Skills -->
+        <section class="section">
+            <h2 class="section-title">Technical Skills</h2>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <div class="skill-category-title">Backend & Cloud</div>
+                    <div class="skill-list">.NET Core, C#, Node.js, Python, Azure (AKS, Service Bus, DevOps, Functions)</div>
+                </div>
+                <div class="skill-category">
+                    <div class="skill-category-title">Data & Analytics</div>
+                    <div class="skill-list">Snowflake, SQL Server, KDB+, Databricks, Power BI, Azure Data Factory</div>
+                </div>
+                <div class="skill-category">
+                    <div class="skill-category-title">Frontend & UI</div>
+                    <div class="skill-list">Svelte, React, TypeScript, WPF, WinForms, Excel-DNA</div>
+                </div>
+                <div class="skill-category">
+                    <div class="skill-category-title">DevOps & Architecture</div>
+                    <div class="skill-list">Kubernetes, KEDA, Docker, CI/CD, Auth0, OpenAI Integration</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Achievements -->
+        <section class="section">
+            <h2 class="section-title">Key Achievements</h2>
+            <ul class="achievements-list">
+                <li><strong>1,600% user growth</strong> and <strong>3,001% engagement increase</strong> on Precision Targeting platform</li>
+                <li><strong>Zero production incidents</strong> across all major platform releases</li>
+                <li>Rewrote legacy platform in <strong>30 days</strong> with 30% performance improvement</li>
+                <li>Pioneered AI integration using GPT-4o mini for medical terminology and ICD-10 validation</li>
+                <li>Established reusable patterns reducing future development time by 30-40%</li>
+                <li>Implemented enterprise compliance standards (GxP, HIPAA, SOX)</li>
+            </ul>
+        </section>
+
+        <!-- Education -->
+        <section class="section">
+            <h2 class="section-title">Education</h2>
+            <div class="education-item">
+                <div class="degree">Master's Degree in Control Systems</div>
+                <div class="school">Mahendra Institutions</div>
+                <div class="edu-date">2016 - 2018</div>
+            </div>
+            <div class="education-item">
+                <div class="degree">Bachelor's Degree in Electrical and Electronics Engineering</div>
+                <div class="school">Mahendra Institutions</div>
+                <div class="edu-date">2012 - 2016</div>
+            </div>
+            <div class="education-item">
+                <div class="degree">Nano Degree - Machine Learning Engineer</div>
+                <div class="school">Udacity</div>
+                <div class="edu-date">2020</div>
+            </div>
+        </section>
+
+        <!-- Languages -->
+        <section class="section">
+            <h2 class="section-title">Languages</h2>
+            <div class="languages">
+                <span><strong>English</strong> (Full Professional)</span>
+                <span><strong>Tamil</strong> (Native)</span>
+                <span><strong>French</strong> (Elementary)</span>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
