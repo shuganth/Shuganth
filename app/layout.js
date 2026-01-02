@@ -5,6 +5,11 @@ export const metadata = {
   description: 'Associate Director at Syneos Health | Building Healthcare Analytics Platforms | Enterprise Architecture & AI Integration | 1600% User Growth',
   keywords: ['Associate Director', 'Healthcare Analytics', 'Enterprise Architecture', 'AI Integration', 'Azure Kubernetes', 'Snowflake', '.NET Core', 'Svelte'],
   authors: [{ name: 'Suganthan Arulvelan' }],
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
   openGraph: {
     title: 'Suganthan Arulvelan | Healthcare Analytics & AI',
     description: 'Associate Director at Syneos Health | Building Healthcare Analytics Platforms',

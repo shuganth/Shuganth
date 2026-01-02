@@ -1791,35 +1791,43 @@ const ExperienceSection = () => {
   const experiences = [
     {
       period: 'Nov 2025 - Present',
+      className: 'AssociateDirector',
       role: 'Associate Director',
       company: 'Syneos Health',
       location: 'Salem, Tamil Nadu',
-      description: 'Leading Technical Delivery Center with 20 engineers across UI, middleware, data, and QA. Delivered Precision Targeting with 1,600% user growth and 3,001% engagement increase. Zero production incidents across all releases.',
-      highlights: ['Team Leadership', 'Azure Kubernetes', 'AI Integration', 'Enterprise Architecture'],
+      teamSize: 20,
+      uptime: '99.99%',
+      growth: '1600%',
+      stack: ['Azure Kubernetes', 'AI Integration', 'Enterprise Architecture'],
     },
     {
       period: 'Jul 2024 - Nov 2025',
+      className: 'PrincipalEngineer',
       role: 'Principal Engineer',
       company: 'Syneos Health',
       location: 'Salem, Tamil Nadu',
-      description: 'Led 8-10 engineers delivering three major platforms with 99.9%+ uptime. Rewrote AIP from Node.js to .NET Core in 30 days. Integrated GPT-4o mini for medical terminology.',
-      highlights: ['Svelte', '.NET Core', 'Snowflake', 'KEDA Autoscaling'],
+      teamSize: 10,
+      uptime: '99.9%',
+      migrationDays: 30,
+      stack: ['Svelte', '.NET Core', 'Snowflake', 'KEDA'],
     },
     {
       period: 'Jun 2023 - Jun 2024',
+      className: 'SeniorFullStackDev',
       role: 'Senior Full Stack Developer',
       company: 'Syneos Health',
       location: 'Salem, Tamil Nadu',
-      description: 'Built KDB IDE with spreadsheet functionality and SSH views. Created Diversity Equity Index reports tool. Designed Excel add-ins using Excel-DNA for complex operations.',
-      highlights: ['WPF', 'Excel-DNA', 'Plotly', 'Syncfusion'],
+      projects: ['KDB IDE', 'DEI Reports', 'Excel Add-ins'],
+      stack: ['WPF', 'Excel-DNA', 'Plotly', 'Syncfusion'],
     },
     {
       period: 'Jul 2018 - Mar 2021',
+      className: 'EmbeddedEngineer',
       role: 'Embedded Design Engineer',
       company: 'SUGUS',
       location: 'Salem, Tamil Nadu',
-      description: 'Developed TDS Meter for Bosch Groups and counter meter for TVS Tires. Built HMI automation device for RO plants using Python. Designed home security systems.',
-      highlights: ['Embedded C', 'MicroPython', 'Industrial HMI', 'IoT'],
+      clients: ['Bosch', 'TVS'],
+      stack: ['Embedded C', 'MicroPython', 'Industrial HMI', 'IoT'],
     },
   ]
 
@@ -1835,55 +1843,154 @@ const ExperienceSection = () => {
         >
           <div className="font-body text-ember text-sm mb-4 tracking-widest">CAREER JOURNEY</div>
           <h2 className="text-4xl md:text-5xl font-display font-black">
-            A Decade of <span className="gradient-text">Building & Leading</span>
+            <span className="text-purple-400">class</span> <span className="gradient-text">CareerPath</span> <span className="text-platinum">{'{'}</span>
           </h2>
         </motion.div>
 
-        <div className="relative">
-          {/* Timeline Line */}
-          <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-ember via-gold to-ember" />
-
+        <div className="grid gap-6 lg:gap-8">
           {experiences.map((exp, i) => (
             <motion.div
               key={exp.role + exp.company}
-              className={`relative mb-16 md:mb-24 ${i % 2 === 0 ? 'md:pr-1/2' : 'md:pl-1/2 md:ml-auto'}`}
-              initial={{ opacity: 0, x: i % 2 === 0 ? -50 : 50 }}
+              initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.6 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.6, delay: i * 0.1 }}
             >
-              {/* Timeline Dot */}
-              <div className={`absolute top-0 ${i % 2 === 0 ? 'left-0 md:right-0 md:left-auto md:translate-x-1/2' : 'left-0 md:-translate-x-1/2'} w-4 h-4`}>
-                <div className="w-4 h-4 bg-ember rounded-full animate-pulse" />
-                <div className="absolute inset-0 bg-ember rounded-full animate-ping opacity-20" />
-              </div>
-
-              <div className={`ml-8 md:ml-0 ${i % 2 === 0 ? 'md:mr-12' : 'md:ml-12'}`}>
-                <div className="project-card p-8 rounded-2xl">
-                  <div className="flex flex-wrap items-center gap-4 mb-4">
-                    <span className="px-3 py-1 bg-ember/10 text-ember text-sm font-body rounded-full">
-                      {exp.period}
-                    </span>
-                    <span className="text-mercury text-sm font-body">{exp.location}</span>
+              {/* Code Block Style Card */}
+              <div className="bg-void rounded-xl border border-platinum/10 overflow-hidden hover:border-ember/30 transition-colors">
+                {/* Code header */}
+                <div className="flex items-center justify-between px-4 py-2 border-b border-platinum/10 bg-smoke/50">
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-red-500/80" />
+                      <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+                      <div className="w-3 h-3 rounded-full bg-green-500/80" />
+                    </div>
+                    <span className="text-xs font-mono text-mercury ml-2">{exp.className}.cs</span>
                   </div>
-                  <h3 className="text-2xl font-display font-bold text-platinum mb-1">{exp.role}</h3>
-                  <p className="text-ember font-body mb-4">{exp.company}</p>
-                  <p className="text-mercury font-body leading-relaxed mb-6">{exp.description}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {exp.highlights.map((highlight) => (
-                      <span
-                        key={highlight}
-                        className="px-3 py-1 bg-smoke border border-platinum/10 rounded-full text-xs font-body text-platinum"
-                      >
-                        {highlight}
+                  <span className="text-xs font-mono text-ember">{exp.period}</span>
+                </div>
+
+                {/* Code content */}
+                <div className="p-4 sm:p-6 font-mono text-sm">
+                  <div className="text-mercury/60">// {exp.location}</div>
+                  <div className="mt-2">
+                    <span className="text-purple-400">public class</span>{' '}
+                    <span className="text-green-400">{exp.className}</span>{' '}
+                    <span className="text-platinum">: </span>
+                    <span className="text-blue-400">IEngineer</span>
+                  </div>
+                  <div className="text-platinum">{'{'}</div>
+
+                  <div className="ml-4 mt-2">
+                    <span className="text-purple-400">public string</span>{' '}
+                    <span className="text-blue-400">Role</span>{' '}
+                    <span className="text-platinum">{'=> '}</span>
+                    <span className="text-green-400">"{exp.role}"</span>
+                    <span className="text-platinum">;</span>
+                  </div>
+
+                  <div className="ml-4">
+                    <span className="text-purple-400">public string</span>{' '}
+                    <span className="text-blue-400">Company</span>{' '}
+                    <span className="text-platinum">{'=> '}</span>
+                    <span className="text-green-400">"{exp.company}"</span>
+                    <span className="text-platinum">;</span>
+                  </div>
+
+                  {exp.teamSize && (
+                    <div className="ml-4">
+                      <span className="text-purple-400">public int</span>{' '}
+                      <span className="text-blue-400">TeamSize</span>{' '}
+                      <span className="text-platinum">{'=> '}</span>
+                      <span className="text-gold">{exp.teamSize}</span>
+                      <span className="text-platinum">;</span>
+                      <span className="text-mercury/60"> // engineers</span>
+                    </div>
+                  )}
+
+                  {exp.uptime && (
+                    <div className="ml-4">
+                      <span className="text-purple-400">public string</span>{' '}
+                      <span className="text-blue-400">Uptime</span>{' '}
+                      <span className="text-platinum">{'=> '}</span>
+                      <span className="text-green-400">"{exp.uptime}"</span>
+                      <span className="text-platinum">;</span>
+                      <span className="text-mercury/60"> // production SLA</span>
+                    </div>
+                  )}
+
+                  {exp.growth && (
+                    <div className="ml-4">
+                      <span className="text-purple-400">public string</span>{' '}
+                      <span className="text-blue-400">UserGrowth</span>{' '}
+                      <span className="text-platinum">{'=> '}</span>
+                      <span className="text-green-400">"{exp.growth}"</span>
+                      <span className="text-platinum">;</span>
+                    </div>
+                  )}
+
+                  {exp.migrationDays && (
+                    <div className="ml-4">
+                      <span className="text-purple-400">public int</span>{' '}
+                      <span className="text-blue-400">MigrationDays</span>{' '}
+                      <span className="text-platinum">{'=> '}</span>
+                      <span className="text-gold">{exp.migrationDays}</span>
+                      <span className="text-platinum">;</span>
+                      <span className="text-mercury/60"> // Node.js to .NET Core</span>
+                    </div>
+                  )}
+
+                  {exp.projects && (
+                    <div className="ml-4">
+                      <span className="text-purple-400">public string[]</span>{' '}
+                      <span className="text-blue-400">Projects</span>{' '}
+                      <span className="text-platinum">{'=> ['}</span>
+                      <span className="text-green-400">"{exp.projects.join('", "')}"</span>
+                      <span className="text-platinum">{'];'}</span>
+                    </div>
+                  )}
+
+                  {exp.clients && (
+                    <div className="ml-4">
+                      <span className="text-purple-400">public string[]</span>{' '}
+                      <span className="text-blue-400">Clients</span>{' '}
+                      <span className="text-platinum">{'=> ['}</span>
+                      <span className="text-green-400">"{exp.clients.join('", "')}"</span>
+                      <span className="text-platinum">{'];'}</span>
+                    </div>
+                  )}
+
+                  <div className="ml-4 mt-2">
+                    <span className="text-purple-400">public string[]</span>{' '}
+                    <span className="text-blue-400">Stack</span>{' '}
+                    <span className="text-platinum">{'=> new[] {'}</span>
+                  </div>
+                  <div className="ml-8 flex flex-wrap gap-x-1">
+                    {exp.stack.map((tech, idx) => (
+                      <span key={tech}>
+                        <span className="text-green-400">"{tech}"</span>
+                        {idx < exp.stack.length - 1 && <span className="text-platinum">, </span>}
                       </span>
                     ))}
                   </div>
+                  <div className="ml-4 text-platinum">{'}; '}</div>
+
+                  <div className="text-platinum mt-2">{'}'}</div>
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
+
+        <motion.div
+          className="text-center mt-12"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
+          <span className="text-4xl md:text-5xl font-display font-black text-platinum">{'}'}</span>
+        </motion.div>
       </div>
     </section>
   )
@@ -2253,86 +2360,120 @@ const ContactSection = () => {
       </motion.div>
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
-          {/* Left - Info with stagger */}
+          {/* Left - Contact as Code */}
           <SlideIn direction="left">
             <div>
               <TextReveal>
                 <div className="font-body text-ember text-sm mb-4 tracking-widest">GET IN TOUCH</div>
               </TextReveal>
-              <TextReveal>
-                <h2 className="text-4xl md:text-5xl font-display font-black mb-6">
-                  Let's Build <span className="gradient-text">Something Great</span>
-                </h2>
-              </TextReveal>
-              <TextReveal>
-                <p className="text-mercury font-body leading-relaxed mb-8">
-                  Whether you're looking for technical leadership, architecture consulting,
-                  or want to discuss the future of healthcare technology—I'd love to hear from you.
-                </p>
-              </TextReveal>
 
-              <StaggerContainer className="space-y-6" staggerDelay={0.1}>
-                <StaggerItem>
+              {/* Code Block for Contact */}
+              <motion.div
+                className="bg-void rounded-xl border border-platinum/10 overflow-hidden mb-8"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                {/* Code header */}
+                <div className="flex items-center gap-2 px-4 py-2 border-b border-platinum/10 bg-smoke/50">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-red-500/80" />
+                    <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+                    <div className="w-3 h-3 rounded-full bg-green-500/80" />
+                  </div>
+                  <span className="text-xs font-mono text-mercury ml-2">contact.sql</span>
+                </div>
+
+                {/* SQL Code content */}
+                <div className="p-4 sm:p-6 font-mono text-sm">
+                  <div className="text-mercury/60">-- Let's connect and build something great</div>
+                  <div className="mt-3">
+                    <span className="text-purple-400">SELECT</span>{' '}
+                    <span className="text-platinum">*</span>{' '}
+                    <span className="text-purple-400">FROM</span>{' '}
+                    <span className="text-blue-400">Suganthan</span>
+                  </div>
+                  <div>
+                    <span className="text-purple-400">WHERE</span>{' '}
+                    <span className="text-blue-400">Status</span>{' '}
+                    <span className="text-platinum">=</span>{' '}
+                    <span className="text-green-400">'Open to Opportunities'</span>
+                  </div>
+                  <div className="mt-4 text-mercury/60">-- Connection endpoints:</div>
+                  <div className="mt-2">
+                    <span className="text-purple-400">INSERT INTO</span>{' '}
+                    <span className="text-blue-400">Contact</span>{' '}
+                    <span className="text-platinum">(</span>
+                    <span className="text-blue-400">Type</span>
+                    <span className="text-platinum">,</span>{' '}
+                    <span className="text-blue-400">Value</span>
+                    <span className="text-platinum">)</span>
+                  </div>
+                  <div>
+                    <span className="text-purple-400">VALUES</span>
+                  </div>
+
+                  {/* Email Row - Clickable */}
                   <motion.a
                     href="mailto:suganthan94@yahoo.com"
-                    className="flex items-center gap-4 group"
-                    whileHover={{ x: 10 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                    className="block ml-4 hover:bg-ember/10 -mx-2 px-2 py-1 rounded transition-colors group"
                   >
-                    <motion.div
-                      className="w-12 h-12 bg-ember/10 rounded-xl flex items-center justify-center"
-                      whileHover={{ scale: 1.1, backgroundColor: 'rgba(255, 77, 0, 0.2)' }}
-                    >
-                      <svg className="w-6 h-6 text-ember" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                    </motion.div>
-                    <div>
-                      <div className="text-sm font-body text-mercury">Email</div>
-                      <div className="font-body text-platinum group-hover:text-ember transition-colors">suganthan94@yahoo.com</div>
-                    </div>
+                    <span className="text-platinum">(</span>
+                    <span className="text-green-400">'Email'</span>
+                    <span className="text-platinum">,</span>{' '}
+                    <span className="text-green-400 group-hover:text-ember transition-colors">'suganthan94@yahoo.com'</span>
+                    <span className="text-platinum">),</span>
                   </motion.a>
-                </StaggerItem>
 
-                <StaggerItem>
+                  {/* LinkedIn Row - Clickable */}
                   <motion.a
                     href="https://www.linkedin.com/in/suganthan-arulvelan-a9356073/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-4 group"
-                    whileHover={{ x: 10 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                    className="block ml-4 hover:bg-ember/10 -mx-2 px-2 py-1 rounded transition-colors group"
                   >
-                    <motion.div
-                      className="w-12 h-12 bg-ember/10 rounded-xl flex items-center justify-center"
-                      whileHover={{ scale: 1.1, backgroundColor: 'rgba(255, 77, 0, 0.2)' }}
-                    >
-                      <svg className="w-6 h-6 text-ember" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                      </svg>
-                    </motion.div>
-                    <div>
-                      <div className="text-sm font-body text-mercury">LinkedIn</div>
-                      <div className="font-body text-platinum group-hover:text-ember transition-colors">linkedin.com/in/suganthan-arulvelan</div>
-                    </div>
+                    <span className="text-platinum">(</span>
+                    <span className="text-green-400">'LinkedIn'</span>
+                    <span className="text-platinum">,</span>{' '}
+                    <span className="text-green-400 group-hover:text-ember transition-colors">'linkedin.com/in/suganthan-arulvelan'</span>
+                    <span className="text-platinum">),</span>
                   </motion.a>
-                </StaggerItem>
 
-                <StaggerItem>
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-ember/10 rounded-xl flex items-center justify-center">
-                      <svg className="w-6 h-6 text-ember" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="text-sm font-body text-mercury">Location</div>
-                      <div className="font-body text-platinum">Salem, Tamil Nadu, India</div>
-                    </div>
+                  {/* GitHub Row - Clickable */}
+                  <motion.a
+                    href="https://github.com/shuganth"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block ml-4 hover:bg-ember/10 -mx-2 px-2 py-1 rounded transition-colors group"
+                  >
+                    <span className="text-platinum">(</span>
+                    <span className="text-green-400">'GitHub'</span>
+                    <span className="text-platinum">,</span>{' '}
+                    <span className="text-green-400 group-hover:text-ember transition-colors">'github.com/shuganth'</span>
+                    <span className="text-platinum">),</span>
+                  </motion.a>
+
+                  {/* Location Row */}
+                  <div className="ml-4">
+                    <span className="text-platinum">(</span>
+                    <span className="text-green-400">'Location'</span>
+                    <span className="text-platinum">,</span>{' '}
+                    <span className="text-green-400">'Salem, Tamil Nadu, India'</span>
+                    <span className="text-platinum">);</span>
                   </div>
-                </StaggerItem>
-              </StaggerContainer>
+
+                  <div className="mt-4 text-mercury/60">-- Response time: &lt; 24 hours</div>
+                  <div className="text-mercury/60">-- Rows affected: 1 new connection</div>
+                </div>
+              </motion.div>
+
+              <TextReveal>
+                <p className="text-mercury font-body leading-relaxed text-sm">
+                  Whether you're looking for technical leadership, architecture consulting,
+                  or want to discuss the future of healthcare technology—execute that query.
+                </p>
+              </TextReveal>
             </div>
           </SlideIn>
 
