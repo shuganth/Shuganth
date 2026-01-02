@@ -1120,136 +1120,74 @@ const HeroSection = () => {
   )
 }
 
-// Apple-style SA Reveal Section (like M5 chip reveal)
-const SARevealSection = () => {
-  const sectionRef = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end end']
-  })
-
-  // SA text animations
-  const saScale = useTransform(scrollYProgress, [0, 0.3, 0.5], [0.3, 1, 1.2])
-  const saOpacity = useTransform(scrollYProgress, [0, 0.2, 0.5, 0.8], [0, 1, 1, 0])
-  const saY = useTransform(scrollYProgress, [0, 0.3, 0.5], [100, 0, -50])
-  const saBlur = useTransform(scrollYProgress, [0, 0.2, 0.4], [20, 0, 0])
-
-  // Full name reveal
-  const nameOpacity = useTransform(scrollYProgress, [0.3, 0.5, 0.8], [0, 1, 0])
-  const nameY = useTransform(scrollYProgress, [0.3, 0.5], [50, 0])
-
-  // Tagline reveal
-  const taglineOpacity = useTransform(scrollYProgress, [0.45, 0.6, 0.8], [0, 1, 0])
-
-  // Background effects
-  const bgScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.1, 1.2])
-  const glowOpacity = useTransform(scrollYProgress, [0.2, 0.4, 0.6], [0, 1, 0])
-
-  // Smooth springs
-  const smoothSaScale = useSpring(saScale, { stiffness: 100, damping: 30 })
-  const smoothSaY = useSpring(saY, { stiffness: 100, damping: 30 })
-  const smoothNameY = useSpring(nameY, { stiffness: 100, damping: 30 })
+// Simplified SA Brand Section - Clean and elegant
+const SABrandSection = () => {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, margin: '-100px' })
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative h-[300vh]"
-    >
-      {/* Sticky container */}
-      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-void">
-        {/* Animated background glow */}
-        <motion.div
-          className="absolute inset-0 flex items-center justify-center"
-          style={{ scale: bgScale }}
-        >
-          <motion.div
-            className="w-[800px] h-[800px] rounded-full"
-            style={{
-              opacity: glowOpacity,
-              background: 'radial-gradient(circle, rgba(255, 77, 0, 0.3) 0%, rgba(255, 77, 0, 0.1) 30%, transparent 70%)',
-              filter: 'blur(60px)',
-            }}
-          />
-        </motion.div>
+    <section ref={ref} className="py-32 relative overflow-hidden bg-void">
+      {/* Subtle background glow */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div
+          className="w-[600px] h-[600px] rounded-full opacity-20"
+          style={{
+            background: 'radial-gradient(circle, rgba(255, 77, 0, 0.4) 0%, transparent 70%)',
+            filter: 'blur(80px)',
+          }}
+        />
+      </div>
 
-        {/* Grid background */}
-        <div className="absolute inset-0 grid-bg opacity-10" />
-
-        {/* Main content */}
-        <div className="relative z-10 text-center">
-          {/* Large SA letters */}
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="text-center">
+          {/* Large SA with smooth animation */}
           <motion.div
-            className="relative"
-            style={{
-              scale: smoothSaScale,
-              y: smoothSaY,
-              opacity: saOpacity,
-              filter: useTransform(saBlur, (v) => `blur(${v}px)`),
-            }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="mb-8"
           >
-            <h2 className="text-[20vw] md:text-[25vw] font-display font-black leading-none tracking-tighter">
+            <h2 className="text-[25vw] md:text-[20vw] lg:text-[15vw] font-display font-black leading-none tracking-tighter">
               <span className="bg-gradient-to-r from-ember via-gold to-ember bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
                 SA
               </span>
             </h2>
-            {/* Reflection effect */}
-            <div
-              className="absolute top-full left-0 right-0 text-[20vw] md:text-[25vw] font-display font-black leading-none tracking-tighter opacity-20"
-              style={{
-                transform: 'scaleY(-1)',
-                maskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 50%)',
-                WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 50%)',
-              }}
-            >
-              <span className="bg-gradient-to-r from-ember via-gold to-ember bg-clip-text text-transparent">
-                SA
-              </span>
-            </div>
           </motion.div>
 
-          {/* Full name reveal */}
+          {/* Name reveal */}
           <motion.div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap"
-            style={{
-              opacity: nameOpacity,
-              y: smoothNameY,
-            }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            <h3 className="text-4xl md:text-6xl lg:text-8xl font-display font-black text-platinum">
-              SUGANTHAN
-            </h3>
-            <h3 className="text-4xl md:text-6xl lg:text-8xl font-display font-black gradient-text">
-              ARULVELAN
+            <h3 className="text-2xl md:text-4xl lg:text-5xl font-display font-bold text-platinum mb-2">
+              SUGANTHAN ARULVELAN
             </h3>
           </motion.div>
 
           {/* Tagline */}
           <motion.div
-            className="absolute top-[60%] left-1/2 -translate-x-1/2 mt-8"
-            style={{ opacity: taglineOpacity }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            <p className="text-xl md:text-2xl font-body text-mercury">
-              Engineering Excellence. <span className="text-ember">Delivered.</span>
+            <p className="text-lg md:text-xl font-body text-mercury mt-4">
+              Engineering Excellence. <span className="text-ember font-bold">Delivered.</span>
             </p>
           </motion.div>
-        </div>
 
-        {/* Scroll indicator at bottom */}
-        <motion.div
-          className="absolute bottom-10 left-1/2 -translate-x-1/2"
-          style={{ opacity: useTransform(scrollYProgress, [0, 0.1, 0.3], [1, 1, 0]) }}
-        >
+          {/* Decorative line */}
           <motion.div
-            className="flex flex-col items-center gap-2"
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
+            className="flex items-center justify-center gap-4 mt-8"
+            initial={{ opacity: 0, scaleX: 0 }}
+            animate={isInView ? { opacity: 1, scaleX: 1 } : {}}
+            transition={{ duration: 0.8, delay: 0.7 }}
           >
-            <span className="text-xs font-body text-mercury/50 uppercase tracking-widest">Scroll to reveal</span>
-            <svg className="w-6 h-6 text-ember/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
+            <div className="w-16 h-px bg-gradient-to-r from-transparent to-ember" />
+            <div className="w-2 h-2 rounded-full bg-ember" />
+            <div className="w-16 h-px bg-gradient-to-l from-transparent to-ember" />
           </motion.div>
-        </motion.div>
+        </div>
       </div>
     </section>
   )
@@ -1415,6 +1353,335 @@ const AboutSection = () => {
             </StaggerContainer>
           </motion.div>
         </div>
+      </div>
+    </section>
+  )
+}
+
+// Tech Stack Code Showcase - Interactive Code Snippets
+const TechShowcaseSection = () => {
+  const [activeTab, setActiveTab] = useState(0)
+
+  const codeSnippets = [
+    {
+      name: 'Kubernetes',
+      file: 'precision-targeting.yaml',
+      icon: '☸️',
+      color: 'text-blue-400',
+      code: `apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: precision-targeting
+  labels:
+    app: healthcare-analytics
+    engineer: suganthan
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0  # Zero downtime
+  template:
+    spec:
+      containers:
+      - name: analytics-engine
+        image: syneos/precision:latest
+        resources:
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+          initialDelaySeconds: 30`
+    },
+    {
+      name: 'C# .NET',
+      file: 'AnalyticsService.cs',
+      icon: '💜',
+      color: 'text-purple-400',
+      code: `public class AnalyticsService : IAnalyticsService
+{
+    private readonly ISnowflakeClient _snowflake;
+    private readonly IOpenAIClient _openAI;
+
+    public async Task<AnalyticsResult> ProcessAsync(
+        AnalyticsRequest request)
+    {
+        // Suganthan's architecture pattern
+        await using var scope = _logger
+            .BeginScope("Request: {Id}", request.Id);
+
+        var data = await _snowflake
+            .QueryAsync<HcpData>(request.Query);
+
+        // GPT-4o integration for medical terms
+        var enriched = await _openAI
+            .EnrichMedicalTermsAsync(data);
+
+        return new AnalyticsResult
+        {
+            Data = enriched,
+            ProcessedAt = DateTime.UtcNow,
+            Uptime = "99.9%"  // Always
+        };
+    }
+}`
+    },
+    {
+      name: 'SQL',
+      file: 'precision_query.sql',
+      icon: '🗄️',
+      color: 'text-yellow-400',
+      code: `-- Precision Targeting Analytics Query
+-- Author: Suganthan Arulvelan
+-- Performance: Optimized for 1M+ records
+
+WITH hcp_segments AS (
+    SELECT
+        hcp.physician_id,
+        hcp.specialty,
+        hcp.prescribing_volume,
+        RANK() OVER (
+            PARTITION BY hcp.region
+            ORDER BY hcp.engagement_score DESC
+        ) as rank
+    FROM healthcare_providers hcp
+    WHERE hcp.active = TRUE
+),
+engagement_metrics AS (
+    SELECT
+        physician_id,
+        COUNT(*) as total_interactions,
+        AVG(response_time) as avg_response
+    FROM interactions
+    GROUP BY physician_id
+)
+SELECT
+    s.physician_id,
+    s.specialty,
+    m.total_interactions,
+    -- 1600% user growth achieved
+    CASE WHEN s.rank <= 10 THEN 'Priority'
+         ELSE 'Standard' END as tier
+FROM hcp_segments s
+JOIN engagement_metrics m USING (physician_id);`
+    },
+    {
+      name: 'Svelte',
+      file: 'Dashboard.svelte',
+      icon: '🔥',
+      color: 'text-orange-400',
+      code: `<script lang="ts">
+  import { onMount } from 'svelte';
+  import { fade, fly } from 'svelte/transition';
+  import { analytics } from '$lib/stores';
+
+  // Real-time dashboard by Suganthan
+  let metrics: DashboardMetrics;
+  let loading = true;
+
+  onMount(async () => {
+    metrics = await analytics.fetchMetrics();
+    loading = false;
+  });
+
+  $: growth = metrics?.userGrowth ?? 0;
+  $: uptime = metrics?.uptime ?? '99.9%';
+</script>
+
+<div class="dashboard" in:fade>
+  {#if loading}
+    <Skeleton />
+  {:else}
+    <MetricCard
+      label="User Growth"
+      value="{growth}%"
+      trend="up"
+    />
+    <MetricCard
+      label="Uptime"
+      value={uptime}
+      status="healthy"
+    />
+    <!-- Zero production incidents -->
+  {/if}
+</div>`
+    },
+    {
+      name: 'Azure',
+      file: 'infrastructure.bicep',
+      icon: '☁️',
+      color: 'text-cyan-400',
+      code: `// Azure Infrastructure as Code
+// Architect: Suganthan Arulvelan
+
+@description('AKS Cluster for Healthcare Platform')
+resource aksCluster 'Microsoft.ContainerService/
+    managedClusters@2023-01-01' = {
+  name: 'aks-precision-targeting'
+  location: resourceGroup().location
+  properties: {
+    kubernetesVersion: '1.28'
+    dnsPrefix: 'precision'
+
+    agentPoolProfiles: [{
+      name: 'systempool'
+      count: 3
+      vmSize: 'Standard_D4s_v3'
+      mode: 'System'
+      enableAutoScaling: true  // KEDA ready
+      minCount: 3
+      maxCount: 10
+    }]
+
+    addonProfiles: {
+      azureKeyvaultSecretsProvider: {
+        enabled: true  // Secure secrets
+      }
+    }
+
+    // 99.9% SLA guaranteed
+    sku: { tier: 'Standard' }
+  }
+}`
+    }
+  ]
+
+  const activeSnippet = codeSnippets[activeTab]
+
+  return (
+    <section className="py-24 bg-obsidian relative overflow-hidden">
+      <div className="absolute inset-0 grid-bg opacity-20" />
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <TextReveal className="text-center mb-12">
+          <div className="font-body text-ember text-sm mb-4 tracking-widest uppercase">Tech Stack in Action</div>
+          <h2 className="text-4xl md:text-5xl font-display font-black mb-4">
+            Code That <span className="gradient-text">Powers Healthcare</span>
+          </h2>
+          <p className="text-mercury font-body max-w-2xl mx-auto">
+            From Kubernetes orchestration to real-time analytics—here's how I build enterprise systems.
+          </p>
+        </TextReveal>
+
+        {/* Tab Navigation */}
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
+          {codeSnippets.map((snippet, index) => (
+            <motion.button
+              key={snippet.name}
+              onClick={() => setActiveTab(index)}
+              className={`px-4 py-2 rounded-lg font-body text-sm flex items-center gap-2 transition-all ${
+                activeTab === index
+                  ? 'bg-ember text-void'
+                  : 'bg-smoke border border-platinum/10 text-mercury hover:border-ember/50'
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span>{snippet.icon}</span>
+              <span>{snippet.name}</span>
+            </motion.button>
+          ))}
+        </div>
+
+        {/* Code Display */}
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="max-w-4xl mx-auto"
+        >
+          <div className="rounded-xl overflow-hidden border border-platinum/10 bg-void/80 backdrop-blur-sm shadow-2xl">
+            {/* Code header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-platinum/10 bg-smoke/50">
+              <div className="flex items-center gap-3">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-500/80" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+                  <div className="w-3 h-3 rounded-full bg-green-500/80" />
+                </div>
+                <span className="text-xs font-mono text-mercury">{activeSnippet.file}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className={`text-lg ${activeSnippet.color}`}>{activeSnippet.icon}</span>
+                <span className="text-xs font-body text-ember">{activeSnippet.name}</span>
+              </div>
+            </div>
+
+            {/* Code content with syntax highlighting simulation */}
+            <div className="p-6 overflow-x-auto">
+              <pre className="font-mono text-sm leading-relaxed">
+                <code>
+                  {activeSnippet.code.split('\n').map((line, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.02, duration: 0.3 }}
+                      className="flex"
+                    >
+                      <span className="text-mercury/30 w-8 text-right mr-4 select-none">{i + 1}</span>
+                      <span className="text-platinum/90">
+                        {line
+                          .replace(/(\/\/.*|#.*|--.*)/g, '<span class="text-mercury/50">$1</span>')
+                          .replace(/(["'`].*?["'`])/g, '<span class="text-green-400">$1</span>')
+                          .replace(/\b(const|let|var|function|async|await|return|import|export|from|class|public|private|readonly|interface|type|namespace|using|SELECT|FROM|WHERE|JOIN|ORDER BY|GROUP BY|WITH|AS|CASE|WHEN|THEN|ELSE|END|AND|OR|TRUE|FALSE|NULL)\b/g, '<span class="text-purple-400">$1</span>')
+                          .replace(/\b(apiVersion|kind|metadata|spec|name|replicas|template|containers|image|resources|limits|enabled)\b(?=:)/g, '<span class="text-blue-400">$1</span>')
+                          .replace(/(@\w+)/g, '<span class="text-yellow-400">$1</span>')
+                          .split(/(<span.*?<\/span>)/)
+                          .map((part, j) =>
+                            part.startsWith('<span')
+                              ? <span key={j} dangerouslySetInnerHTML={{ __html: part }} />
+                              : part
+                          )
+                        }
+                      </span>
+                    </motion.div>
+                  ))}
+                </code>
+              </pre>
+            </div>
+
+            {/* Footer with stats */}
+            <div className="px-6 py-3 border-t border-platinum/10 bg-smoke/30 flex items-center justify-between">
+              <span className="text-xs font-body text-mercury/50">
+                Built with precision • Zero production incidents
+              </span>
+              <div className="flex items-center gap-4">
+                <span className="text-xs font-body text-ember">99.9% Uptime</span>
+                <span className="text-xs font-body text-green-400">● Live</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Tech logos marquee */}
+        <motion.div
+          className="mt-12 text-center"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
+          <p className="text-xs font-body text-mercury/50 mb-4">Technologies I architect with daily</p>
+          <div className="flex flex-wrap justify-center gap-4">
+            {['.NET Core', 'Kubernetes', 'Snowflake', 'Azure', 'Svelte', 'OpenAI', 'KEDA', 'Auth0'].map((tech, i) => (
+              <motion.span
+                key={tech}
+                className="px-3 py-1.5 bg-void border border-platinum/10 rounded-full text-xs font-body text-mercury"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                whileHover={{ borderColor: 'rgba(255, 77, 0, 0.5)', color: 'rgb(255, 77, 0)' }}
+              >
+                {tech}
+              </motion.span>
+            ))}
+          </div>
+        </motion.div>
       </div>
     </section>
   )
@@ -2213,9 +2480,10 @@ export default function Home() {
       <main className="relative overflow-x-hidden">
         <Navigation />
         <HeroSection />
-        <SARevealSection />
+        <SABrandSection />
         <StatsSection />
         <AboutSection />
+        <TechShowcaseSection />
         <InnovationSection />
         <ExperienceSection />
         <ProjectsSection />
