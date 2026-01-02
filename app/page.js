@@ -759,16 +759,12 @@ const Navigation = () => {
             </motion.a>
           ))}
         </div>
-        <MagneticElement strength={0.3}>
-          <motion.a
-            href="#contact"
-            className="cyber-button px-6 py-2 bg-ember text-void font-body text-sm font-bold rounded-full"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Let's Talk
-          </motion.a>
-        </MagneticElement>
+        <a
+          href="#contact"
+          className="px-4 sm:px-6 py-2 bg-ember text-void font-body text-sm font-bold rounded-full hover:bg-ember/90 transition-colors"
+        >
+          Let's Talk
+        </a>
       </div>
     </motion.nav>
   )
@@ -776,52 +772,13 @@ const Navigation = () => {
 
 // Hero Section
 const HeroSection = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const heroRef = useRef(null)
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
-    }
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
-  }, [])
-
   return (
-    <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden grid-bg">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0">
-        <motion.div
-          className="morph-bg"
-          style={{ top: '10%', left: '10%' }}
-          animate={{
-            x: mousePosition.x * 0.02,
-            y: mousePosition.y * 0.02,
-          }}
-        />
-        <motion.div
-          className="morph-bg"
-          style={{ bottom: '10%', right: '10%' }}
-          animate={{
-            x: mousePosition.x * -0.02,
-            y: mousePosition.y * -0.02,
-          }}
-        />
-      </div>
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Subtle gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-void via-obsidian to-void" />
+      <div className="absolute inset-0 grid-bg opacity-20" />
 
-      {/* Enhanced Floating Particles */}
-      <EnhancedParticles />
-
-      {/* Cursor Glow */}
-      <div
-        className="cursor-glow hidden lg:block"
-        style={{
-          left: mousePosition.x,
-          top: mousePosition.y,
-        }}
-      />
-
-      <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 text-center py-20">
         {/* Status Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -835,36 +792,28 @@ const HeroSection = () => {
 
         {/* Main Title - Clean & Professional */}
         <motion.h1
-          className="hero-title text-5xl md:text-7xl lg:text-8xl font-display font-black leading-none mb-6"
+          className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-black leading-tight mb-6"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <span className="block text-platinum">
-            SUGANTHAN
-          </span>
-          <span className="block gradient-text">
-            ARULVELAN
-          </span>
+          <span className="block text-platinum">SUGANTHAN</span>
+          <span className="block gradient-text">ARULVELAN</span>
         </motion.h1>
 
         {/* Subtitle */}
         <motion.div
-          className="flex flex-wrap justify-center items-center gap-4 mb-8"
+          className="flex flex-wrap justify-center items-center gap-2 sm:gap-4 mb-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <span className="px-4 py-2 bg-obsidian rounded-lg font-body text-ember border border-ember/20 glow-pulse">
+          <span className="px-3 sm:px-4 py-2 bg-obsidian rounded-lg font-body text-ember border border-ember/20 text-sm sm:text-base">
             Associate Director
           </span>
-          <span className="text-mercury">@</span>
-          <span className="px-4 py-2 bg-obsidian rounded-lg font-body text-platinum border border-platinum/20">
+          <span className="text-mercury hidden sm:inline">@</span>
+          <span className="px-3 sm:px-4 py-2 bg-obsidian rounded-lg font-body text-platinum border border-platinum/20 text-sm sm:text-base">
             Syneos Health
-          </span>
-          <span className="hidden md:block text-mercury">|</span>
-          <span className="px-4 py-2 bg-obsidian rounded-lg font-body text-gold border border-gold/20">
-            AI & Enterprise Architecture
           </span>
         </motion.div>
 
@@ -885,41 +834,29 @@ const HeroSection = () => {
           </p>
         </motion.div>
 
-        {/* CTA Buttons with Magnetic Attraction */}
+        {/* CTA Buttons */}
         <motion.div
-          className="flex flex-col sm:flex-row justify-center gap-6"
+          className="flex flex-col sm:flex-row justify-center gap-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.5 }}
+          transition={{ duration: 0.8, delay: 1 }}
         >
-          <MagneticElement strength={0.4}>
-            <motion.a
-              href="#projects"
-              className="cyber-button group px-8 py-4 bg-ember text-void font-body font-bold rounded-lg flex items-center justify-center gap-2 relative overflow-hidden"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span className="relative z-10 flex items-center gap-2">
-                View My Work
-                <svg className="w-5 h-5 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-gold to-ember opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </motion.a>
-          </MagneticElement>
-          <MagneticElement strength={0.4}>
-            <motion.a
-              href="/Suganthan_Arulvelan_Resume.html"
-              target="_blank"
-              className="glass-card px-8 py-4 border border-ember/30 text-platinum font-body font-bold rounded-lg hover:border-ember hover:text-ember transition-all relative overflow-hidden group"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span className="relative z-10">View Resume</span>
-              <div className="absolute inset-0 bg-ember/5 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-            </motion.a>
-          </MagneticElement>
+          <a
+            href="#projects"
+            className="px-6 sm:px-8 py-3 sm:py-4 bg-ember text-void font-body font-bold rounded-lg flex items-center justify-center gap-2 hover:bg-ember/90 transition-colors"
+          >
+            View My Work
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+          <a
+            href="/Suganthan_Arulvelan_Resume.html"
+            target="_blank"
+            className="px-6 sm:px-8 py-3 sm:py-4 border border-platinum/30 text-platinum font-body font-bold rounded-lg hover:border-ember hover:text-ember transition-all text-center"
+          >
+            View Resume
+          </a>
         </motion.div>
 
         {/* Scroll Indicator */}
@@ -938,43 +875,33 @@ const HeroSection = () => {
   )
 }
 
-// Stats Section with 3D Tilt Cards
+// Stats Section - Clean
 const StatsSection = () => {
   const stats = [
-    { value: '7+', label: 'Years Experience', icon: '⚡', color: 'ember' },
-    { value: '20+', label: 'Engineers Led', icon: '👥', color: 'gold' },
-    { value: '1600%', label: 'User Growth Achieved', icon: '📈', color: 'ember' },
-    { value: '3001%', label: 'Engagement Increase', icon: '🔢', color: 'gold' },
+    { value: '7+', label: 'Years Experience' },
+    { value: '20+', label: 'Engineers Led' },
+    { value: '1600%', label: 'User Growth' },
+    { value: '99.9%', label: 'Uptime' },
   ]
 
   return (
-    <section className="py-24 bg-obsidian relative overflow-hidden">
-      <div className="absolute inset-0 cyber-grid opacity-30" />
-      <div className="absolute inset-0 aurora-bg" />
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+    <section className="py-16 sm:py-20 bg-obsidian">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
           {stats.map((stat, i) => (
-            <RevealOnScroll key={stat.label} direction="up">
-              <Tilt3DCard>
-                <motion.div
-                  className="text-center p-6 rounded-2xl bg-void/50 backdrop-blur-sm border border-platinum/10 breathing-glow group"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <motion.div
-                    className="text-5xl mb-4"
-                    animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.1, 1] }}
-                    transition={{ duration: 3, repeat: Infinity, delay: i * 0.2 }}
-                  >
-                    {stat.icon}
-                  </motion.div>
-                  <div className={`text-4xl md:text-5xl font-display font-black mb-2 ${stat.color === 'ember' ? 'gradient-text' : 'text-gold'}`}>
-                    <AnimatedCounter value={stat.value} />
-                  </div>
-                  <div className="text-sm font-body text-mercury group-hover:text-platinum transition-colors">{stat.label}</div>
-                </motion.div>
-              </Tilt3DCard>
-            </RevealOnScroll>
+            <motion.div
+              key={stat.label}
+              className="text-center p-4 sm:p-6"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+            >
+              <div className="text-3xl sm:text-4xl md:text-5xl font-display font-black text-ember mb-2">
+                {stat.value}
+              </div>
+              <div className="text-xs sm:text-sm font-body text-mercury">{stat.label}</div>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -984,81 +911,52 @@ const StatsSection = () => {
 
 // About Section
 const AboutSection = () => {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
-
   return (
-    <section id="about" ref={ref} className="py-32 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left - Visual */}
+    <section id="about" className="py-16 sm:py-24 lg:py-32 relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+          {/* Left - Profile Image */}
           <motion.div
-            className="relative"
-            initial={{ opacity: 0, x: -50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8 }}
+            className="relative order-2 lg:order-1"
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
           >
-            <div className="relative w-full aspect-square max-w-md mx-auto">
-              {/* Decorative Elements */}
-              <div className="absolute inset-0 border-2 border-ember/20 rounded-3xl transform rotate-6" />
-              <div className="absolute inset-0 border-2 border-gold/20 rounded-3xl transform -rotate-3" />
-
-              {/* Main Container with Profile Image */}
-              <div className="relative w-full h-full bg-gradient-to-br from-obsidian to-smoke rounded-3xl overflow-hidden border border-ember/20 glow-pulse">
-                {/* Profile Image with fallback */}
-                <ProfileImage />
-
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-void/80 via-transparent to-transparent" />
-
-                {/* Floating Tech Icons */}
-                <motion.div
-                  className="absolute top-4 left-4 px-3 py-1 bg-obsidian/80 backdrop-blur-sm rounded-full border border-platinum/20 text-xs font-body"
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                >
-                  .NET Core
-                </motion.div>
-                <motion.div
-                  className="absolute top-4 right-4 px-3 py-1 bg-obsidian/80 backdrop-blur-sm rounded-full border border-platinum/20 text-xs font-body"
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
-                >
-                  Azure
-                </motion.div>
-                <motion.div
-                  className="absolute bottom-4 left-4 px-3 py-1 bg-obsidian/80 backdrop-blur-sm rounded-full border border-platinum/20 text-xs font-body"
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, delay: 1 }}
-                >
-                  Snowflake
-                </motion.div>
-                <motion.div
-                  className="absolute bottom-4 right-4 px-3 py-1 bg-obsidian/80 backdrop-blur-sm rounded-full border border-platinum/20 text-xs font-body"
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
-                >
-                  React
-                </motion.div>
+            <div className="relative w-full max-w-sm mx-auto aspect-square">
+              {/* Profile Image */}
+              <div className="relative w-full h-full rounded-2xl overflow-hidden border border-platinum/20">
+                <img
+                  src="/profile.jpg"
+                  alt="Suganthan Arulvelan"
+                  className="w-full h-full object-cover"
+                />
+                {/* Subtle gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-void/60 via-transparent to-transparent" />
               </div>
+
+              {/* Accent border */}
+              <div className="absolute -inset-2 border border-ember/20 rounded-2xl -z-10" />
             </div>
           </motion.div>
 
           {/* Right - Content */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            className="order-1 lg:order-2"
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
           >
             <div className="font-body text-ember text-sm mb-4 tracking-widest">ABOUT ME</div>
-            <h2 className="text-4xl md:text-5xl font-display font-black mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-black mb-6">
               Engineering the <span className="gradient-text">Future of Healthcare</span>
             </h2>
-            <div className="space-y-4 text-mercury font-body leading-relaxed">
+            <div className="space-y-4 text-mercury font-body leading-relaxed text-sm sm:text-base">
               <p>
                 From programming microcontrollers to leading enterprise platform teams—my journey
                 has been about solving progressively harder problems. As Associate Director at
-                Syneos Health, I lead 10+ engineers building healthcare analytics platforms used
+                Syneos Health, I lead 20+ engineers building healthcare analytics platforms used
                 by pharmaceutical companies worldwide.
               </p>
               <p>
@@ -1066,24 +964,19 @@ const AboutSection = () => {
                 and emerging AI capabilities. I care deeply about craft—clean architecture, proper
                 abstractions, systems that don't break at 2 AM.
               </p>
-              <p>
-                Equally passionate about people—helping engineers grow from writing code to thinking
-                in systems. My background in embedded systems gives me an appreciation for constraints
-                and efficiency that shapes how I approach enterprise software.
-              </p>
             </div>
 
             {/* Key Highlights */}
-            <div className="mt-8 grid grid-cols-2 gap-4">
+            <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4">
               {[
                 { label: 'Leadership', value: 'Team of 20+' },
                 { label: 'Domain', value: 'Healthcare Analytics' },
-                { label: 'Location', value: 'Salem, Tamil Nadu' },
+                { label: 'Location', value: 'Salem, India' },
                 { label: 'Focus', value: 'AI & Architecture' },
-              ].map((item, i) => (
-                <div key={item.label} className="p-4 bg-obsidian rounded-xl border border-platinum/10 hover-lift">
+              ].map((item) => (
+                <div key={item.label} className="p-3 sm:p-4 bg-obsidian rounded-xl border border-platinum/10">
                   <div className="text-xs font-body text-mercury mb-1">{item.label}</div>
-                  <div className="font-body text-platinum">{item.value}</div>
+                  <div className="font-body text-platinum text-sm sm:text-base">{item.value}</div>
                 </div>
               ))}
             </div>
@@ -1380,40 +1273,37 @@ const SkillsSection = () => {
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
           {skillCategories.map((category, catIndex) => (
-            <RevealOnScroll key={category.title} direction={catIndex % 2 === 0 ? 'left' : 'right'}>
-              <Tilt3DCard>
-                <div className="p-8 bg-smoke rounded-2xl border border-platinum/10 neon-border relative overflow-hidden group">
-                  {/* Animated background gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-ember/5 via-transparent to-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                  <h3 className="text-xl font-display font-bold text-platinum mb-6 relative z-10">{category.title}</h3>
-                  <div className="space-y-5 relative z-10">
-                    {category.skills.map((skill, skillIndex) => (
-                      <div key={skill.name} className="group/skill">
-                        <div className="flex justify-between mb-2">
-                          <span className="font-body text-mercury group-hover/skill:text-platinum transition-colors">{skill.name}</span>
-                          <span className="font-body text-ember">{skill.level}%</span>
-                        </div>
-                        <div className="h-2 bg-void rounded-full overflow-hidden relative">
-                          <motion.div
-                            className="h-full bg-gradient-to-r from-ember to-gold rounded-full relative"
-                            initial={{ width: 0 }}
-                            whileInView={{ width: `${skill.level}%` }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 1.2, delay: catIndex * 0.1 + skillIndex * 0.15, ease: [0.16, 1, 0.3, 1] }}
-                          >
-                            {/* Shimmer effect */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-shimmer" />
-                          </motion.div>
-                        </div>
-                      </div>
-                    ))}
+            <motion.div
+              key={category.title}
+              className="p-5 sm:p-6 bg-smoke rounded-xl border border-platinum/10"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: catIndex * 0.1 }}
+            >
+              <h3 className="text-lg sm:text-xl font-display font-bold text-platinum mb-4 sm:mb-6">{category.title}</h3>
+              <div className="space-y-4">
+                {category.skills.map((skill, skillIndex) => (
+                  <div key={skill.name}>
+                    <div className="flex justify-between mb-2">
+                      <span className="font-body text-mercury text-sm">{skill.name}</span>
+                      <span className="font-body text-ember text-sm">{skill.level}%</span>
+                    </div>
+                    <div className="h-1.5 bg-void rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-ember rounded-full"
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${skill.level}%` }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: skillIndex * 0.1 }}
+                      />
+                    </div>
                   </div>
-                </div>
-              </Tilt3DCard>
-            </RevealOnScroll>
+                ))}
+              </div>
+            </motion.div>
           ))}
         </div>
 
@@ -1461,12 +1351,11 @@ const ContactSection = () => {
         <div className="morph-bg" style={{ top: '-20%', right: '-20%' }} />
       </div>
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
           {/* Left - Info */}
-          <RevealOnScroll direction="left">
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
             <div className="font-body text-ember text-sm mb-4 tracking-widest">GET IN TOUCH</div>
@@ -1517,16 +1406,15 @@ const ContactSection = () => {
               </div>
             </div>
           </motion.div>
-          </RevealOnScroll>
 
           {/* Right - Form */}
-          <RevealOnScroll direction="right">
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
           >
-            <form onSubmit={handleSubmit} className="bg-obsidian p-8 rounded-2xl border border-platinum/10 neon-border">
+            <form onSubmit={handleSubmit} className="bg-obsidian p-6 sm:p-8 rounded-2xl border border-platinum/10">
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-body text-mercury mb-2">Name</label>
@@ -1561,31 +1449,25 @@ const ContactSection = () => {
                     placeholder="Tell me about your project..."
                   />
                 </div>
-                <MagneticElement strength={0.2}>
-                  <motion.button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full cyber-button py-4 bg-ember text-void font-body font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 relative overflow-hidden group"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    {isSubmitting ? (
-                      <div className="w-6 h-6 border-2 border-void border-t-transparent rounded-full animate-spin" />
-                    ) : (
-                      <>
-                        <span className="relative z-10">Send Message</span>
-                        <svg className="w-5 h-5 relative z-10 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                        <div className="absolute inset-0 bg-gradient-to-r from-gold to-ember opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      </>
-                    )}
-                  </motion.button>
-                </MagneticElement>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-3 sm:py-4 bg-ember text-void font-body font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 hover:bg-ember/90 transition-colors"
+                >
+                  {isSubmitting ? (
+                    <div className="w-5 h-5 border-2 border-void border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      Send Message
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </>
+                  )}
+                </button>
               </div>
             </form>
           </motion.div>
-          </RevealOnScroll>
         </div>
       </div>
     </section>
@@ -1631,22 +1513,21 @@ export default function Home() {
   return (
     <>
       <Preloader onComplete={() => setIsLoaded(true)} />
-      <CustomCursor />
-      <MouseGlow />
       <ScrollProgress />
 
-      {/* Stunning Background Effects */}
-      <ParticleConstellation />
-      <GlowingOrbs />
+      {/* Desktop only - subtle cursor */}
+      <div className="hidden lg:block">
+        <CustomCursor />
+      </div>
 
       {isLoaded && (
-        <>
+        <div className="hidden lg:block">
           <SocialSidebar />
           <EmailSidebar />
-        </>
+        </div>
       )}
 
-      <main className="relative z-10">
+      <main className="relative">
         <Navigation />
         <HeroSection />
         <StatsSection />
