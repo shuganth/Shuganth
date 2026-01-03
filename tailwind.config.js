@@ -12,13 +12,13 @@ module.exports = {
         'mono': ['JetBrains Mono', 'monospace'],
       },
       colors: {
-        // New Cosmic Theme
-        'space': '#050510',
-        'deep': '#0a0a1a',
-        'surface': '#0f0f23',
-        'cyan': '#00F0FF',
-        'violet': '#8B5CF6',
+        // Dark Theme - Black with Blue/Pink/Orange
+        'space': '#000000',
+        'deep': '#050508',
+        'surface': '#0a0a0f',
+        'blue': '#3B82F6',
         'pink': '#EC4899',
+        'orange': '#F97316',
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',

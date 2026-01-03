@@ -134,8 +134,8 @@ const SARevealIntro = ({ onComplete }) => {
           className="absolute inset-0"
           style={{
             backgroundImage: `
-              linear-gradient(rgba(0, 240, 255, 0.3) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(0, 240, 255, 0.3) 1px, transparent 1px)
+              linear-gradient(rgba(59, 130, 246, 0.3) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(59, 130, 246, 0.3) 1px, transparent 1px)
             `,
             backgroundSize: '80px 80px',
           }}
@@ -145,7 +145,7 @@ const SARevealIntro = ({ onComplete }) => {
       {/* Radial glow behind letters */}
       <div className="sa-glow absolute w-[600px] h-[600px] rounded-full opacity-0"
         style={{
-          background: 'radial-gradient(circle, rgba(0, 240, 255, 0.3) 0%, rgba(139, 92, 246, 0.2) 40%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(249, 115, 22, 0.2) 40%, transparent 70%)',
         }}
       />
 
@@ -156,10 +156,10 @@ const SARevealIntro = ({ onComplete }) => {
           <span
             className="text-[20vw] md:text-[15vw] font-black leading-none select-none"
             style={{
-              background: 'linear-gradient(135deg, #00F0FF 0%, #8B5CF6 100%)',
+              background: 'linear-gradient(135deg, #3B82F6 0%, #F97316 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              filter: 'drop-shadow(0 0 30px rgba(0, 240, 255, 0.5))',
+              filter: 'drop-shadow(0 0 30px rgba(59, 130, 246, 0.5))',
             }}
           >
             S
@@ -171,8 +171,8 @@ const SARevealIntro = ({ onComplete }) => {
           ref={lineRef}
           className="center-beam absolute w-1 h-[50vh] opacity-0"
           style={{
-            background: 'linear-gradient(180deg, transparent, #00F0FF, #8B5CF6, #EC4899, #8B5CF6, #00F0FF, transparent)',
-            boxShadow: '0 0 30px rgba(0, 240, 255, 0.8), 0 0 60px rgba(139, 92, 246, 0.5)',
+            background: 'linear-gradient(180deg, transparent, #3B82F6, #F97316, #EC4899, #F97316, #3B82F6, transparent)',
+            boxShadow: '0 0 30px rgba(59, 130, 246, 0.8), 0 0 60px rgba(249, 115, 22, 0.5)',
             transformOrigin: 'center',
           }}
         />
@@ -182,10 +182,10 @@ const SARevealIntro = ({ onComplete }) => {
           <span
             className="text-[20vw] md:text-[15vw] font-black leading-none select-none"
             style={{
-              background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
+              background: 'linear-gradient(135deg, #F97316 0%, #EC4899 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              filter: 'drop-shadow(0 0 30px rgba(139, 92, 246, 0.5))',
+              filter: 'drop-shadow(0 0 30px rgba(249, 115, 22, 0.5))',
             }}
           >
             A
@@ -200,7 +200,7 @@ const SARevealIntro = ({ onComplete }) => {
             key={word}
             className="exp-word absolute text-sm md:text-lg font-bold opacity-0 whitespace-nowrap"
             style={{
-              color: i % 3 === 0 ? '#00F0FF' : i % 3 === 1 ? '#8B5CF6' : '#EC4899',
+              color: i % 3 === 0 ? '#3B82F6' : i % 3 === 1 ? '#F97316' : '#EC4899',
               textShadow: `0 0 20px currentColor`,
             }}
           >
@@ -218,7 +218,7 @@ const SARevealIntro = ({ onComplete }) => {
             style={{
               left: '50%',
               top: '50%',
-              background: i % 3 === 0 ? '#00F0FF' : i % 3 === 1 ? '#8B5CF6' : '#EC4899',
+              background: i % 3 === 0 ? '#3B82F6' : i % 3 === 1 ? '#F97316' : '#EC4899',
               boxShadow: `0 0 10px currentColor`,
             }}
           />
@@ -229,7 +229,7 @@ const SARevealIntro = ({ onComplete }) => {
       <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
         <div className="w-48 h-0.5 bg-white/10 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-cyan via-violet to-pink rounded-full"
+            className="h-full bg-gradient-to-r from-blue via-orange to-pink rounded-full"
             initial={{ width: '0%' }}
             animate={{ width: '100%' }}
             transition={{ duration: 4, ease: 'easeInOut' }}
@@ -261,7 +261,7 @@ const Navigation = ({ currentSection, onNavigate, sections }) => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan to-violet">SA</span>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue to-orange">SA</span>
         </motion.button>
 
         <div className="hidden md:flex items-center gap-1">
@@ -284,8 +284,8 @@ const Navigation = ({ currentSection, onNavigate, sections }) => {
 
         <motion.button
           onClick={() => onNavigate(sections.length - 1)}
-          className="px-6 py-2.5 bg-gradient-to-r from-cyan to-violet text-space text-sm font-bold rounded-full"
-          whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(0, 240, 255, 0.5)' }}
+          className="px-6 py-2.5 bg-gradient-to-r from-blue to-orange text-space text-sm font-bold rounded-full"
+          whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(59, 130, 246, 0.5)' }}
           whileTap={{ scale: 0.95 }}
         >
           Connect
@@ -317,7 +317,7 @@ const SectionDots = ({ currentSection, onNavigate, total, sections }) => {
           <motion.div
             className={`w-2 h-2 rounded-full transition-all duration-300 ${
               currentSection === i
-                ? 'bg-cyan scale-150 shadow-[0_0_15px_rgba(0,240,255,0.8)]'
+                ? 'bg-blue scale-150 shadow-[0_0_15px_rgba(59,130,246,0.8)]'
                 : 'bg-white/30 hover:bg-white/60'
             }`}
           />
@@ -343,7 +343,7 @@ const MobileNav = ({ currentSection, onNavigate, total }) => {
             onClick={() => onNavigate(i)}
             className={`w-2.5 h-2.5 rounded-full transition-all ${
               currentSection === i
-                ? 'bg-cyan scale-125 shadow-[0_0_10px_rgba(0,240,255,0.8)]'
+                ? 'bg-blue scale-125 shadow-[0_0_10px_rgba(59,130,246,0.8)]'
                 : 'bg-white/20'
             }`}
           />
@@ -387,7 +387,7 @@ const HomeSection = ({ onNavigate }) => {
       <div
         className="absolute w-[800px] h-[800px] rounded-full opacity-20 blur-[150px]"
         style={{
-          background: 'radial-gradient(circle, rgba(0,240,255,0.5) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(59,130,246,0.5) 0%, transparent 70%)',
           transform: `translate(${mousePos.x}px, ${mousePos.y}px)`,
           transition: 'transform 0.3s ease-out'
         }}
@@ -395,7 +395,7 @@ const HomeSection = ({ onNavigate }) => {
       <div
         className="absolute w-[600px] h-[600px] rounded-full opacity-20 blur-[120px] right-0 bottom-0"
         style={{
-          background: 'radial-gradient(circle, rgba(139,92,246,0.5) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(249,115,22,0.5) 0%, transparent 70%)',
           transform: `translate(${-mousePos.x * 0.5}px, ${-mousePos.y * 0.5}px)`,
           transition: 'transform 0.3s ease-out'
         }}
@@ -420,14 +420,14 @@ const HomeSection = ({ onNavigate }) => {
         {/* Name */}
         <h1 className="home-animate opacity-0 text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-6">
           <span className="block text-white">SUGANTHAN</span>
-          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan via-violet to-pink">
+          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue via-orange to-pink">
             ARULVELAN
           </span>
         </h1>
 
         {/* Subtitle */}
         <p className="home-animate opacity-0 text-xl md:text-2xl text-white/60 font-light mb-4">
-          Software <span className="text-cyan font-medium">Architect</span> & <span className="text-violet font-medium">Engineering Leader</span>
+          Software <span className="text-blue font-medium">Architect</span> & <span className="text-orange font-medium">Engineering Leader</span>
         </p>
         <p className="home-animate opacity-0 text-white/40 max-w-2xl mx-auto mb-12 leading-relaxed">
           7+ years crafting enterprise systems with zero production incidents.
@@ -443,7 +443,7 @@ const HomeSection = ({ onNavigate }) => {
             { value: '20+', label: 'Engineers' },
           ].map((stat, i) => (
             <div key={i} className="p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
-              <div className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan to-violet">
+              <div className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue to-orange">
                 {stat.value}
               </div>
               <div className="text-xs md:text-sm text-white/40 mt-1">{stat.label}</div>
@@ -455,8 +455,8 @@ const HomeSection = ({ onNavigate }) => {
         <div className="home-animate opacity-0 flex flex-col sm:flex-row items-center justify-center gap-4">
           <motion.button
             onClick={() => onNavigate(1)}
-            className="group px-8 py-4 bg-gradient-to-r from-cyan to-violet text-space font-bold rounded-full flex items-center gap-3"
-            whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(0, 240, 255, 0.4)' }}
+            className="group px-8 py-4 bg-gradient-to-r from-blue to-orange text-space font-bold rounded-full flex items-center gap-3"
+            whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(59, 130, 246, 0.4)' }}
             whileTap={{ scale: 0.95 }}
           >
             Explore Experience
@@ -482,7 +482,7 @@ const HomeSection = ({ onNavigate }) => {
         animate={{ y: [0, 10, 0] }}
         transition={{ repeat: Infinity, duration: 1.5 }}
       >
-        <button onClick={() => onNavigate(1)} className="text-white/30 hover:text-cyan transition-colors">
+        <button onClick={() => onNavigate(1)} className="text-white/30 hover:text-blue transition-colors">
           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
           </svg>
@@ -501,7 +501,7 @@ const ExperienceSection = () => {
       company: 'Syneos Health',
       description: 'Leading 20+ engineers. Enterprise architecture. AI integration.',
       tech: ['Azure', 'Kubernetes', 'OpenAI', 'Leadership'],
-      color: 'cyan'
+      color: 'blue'
     },
     {
       period: '2024 - 2025',
@@ -509,7 +509,7 @@ const ExperienceSection = () => {
       company: 'Syneos Health',
       description: '30-day platform migration. KEDA autoscaling. Zero downtime.',
       tech: ['Svelte', '.NET Core', 'Snowflake', 'KEDA'],
-      color: 'violet'
+      color: 'orange'
     },
     {
       period: '2023 - 2024',
@@ -525,7 +525,7 @@ const ExperienceSection = () => {
       company: 'SUGUS',
       description: 'Industrial IoT. Automotive clients. HMI systems.',
       tech: ['Embedded C', 'MicroPython', 'IoT', 'Bosch'],
-      color: 'cyan'
+      color: 'blue'
     },
   ]
 
@@ -543,8 +543,8 @@ const ExperienceSection = () => {
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden px-6 py-24">
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-cyan/5 rounded-full blur-[150px]" />
-        <div className="absolute bottom-1/4 right-0 w-[400px] h-[400px] bg-violet/5 rounded-full blur-[120px]" />
+        <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-blue/5 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/4 right-0 w-[400px] h-[400px] bg-orange/5 rounded-full blur-[120px]" />
       </div>
 
       <div className="relative z-10 max-w-5xl w-full">
@@ -554,10 +554,10 @@ const ExperienceSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <span className="text-cyan text-sm font-mono tracking-wider mb-4 block">// EXPERIENCE</span>
+          <span className="text-blue text-sm font-mono tracking-wider mb-4 block">// EXPERIENCE</span>
           <h2 className="text-4xl md:text-6xl font-black tracking-tight">
             <span className="text-white">Career </span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan to-violet">Journey</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue to-orange">Journey</span>
           </h2>
         </motion.div>
 
@@ -573,7 +573,7 @@ const ExperienceSection = () => {
             >
               <motion.div
                 className="p-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl relative overflow-hidden group"
-                whileHover={{ borderColor: `rgba(${exp.color === 'cyan' ? '0, 240, 255' : exp.color === 'violet' ? '139, 92, 246' : '236, 72, 153'}, 0.5)` }}
+                whileHover={{ borderColor: `rgba(${exp.color === 'blue' ? '59, 130, 246' : exp.color === 'orange' ? '249, 115, 22' : '236, 72, 153'}, 0.5)` }}
               >
                 <div className={`absolute top-0 left-0 w-1 h-full bg-${exp.color}`} />
 
@@ -606,11 +606,11 @@ const ExperienceSection = () => {
 // ============ SKILLS SECTION ============
 const SkillsSection = () => {
   const skillGroups = [
-    { name: 'Backend', skills: ['.NET Core', 'Python', 'Node.js'], color: 'cyan' },
-    { name: 'Cloud', skills: ['Azure', 'Kubernetes', 'KEDA'], color: 'violet' },
+    { name: 'Backend', skills: ['.NET Core', 'Python', 'Node.js'], color: 'blue' },
+    { name: 'Cloud', skills: ['Azure', 'Kubernetes', 'KEDA'], color: 'orange' },
     { name: 'Data', skills: ['Snowflake', 'KDB+', 'Databricks'], color: 'pink' },
-    { name: 'Frontend', skills: ['Svelte', 'React', 'WPF'], color: 'cyan' },
-    { name: 'AI', skills: ['OpenAI', 'GPT-4', 'LangChain'], color: 'violet' },
+    { name: 'Frontend', skills: ['Svelte', 'React', 'WPF'], color: 'blue' },
+    { name: 'AI', skills: ['OpenAI', 'GPT-4', 'LangChain'], color: 'orange' },
     { name: 'DevOps', skills: ['Azure DevOps', 'Docker', 'CI/CD'], color: 'pink' },
   ]
 
@@ -629,7 +629,7 @@ const SkillsSection = () => {
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden px-6 py-24">
       <div className="absolute inset-0">
         <div className="absolute inset-0 opacity-5" style={{
-          backgroundImage: 'radial-gradient(rgba(0, 240, 255, 0.3) 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(rgba(59, 130, 246, 0.3) 1px, transparent 1px)',
           backgroundSize: '30px 30px'
         }} />
       </div>
@@ -641,10 +641,10 @@ const SkillsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <span className="text-violet text-sm font-mono tracking-wider mb-4 block">// SKILLS</span>
+          <span className="text-orange text-sm font-mono tracking-wider mb-4 block">// SKILLS</span>
           <h2 className="text-4xl md:text-6xl font-black tracking-tight">
             <span className="text-white">Tech </span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan via-violet to-pink">Arsenal</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue via-orange to-pink">Arsenal</span>
           </h2>
         </motion.div>
 
@@ -654,7 +654,7 @@ const SkillsSection = () => {
               key={group.name}
               className="skill-orb opacity-0 p-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl text-center"
               whileHover={{
-                borderColor: `rgba(${group.color === 'cyan' ? '0, 240, 255' : group.color === 'violet' ? '139, 92, 246' : '236, 72, 153'}, 0.5)`,
+                borderColor: `rgba(${group.color === 'blue' ? '59, 130, 246' : group.color === 'orange' ? '249, 115, 22' : '236, 72, 153'}, 0.5)`,
                 y: -5
               }}
             >
@@ -675,16 +675,16 @@ const SkillsSection = () => {
 // ============ ACHIEVEMENTS SECTION ============
 const AchievementsSection = () => {
   const achievements = [
-    { metric: '1600%', label: 'User Growth', desc: 'Scaled platform to 150+ users', color: 'cyan' },
-    { metric: '30', suffix: 'days', label: 'Migration', desc: 'Node.js to .NET Core', color: 'violet' },
+    { metric: '1600%', label: 'User Growth', desc: 'Scaled platform to 150+ users', color: 'blue' },
+    { metric: '30', suffix: 'days', label: 'Migration', desc: 'Node.js to .NET Core', color: 'orange' },
     { metric: 'GPT-4', label: 'AI Integration', desc: 'Enterprise-grade processing', color: 'pink' },
-    { metric: '99.9%', label: 'Uptime', desc: 'Production SLA maintained', color: 'cyan' },
+    { metric: '99.9%', label: 'Uptime', desc: 'Production SLA maintained', color: 'blue' },
   ]
 
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden px-6 py-24">
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-violet/5 rounded-full blur-[200px]" />
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-orange/5 rounded-full blur-[200px]" />
       </div>
 
       <div className="relative z-10 max-w-6xl w-full">
@@ -697,7 +697,7 @@ const AchievementsSection = () => {
           <span className="text-pink text-sm font-mono tracking-wider mb-4 block">// IMPACT</span>
           <h2 className="text-4xl md:text-6xl font-black tracking-tight">
             <span className="text-white">What I </span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan via-violet to-pink">Delivered</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue via-orange to-pink">Delivered</span>
           </h2>
         </motion.div>
 
@@ -716,7 +716,7 @@ const AchievementsSection = () => {
                 whileHover={{ y: -10, borderColor: 'rgba(255,255,255,0.2)' }}
               >
                 <div className="mb-4">
-                  <span className={`text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-${item.color} to-${item.color === 'cyan' ? 'violet' : item.color === 'violet' ? 'pink' : 'cyan'}`}>
+                  <span className={`text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-${item.color} to-${item.color === 'blue' ? 'orange' : item.color === 'orange' ? 'pink' : 'blue'}`}>
                     {item.metric}
                   </span>
                   {item.suffix && <span className="text-2xl text-white/40 ml-2">{item.suffix}</span>}
@@ -749,8 +749,8 @@ const ConnectSection = () => {
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden px-6 py-24">
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-violet/5 rounded-full blur-[200px]" />
-        <div className="absolute bottom-1/4 left-1/4 w-[500px] h-[500px] bg-cyan/5 rounded-full blur-[180px]" />
+        <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] bg-orange/5 rounded-full blur-[200px]" />
+        <div className="absolute bottom-1/4 left-1/4 w-[500px] h-[500px] bg-blue/5 rounded-full blur-[180px]" />
       </div>
 
       <div className="relative z-10 max-w-4xl w-full">
@@ -760,10 +760,10 @@ const ConnectSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <span className="text-cyan text-sm font-mono tracking-wider mb-4 block">// CONNECT</span>
+          <span className="text-blue text-sm font-mono tracking-wider mb-4 block">// CONNECT</span>
           <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-4">
             <span className="text-white">Let&apos;s Build </span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan via-violet to-pink">Together</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue via-orange to-pink">Together</span>
           </h2>
         </motion.div>
 
@@ -784,7 +784,7 @@ const ConnectSection = () => {
                 href={item.href}
                 target={item.href.startsWith('http') ? '_blank' : undefined}
                 rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-xl hover:border-cyan/50 transition-colors"
+                className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-xl hover:border-blue/50 transition-colors"
                 whileHover={{ x: 5 }}
               >
                 <span className="text-2xl">{item.icon}</span>
@@ -810,7 +810,7 @@ const ConnectSection = () => {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-cyan focus:outline-none"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-blue focus:outline-none"
               />
               <input
                 type="email"
@@ -818,7 +818,7 @@ const ConnectSection = () => {
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-cyan focus:outline-none"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-blue focus:outline-none"
               />
               <textarea
                 placeholder="Message"
@@ -826,12 +826,12 @@ const ConnectSection = () => {
                 rows={4}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-cyan focus:outline-none resize-none"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:border-blue focus:outline-none resize-none"
               />
               <motion.button
                 type="submit"
                 disabled={status !== 'idle'}
-                className="w-full py-4 bg-gradient-to-r from-cyan to-violet text-space font-bold rounded-xl disabled:opacity-50"
+                className="w-full py-4 bg-gradient-to-r from-blue to-orange text-space font-bold rounded-xl disabled:opacity-50"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
