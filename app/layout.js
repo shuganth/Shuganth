@@ -20,10 +20,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
-        <div className="grain" />
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   )
 }

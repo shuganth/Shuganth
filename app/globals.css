@@ -289,11 +289,77 @@ section {
 
 /* ============ CARD HOVER ============ */
 .card-hover {
-  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
-              box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card-hover:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* ============ PERFORMANCE OPTIMIZED ANIMATIONS ============ */
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeOut {
+  animation: fadeOut 0.5s ease 0.5s forwards;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; pointer-events: none; }
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.5s ease forwards;
+}
+
+.delay-100 {
+  animation-delay: 0.1s;
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+/* Tech badge hover */
+.tech-badge {
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.tech-badge:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Experience card */
+.exp-card {
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.exp-card:hover {
+  transform: translateX(4px);
+  border-color: rgba(255, 77, 0, 0.3);
+}
+
+/* Project card */
+.project-card {
+  transition: transform 0.2s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+}
+
+/* GPU acceleration for panels */
+.panel {
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }

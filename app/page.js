@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, useLayoutEffect } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { motion, AnimatePresence } from 'framer-motion'
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
@@ -105,55 +104,26 @@ const TechIcons = {
 // ============ PRELOADER ============
 const Preloader = ({ onComplete }) => {
   useEffect(() => {
-    const tl = gsap.timeline({
-      onComplete: () => setTimeout(onComplete, 100)
-    })
-
-    tl.fromTo('.pre-s',
-      { scale: 0, rotation: -180 },
-      { scale: 1, rotation: 0, duration: 0.8, ease: 'elastic.out(1, 0.5)' }
-    )
-    .fromTo('.pre-a',
-      { scale: 0, rotation: 180 },
-      { scale: 1, rotation: 0, duration: 0.8, ease: 'elastic.out(1, 0.5)' },
-      '-=0.5'
-    )
-    .to('.preloader-content', {
-      scale: 50,
-      opacity: 0,
-      duration: 1,
-      ease: 'power4.in'
-    }, '+=0.3')
-    .to('.preloader', {
-      opacity: 0,
-      duration: 0.3
-    })
-
-    return () => tl.kill()
+    const timer = setTimeout(onComplete, 800)
+    return () => clearTimeout(timer)
   }, [onComplete])
 
   return (
-    <div className="preloader fixed inset-0 z-[200] bg-void flex items-center justify-center">
-      <div className="preloader-content flex items-center">
-        <span className="pre-s text-[20vw] font-black sa-letter-s">S</span>
-        <span className="pre-a text-[20vw] font-black sa-letter-a">A</span>
+    <div className="preloader fixed inset-0 z-[200] bg-void flex items-center justify-center animate-fadeOut">
+      <div className="flex items-center">
+        <span className="text-[20vw] font-black sa-letter-s animate-scaleIn">S</span>
+        <span className="text-[20vw] font-black sa-letter-a animate-scaleIn delay-100">A</span>
       </div>
     </div>
   )
 }
 
 // ============ TECH BADGE COMPONENT ============
-const TechBadge = ({ name, icon, color = 'ember' }) => (
-  <motion.div
-    className="flex items-center gap-2 px-3 py-2 rounded-lg glass card-hover"
-    whileHover={{ scale: 1.05, y: -2 }}
-    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-  >
-    <div className={`w-6 h-6 text-${color}`}>
-      {icon}
-    </div>
+const TechBadge = ({ name, icon }) => (
+  <div className="flex items-center gap-2 px-3 py-2 rounded-lg glass tech-badge">
+    <div className="w-6 h-6">{icon}</div>
     <span className="text-sm text-white font-medium">{name}</span>
-  </motion.div>
+  </div>
 )
 
 // ============ MAIN HORIZONTAL SCROLL EXPERIENCE ============
@@ -167,7 +137,9 @@ export default function Home() {
 
     const ctx = gsap.context(() => {
       const panels = gsap.utils.toArray('.panel')
-      const totalWidth = panels.length * window.innerWidth
+
+      // Much shorter scroll distance for faster response
+      const scrollDistance = window.innerWidth * 2
 
       gsap.to(panels, {
         xPercent: -100 * (panels.length - 1),
@@ -175,36 +147,9 @@ export default function Home() {
         scrollTrigger: {
           trigger: wrapperRef.current,
           pin: true,
-          scrub: 1,
-          snap: 1 / (panels.length - 1),
-          end: () => `+=${totalWidth}`,
-        }
-      })
-
-      // Floating SA
-      ScrollTrigger.create({
-        trigger: wrapperRef.current,
-        start: 'top top',
-        end: () => `+=${totalWidth}`,
-        scrub: 1,
-        onUpdate: (self) => {
-          const progress = self.progress
-          gsap.to('.floating-s', {
-            x: progress * window.innerWidth * 0.3,
-            y: Math.sin(progress * Math.PI * 2) * 100,
-            scale: 1 - progress * 0.7,
-            rotation: progress * 360,
-            opacity: 0.15 - progress * 0.1,
-            duration: 0.3
-          })
-          gsap.to('.floating-a', {
-            x: progress * window.innerWidth * 0.3 + 50,
-            y: Math.cos(progress * Math.PI * 2) * 100,
-            scale: 1 - progress * 0.7,
-            rotation: -progress * 360,
-            opacity: 0.15 - progress * 0.1,
-            duration: 0.3
-          })
+          scrub: 0.3, // Lower = more responsive
+          end: () => `+=${scrollDistance}`,
+          invalidateOnRefresh: true,
         }
       })
     }, containerRef)
@@ -273,22 +218,12 @@ export default function Home() {
 
   return (
     <main ref={containerRef} className="bg-void text-white overflow-hidden">
-      <AnimatePresence mode="wait">
-        {loading && <Preloader key="preloader" onComplete={() => setLoading(false)} />}
-      </AnimatePresence>
+      {loading && <Preloader onComplete={() => setLoading(false)} />}
 
       {!loading && (
         <>
-          <div className="grain" />
-
-          {/* Floating SA */}
-          <div className="sa-floating fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 pointer-events-none flex">
-            <span className="floating-s text-[15vw] md:text-[10vw] font-black sa-letter-s opacity-15">S</span>
-            <span className="floating-a text-[15vw] md:text-[10vw] font-black sa-letter-a opacity-15">A</span>
-          </div>
-
           {/* Navigation */}
-          <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
+          <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 glass-dark">
             <div className="max-w-7xl mx-auto flex items-center justify-between">
               <div className="text-2xl font-black gradient-text">SA</div>
               <div className="hidden md:flex items-center gap-6 text-sm text-silver">
@@ -305,39 +240,28 @@ export default function Home() {
             <div className="flex h-screen">
 
               {/* Panel 1: Hero */}
-              <section className="panel w-screen h-screen flex-shrink-0 flex items-center justify-center relative">
-                <div className="absolute inset-0">
-                  <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-ember/20 rounded-full blur-[200px]" />
-                  <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-gold/20 rounded-full blur-[150px]" />
+              <section className="panel w-screen h-screen flex-shrink-0 flex items-center justify-center relative will-change-transform">
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-ember/15 rounded-full blur-[150px]" />
+                  <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-gold/15 rounded-full blur-[120px]" />
                 </div>
 
-                <div className="panel-content text-center px-6 relative z-10 max-w-5xl">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.5, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                  >
-                    <h1 className="text-4xl sm:text-6xl md:text-8xl font-black mb-2">
-                      <span className="text-white">SUGANTHAN</span>
-                    </h1>
-                    <h2 className="text-3xl sm:text-5xl md:text-7xl font-black gradient-text mb-6">
-                      ARULVELAN
-                    </h2>
-                    <p className="text-lg md:text-xl text-silver max-w-2xl mx-auto mb-4">
-                      Associate Director at Syneos Health
-                    </p>
-                    <p className="text-sm md:text-base text-silver/70 max-w-xl mx-auto">
-                      Building Healthcare Analytics Platforms | Enterprise Architecture & AI Integration
-                    </p>
-                  </motion.div>
+                <div className="panel-content text-center px-6 relative z-10 max-w-5xl fade-in">
+                  <h1 className="text-4xl sm:text-6xl md:text-8xl font-black mb-2">
+                    <span className="text-white">SUGANTHAN</span>
+                  </h1>
+                  <h2 className="text-3xl sm:text-5xl md:text-7xl font-black gradient-text mb-6">
+                    ARULVELAN
+                  </h2>
+                  <p className="text-lg md:text-xl text-silver max-w-2xl mx-auto mb-4">
+                    Associate Director at Syneos Health
+                  </p>
+                  <p className="text-sm md:text-base text-silver/70 max-w-xl mx-auto">
+                    Building Healthcare Analytics Platforms | Enterprise Architecture & AI Integration
+                  </p>
 
                   {/* Impact Stats */}
-                  <motion.div
-                    className="flex flex-wrap justify-center gap-4 md:gap-8 mt-10"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8 }}
-                  >
+                  <div className="flex flex-wrap justify-center gap-4 md:gap-8 mt-10">
                     {[
                       { value: '1600%', label: 'User Growth' },
                       { value: '0', label: 'Incidents' },
@@ -349,21 +273,16 @@ export default function Home() {
                         <div className="text-silver text-xs md:text-sm mt-1">{stat.label}</div>
                       </div>
                     ))}
-                  </motion.div>
+                  </div>
 
                   {/* Languages */}
-                  <motion.div
-                    className="flex justify-center gap-4 mt-8 text-xs text-silver/60"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1 }}
-                  >
+                  <div className="flex justify-center gap-4 mt-8 text-xs text-silver/60">
                     <span>🇬🇧 English</span>
                     <span>•</span>
                     <span>🇮🇳 Tamil</span>
                     <span>•</span>
                     <span>🇫🇷 French</span>
-                  </motion.div>
+                  </div>
                 </div>
 
                 <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 text-silver text-sm">
@@ -375,8 +294,8 @@ export default function Home() {
               </section>
 
               {/* Panel 2: About + Tech Stack */}
-              <section className="panel w-screen h-screen flex-shrink-0 flex items-center justify-center relative bg-obsidian">
-                <div className="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-ember/10 to-transparent" />
+              <section className="panel w-screen h-screen flex-shrink-0 flex items-center justify-center relative bg-obsidian will-change-transform">
+                <div className="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-ember/5 to-transparent pointer-events-none" />
 
                 <div className="panel-content max-w-6xl mx-auto px-6">
                   <div className="grid lg:grid-cols-2 gap-12 items-start">
@@ -424,34 +343,26 @@ export default function Home() {
               </section>
 
               {/* Panel 3: Experience Timeline */}
-              <section className="panel w-screen h-screen flex-shrink-0 flex items-center justify-center relative overflow-y-auto">
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-px h-2/3 bg-gradient-to-b from-transparent via-ember to-transparent" />
-
-                <div className="panel-content max-w-5xl mx-auto px-6 py-20">
-                  <div className="text-center mb-10">
+              <section className="panel w-screen h-screen flex-shrink-0 flex items-center justify-center relative will-change-transform">
+                <div className="panel-content max-w-5xl mx-auto px-6">
+                  <div className="text-center mb-8">
                     <span className="text-gold font-mono text-sm tracking-widest">// EXPERIENCE</span>
-                    <h2 className="text-3xl md:text-5xl font-black text-white mt-4">
+                    <h2 className="text-3xl md:text-4xl font-black text-white mt-4">
                       Career <span className="gradient-text">Journey</span>
                     </h2>
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {experiences.slice(0, 4).map((exp, i) => (
-                      <motion.div
-                        key={i}
-                        className="glass rounded-xl p-5 card-hover"
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                      >
+                      <div key={i} className="glass rounded-xl p-4 exp-card">
                         <div className="flex flex-col md:flex-row md:items-start gap-4">
-                          <div className="md:w-40 flex-shrink-0">
+                          <div className="md:w-36 flex-shrink-0">
                             <div className="text-ember font-mono text-xs">{exp.period}</div>
-                            <div className="text-lg font-bold text-white mt-1">{exp.role}</div>
+                            <div className="text-base font-bold text-white mt-1">{exp.role}</div>
                             <div className="text-silver text-sm">{exp.company}</div>
                           </div>
                           <div className="flex-grow">
-                            <p className="text-silver text-sm leading-relaxed mb-3">{exp.description}</p>
+                            <p className="text-silver text-sm leading-relaxed mb-2">{exp.description}</p>
                             <div className="flex flex-wrap gap-2">
                               {exp.achievements.map((a, j) => (
                                 <span key={j} className="text-xs px-2 py-1 bg-ember/20 text-ember rounded">{a}</span>
@@ -459,23 +370,16 @@ export default function Home() {
                             </div>
                           </div>
                         </div>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 </div>
               </section>
 
               {/* Panel 4: Projects/Impact */}
-              <section className="panel w-screen h-screen flex-shrink-0 flex items-center justify-center relative bg-obsidian">
-                <div className="absolute inset-0 opacity-5">
-                  <div className="absolute inset-0" style={{
-                    backgroundImage: 'radial-gradient(rgba(255,77,0,0.5) 1px, transparent 1px)',
-                    backgroundSize: '40px 40px'
-                  }} />
-                </div>
-
+              <section className="panel w-screen h-screen flex-shrink-0 flex items-center justify-center relative bg-obsidian will-change-transform">
                 <div className="panel-content max-w-6xl mx-auto px-6">
-                  <div className="text-center mb-12">
+                  <div className="text-center mb-10">
                     <span className="text-cyan font-mono text-sm tracking-widest">// IMPACT</span>
                     <h2 className="text-3xl md:text-5xl font-black text-white mt-4">
                       What I <span className="gradient-text">Delivered</span>
@@ -506,26 +410,22 @@ export default function Home() {
                         tech: 'Kubernetes • KEDA • Azure Service Bus • OpenAI'
                       }
                     ].map((project, i) => (
-                      <motion.div
-                        key={i}
-                        className="glass rounded-2xl p-6 card-hover"
-                        whileHover={{ y: -5 }}
-                      >
+                      <div key={i} className="glass rounded-2xl p-6 project-card">
                         <h3 className="text-lg font-bold text-white mb-2">{project.title}</h3>
                         <div className="text-4xl font-black gradient-text">{project.metric}</div>
                         <div className="text-sm text-silver mb-3">{project.label}</div>
                         <p className="text-sm text-silver/80 mb-4">{project.desc}</p>
                         <div className="text-xs text-ember font-mono">{project.tech}</div>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 </div>
               </section>
 
               {/* Panel 5: Contact */}
-              <section className="panel w-screen h-screen flex-shrink-0 flex items-center justify-center relative">
-                <div className="absolute inset-0">
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-ember/20 rounded-full blur-[250px]" />
+              <section className="panel w-screen h-screen flex-shrink-0 flex items-center justify-center relative will-change-transform">
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-ember/15 rounded-full blur-[200px]" />
                 </div>
 
                 <div className="panel-content max-w-4xl mx-auto px-6 text-center">
@@ -577,19 +477,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Progress indicator */}
-          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
-            <div className="flex gap-2">
-              {['Home', 'About', 'Experience', 'Impact', 'Contact'].map((label, i) => (
-                <div key={i} className="group relative">
-                  <div className="w-3 h-3 rounded-full bg-white/20 group-hover:bg-ember transition-colors cursor-pointer" />
-                  <span className="absolute bottom-6 left-1/2 -translate-x-1/2 text-xs text-silver opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    {label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
         </>
       )}
     </main>
