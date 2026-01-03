@@ -4,14 +4,14 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ============ CSS VARIABLES - NEW COSMIC THEME ============ */
+/* ============ CSS VARIABLES - BLACK WITH BLUE/PINK/ORANGE ============ */
 :root {
-  --space: #050510;
-  --deep: #0a0a1a;
-  --surface: #0f0f23;
-  --cyan: #00F0FF;
-  --violet: #8B5CF6;
+  --space: #000000;
+  --deep: #050508;
+  --surface: #0a0a0f;
+  --blue: #3B82F6;
   --pink: #EC4899;
+  --orange: #F97316;
 }
 
 /* ============ BASE STYLES ============ */
@@ -46,22 +46,22 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--cyan), var(--violet));
+  background: linear-gradient(180deg, var(--blue), var(--orange));
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--violet), var(--pink));
+  background: linear-gradient(180deg, var(--orange), var(--pink));
 }
 
 /* ============ TEXT SELECTION ============ */
 ::selection {
-  background: var(--cyan);
+  background: var(--blue);
   color: var(--space);
 }
 
 ::-moz-selection {
-  background: var(--cyan);
+  background: var(--blue);
   color: var(--space);
 }
 
@@ -70,24 +70,24 @@ body {
   background-color: var(--space);
 }
 
-.text-cyan {
-  color: var(--cyan);
+.text-blue {
+  color: var(--blue);
 }
 
-.text-violet {
-  color: var(--violet);
+.text-orange {
+  color: var(--orange);
 }
 
 .text-pink {
   color: var(--pink);
 }
 
-.bg-cyan {
-  background-color: var(--cyan);
+.bg-blue {
+  background-color: var(--blue);
 }
 
-.bg-violet {
-  background-color: var(--violet);
+.bg-orange {
+  background-color: var(--orange);
 }
 
 .bg-pink {
@@ -96,7 +96,7 @@ body {
 
 /* ============ GRADIENT UTILITIES ============ */
 .gradient-text {
-  background: linear-gradient(135deg, var(--cyan) 0%, var(--violet) 50%, var(--pink) 100%);
+  background: linear-gradient(135deg, var(--blue) 0%, var(--orange) 50%, var(--pink) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -109,8 +109,8 @@ body {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(0, 240, 255, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(0, 240, 255, 0.6), 0 0 60px rgba(139, 92, 246, 0.3); }
+  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6), 0 0 60px rgba(249, 115, 22, 0.3); }
 }
 
 @keyframes float {
@@ -132,12 +132,12 @@ body {
 }
 
 /* ============ GLOW EFFECTS ============ */
-.glow-cyan {
-  box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+.glow-blue {
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
 }
 
-.glow-violet {
-  box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+.glow-orange {
+  box-shadow: 0 0 30px rgba(249, 115, 22, 0.3);
 }
 
 .glow-pink {
