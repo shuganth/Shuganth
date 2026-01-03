@@ -1,245 +1,69 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence, useScroll, useTransform, useSpring, useInView } from 'framer-motion'
-import anime from 'animejs'
+import { useEffect, useRef, useState, useLayoutEffect } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 
-// ============ SA REVEAL INTRO ============
-const SARevealIntro = ({ onComplete }) => {
-  const containerRef = useRef(null)
-  const [phase, setPhase] = useState('logo')
+// Register GSAP plugins
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger)
+}
 
+// ============ PRELOADER ============
+const Preloader = ({ onComplete }) => {
   useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const timeline = anime.timeline({
-      easing: 'easeOutExpo',
+    const tl = gsap.timeline({
+      onComplete: () => setTimeout(onComplete, 200)
     })
 
-    // Phase 1: Logo appears with glow
-    timeline.add({
-      targets: '.sa-letter',
-      scale: [0, 1],
-      opacity: [0, 1],
-      duration: 800,
-      delay: anime.stagger(150),
-      easing: 'easeOutElastic(1, .5)',
-    })
-
-    // Glow pulse
-    timeline.add({
-      targets: '.sa-glow',
-      opacity: [0, 0.8, 0.4],
-      scale: [0.8, 1.2, 1],
-      duration: 1000,
-      easing: 'easeInOutQuad',
-    }, '-=400')
-
-    // Phase 2: Letters split apart
-    timeline.add({
-      targets: '.letter-s',
-      translateX: [0, -120],
-      rotateY: [0, -15],
-      duration: 800,
-      easing: 'easeInOutQuart',
-      begin: () => setPhase('split'),
-    }, '+=400')
-
-    timeline.add({
-      targets: '.letter-a',
-      translateX: [0, 120],
-      rotateY: [0, 15],
-      duration: 800,
-      easing: 'easeInOutQuart',
-    }, '-=800')
-
-    // Phase 3: Light beam emerges
-    timeline.add({
-      targets: '.center-beam',
-      scaleY: [0, 1],
-      opacity: [0, 1],
-      duration: 600,
-      easing: 'easeOutQuart',
-    }, '-=400')
-
-    // Phase 4: Experience words fly out
-    timeline.add({
-      targets: '.exp-word',
-      translateY: [0, (el, i) => (i % 2 === 0 ? -80 - i * 20 : 80 + i * 20)],
-      translateX: () => anime.random(-150, 150),
-      opacity: [0, 1],
-      scale: [0.5, 1],
-      duration: 800,
-      delay: anime.stagger(60),
-      easing: 'easeOutExpo',
-      begin: () => setPhase('reveal'),
-    }, '-=300')
-
-    // Phase 5: Everything converges and fades
-    timeline.add({
-      targets: '.exp-word',
-      opacity: [1, 0],
-      scale: [1, 0.8],
-      duration: 500,
-      easing: 'easeInQuart',
-    }, '+=600')
-
-    timeline.add({
-      targets: ['.letter-s', '.letter-a'],
-      translateX: 0,
-      translateY: -200,
-      scale: 0.3,
+    tl.fromTo('.preload-letter',
+      { y: 100, opacity: 0 },
+      { y: 0, opacity: 1, stagger: 0.1, duration: 0.6, ease: 'power3.out' }
+    )
+    .to('.preload-letter', {
+      y: -100,
       opacity: 0,
-      duration: 700,
-      easing: 'easeInQuart',
-    }, '-=300')
+      stagger: 0.05,
+      duration: 0.4,
+      ease: 'power3.in',
+      delay: 0.5
+    })
+    .to('.preload-bar', {
+      scaleX: 1,
+      duration: 1.5,
+      ease: 'power2.inOut'
+    }, 0)
+    .to('.preloader', {
+      yPercent: -100,
+      duration: 0.8,
+      ease: 'power4.inOut'
+    })
 
-    timeline.add({
-      targets: '.center-beam',
-      scaleX: [1, 30],
-      opacity: [1, 0],
-      duration: 500,
-      easing: 'easeInQuart',
-      complete: () => {
-        setPhase('complete')
-        setTimeout(onComplete, 100)
-      },
-    }, '-=500')
-
-    return () => timeline.pause()
+    return () => tl.kill()
   }, [onComplete])
 
-  const experienceWords = [
-    '.NET', 'Kubernetes', 'Azure', 'Svelte', 'Snowflake',
-    'AI', 'Leadership', 'Architecture', 'OpenAI', 'KEDA'
-  ]
-
   return (
-    <motion.div
-      ref={containerRef}
-      className="fixed inset-0 z-[200] bg-black flex items-center justify-center overflow-hidden"
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      {/* Animated grid background */}
-      <div className="absolute inset-0 opacity-10">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(59, 130, 246, 0.3) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(59, 130, 246, 0.3) 1px, transparent 1px)
-            `,
-            backgroundSize: '60px 60px',
-          }}
-        />
-      </div>
-
-      {/* Radial glow behind letters */}
-      <div className="sa-glow absolute w-[400px] h-[400px] md:w-[600px] md:h-[600px] rounded-full opacity-0"
-        style={{
-          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(249, 115, 22, 0.2) 40%, transparent 70%)',
-        }}
-      />
-
-      {/* Main SA container */}
-      <div className="relative flex items-center justify-center" style={{ perspective: '1000px' }}>
-        <div className="letter-s sa-letter relative" style={{ transformStyle: 'preserve-3d' }}>
+    <div className="preloader fixed inset-0 z-[100] bg-void flex flex-col items-center justify-center">
+      <div className="flex overflow-hidden">
+        {'SUGANTHAN'.split('').map((letter, i) => (
           <span
-            className="text-[25vw] md:text-[15vw] font-black leading-none select-none"
-            style={{
-              background: 'linear-gradient(135deg, #3B82F6 0%, #F97316 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              filter: 'drop-shadow(0 0 30px rgba(59, 130, 246, 0.5))',
-            }}
+            key={i}
+            className="preload-letter text-4xl md:text-6xl font-display gradient-text"
           >
-            S
-          </span>
-        </div>
-
-        <div
-          className="center-beam absolute w-1 h-[40vh] opacity-0"
-          style={{
-            background: 'linear-gradient(180deg, transparent, #3B82F6, #F97316, #EC4899, #F97316, #3B82F6, transparent)',
-            boxShadow: '0 0 30px rgba(59, 130, 246, 0.8), 0 0 60px rgba(249, 115, 22, 0.5)',
-            transformOrigin: 'center',
-          }}
-        />
-
-        <div className="letter-a sa-letter relative" style={{ transformStyle: 'preserve-3d' }}>
-          <span
-            className="text-[25vw] md:text-[15vw] font-black leading-none select-none"
-            style={{
-              background: 'linear-gradient(135deg, #F97316 0%, #EC4899 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              filter: 'drop-shadow(0 0 30px rgba(249, 115, 22, 0.5))',
-            }}
-          >
-            A
-          </span>
-        </div>
-      </div>
-
-      {/* Experience words that fly out */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        {experienceWords.map((word, i) => (
-          <span
-            key={word}
-            className="exp-word absolute text-xs md:text-lg font-bold opacity-0 whitespace-nowrap"
-            style={{
-              color: i % 3 === 0 ? '#3B82F6' : i % 3 === 1 ? '#F97316' : '#EC4899',
-              textShadow: '0 0 20px currentColor',
-            }}
-          >
-            {word}
+            {letter}
           </span>
         ))}
       </div>
-
-      {/* Loading indicator */}
-      <div className="absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
-        <div className="w-32 md:w-48 h-0.5 bg-white/10 rounded-full overflow-hidden">
-          <motion.div
-            className="h-full rounded-full"
-            style={{ background: 'linear-gradient(90deg, #3B82F6, #F97316, #EC4899)' }}
-            initial={{ width: '0%' }}
-            animate={{ width: '100%' }}
-            transition={{ duration: 3.5, ease: 'easeInOut' }}
-          />
-        </div>
-        <span className="text-white/30 text-xs font-mono tracking-widest uppercase">
-          {phase === 'logo' && 'Initializing...'}
-          {phase === 'split' && 'Loading experience...'}
-          {phase === 'reveal' && 'Almost there...'}
-        </span>
+      <div className="mt-8 w-48 h-0.5 bg-white/10 rounded-full overflow-hidden">
+        <div className="preload-bar h-full w-full origin-left scale-x-0 bg-gradient-to-r from-ember to-gold rounded-full" />
       </div>
-    </motion.div>
+    </div>
   )
 }
 
-// ============ ANIMATED SECTION WRAPPER ============
-const AnimatedSection = ({ children, className = '', delay = 0 }) => {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
-
-  return (
-    <motion.div
-      ref={ref}
-      className={className}
-      initial={{ opacity: 0, y: 60 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
-      transition={{ duration: 0.8, delay, ease: [0.25, 0.1, 0.25, 1] }}
-    >
-      {children}
-    </motion.div>
-  )
-}
-
-// ============ FLOATING NAVIGATION ============
-const FloatingNav = () => {
+// ============ NAVIGATION ============
+const Navigation = () => {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -249,282 +73,473 @@ const FloatingNav = () => {
   }, [])
 
   const scrollTo = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+    gsap.to(window, {
+      scrollTo: { y: `#${id}`, offsetY: 80 },
+      duration: 1.2,
+      ease: 'power3.inOut'
+    })
   }
 
   return (
     <motion.nav
-      className={`fixed top-0 left-0 right-0 z-50 px-4 md:px-6 py-4 transition-all duration-300 ${
-        scrolled ? 'bg-black/80 backdrop-blur-xl border-b border-white/5' : ''
+      className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-500 ${
+        scrolled ? 'glass-dark' : ''
       }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      transition={{ delay: 0.5, duration: 0.6 }}
+      transition={{ delay: 2.5, duration: 0.8 }}
     >
-      <div className="max-w-6xl mx-auto flex items-center justify-between">
-        <button onClick={() => scrollTo('home')} className="text-xl md:text-2xl font-black tracking-tighter">
-          <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #3B82F6, #F97316)' }}>SA</span>
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="text-2xl font-display gradient-text"
+        >
+          SA
         </button>
 
-        <div className="hidden md:flex items-center gap-6">
-          {['experience', 'skills', 'impact', 'connect'].map((section) => (
+        <div className="hidden md:flex items-center gap-8">
+          {['about', 'experience', 'skills', 'contact'].map((item) => (
             <button
-              key={section}
-              onClick={() => scrollTo(section)}
-              className="text-sm text-white/60 hover:text-white transition-colors capitalize"
+              key={item}
+              onClick={() => scrollTo(item)}
+              className="text-sm text-silver hover:text-white transition-colors capitalize"
             >
-              {section}
+              {item}
             </button>
           ))}
         </div>
 
-        <button
-          onClick={() => scrollTo('connect')}
-          className="px-4 md:px-6 py-2 text-sm font-bold rounded-full"
-          style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316)' }}
+        <a
+          href="#contact"
+          className="px-6 py-2 rounded-full gradient-ember text-void font-semibold text-sm hover:scale-105 transition-transform"
         >
           Connect
-        </button>
+        </a>
       </div>
     </motion.nav>
   )
 }
 
-// ============ HERO SECTION ============
-const HeroSection = () => {
-  const ref = useRef(null)
+// ============ SA HERO WITH GSAP SCROLL SPLIT ============
+const SAHero = () => {
+  const sectionRef = useRef(null)
+  const letterSRef = useRef(null)
+  const letterARef = useRef(null)
+  const contentRef = useRef(null)
   const { scrollYProgress } = useScroll({
-    target: ref,
+    target: sectionRef,
     offset: ['start start', 'end start']
   })
 
-  const y = useTransform(scrollYProgress, [0, 1], [0, 200])
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const ctx = gsap.context(() => {
+      // Initial SA animation
+      const introTl = gsap.timeline({ delay: 2.2 })
+
+      introTl
+        .fromTo([letterSRef.current, letterARef.current],
+          { scale: 0, rotation: -180, opacity: 0 },
+          {
+            scale: 1,
+            rotation: 0,
+            opacity: 1,
+            duration: 1.2,
+            stagger: 0.15,
+            ease: 'elastic.out(1, 0.5)'
+          }
+        )
+        .fromTo(contentRef.current,
+          { y: 60, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' },
+          '-=0.4'
+        )
+
+      // Scroll-triggered SA split animation
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: '+=150%',
+        pin: true,
+        scrub: 1,
+        onUpdate: (self) => {
+          const progress = self.progress
+
+          // S letter moves to top-left
+          gsap.to(letterSRef.current, {
+            x: -window.innerWidth * 0.3 * progress,
+            y: -window.innerHeight * 0.25 * progress,
+            scale: 1 - progress * 0.6,
+            opacity: 1 - progress * 0.8,
+            rotation: -30 * progress,
+            duration: 0.1
+          })
+
+          // A letter moves to bottom-right
+          gsap.to(letterARef.current, {
+            x: window.innerWidth * 0.3 * progress,
+            y: window.innerHeight * 0.25 * progress,
+            scale: 1 - progress * 0.6,
+            opacity: 1 - progress * 0.8,
+            rotation: 30 * progress,
+            duration: 0.1
+          })
+
+          // Content fades
+          gsap.to(contentRef.current, {
+            opacity: 1 - progress * 2,
+            y: -100 * progress,
+            duration: 0.1
+          })
+        }
+      })
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
 
   return (
-    <section id="home" ref={ref} className="min-h-screen flex items-center justify-center relative overflow-hidden px-4 md:px-6">
-      {/* Background orbs */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute w-[300px] md:w-[600px] h-[300px] md:h-[600px] rounded-full blur-[100px] md:blur-[150px] opacity-20"
-          style={{
-            background: 'radial-gradient(circle, rgba(59,130,246,0.6) 0%, transparent 70%)',
-            top: '10%',
-            left: '10%',
-          }}
-          animate={{ x: [0, 50, 0], y: [0, 30, 0] }}
-          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.div
-          className="absolute w-[250px] md:w-[500px] h-[250px] md:h-[500px] rounded-full blur-[80px] md:blur-[120px] opacity-20"
-          style={{
-            background: 'radial-gradient(circle, rgba(249,115,22,0.6) 0%, transparent 70%)',
-            bottom: '10%',
-            right: '10%',
-          }}
-          animate={{ x: [0, -40, 0], y: [0, -20, 0] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        />
+    <section ref={sectionRef} className="h-screen relative bg-void overflow-hidden">
+      {/* Background effects */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-ember/10 rounded-full blur-[150px] animate-pulse-glow" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gold/10 rounded-full blur-[150px] animate-pulse-glow" style={{ animationDelay: '1s' }} />
       </div>
 
-      <motion.div className="relative z-10 text-center max-w-4xl" style={{ y, opacity }}>
-        {/* Status badge */}
-        <motion.div
-          className="inline-flex items-center gap-2 px-3 md:px-4 py-2 mb-6 md:mb-8 bg-white/5 border border-white/10 rounded-full backdrop-blur-sm"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-          <span className="text-xs md:text-sm text-white/60 font-mono">associate-director @ syneos-health</span>
-        </motion.div>
+      {/* Grid pattern */}
+      <div
+        className="absolute inset-0 opacity-5"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(255,77,0,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,77,0,0.3) 1px, transparent 1px)',
+          backgroundSize: '100px 100px'
+        }}
+      />
 
-        {/* Name */}
-        <motion.h1
-          className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-4 md:mb-6"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <span className="block text-white">SUGANTHAN</span>
+      {/* SA Letters Container */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="flex items-center">
           <span
-            className="block text-transparent bg-clip-text"
-            style={{ backgroundImage: 'linear-gradient(135deg, #3B82F6, #F97316, #EC4899)' }}
+            ref={letterSRef}
+            className="sa-letter sa-letter-s text-[30vw] md:text-[25vw] select-none"
+            style={{ transformOrigin: 'center' }}
           >
-            ARULVELAN
+            S
           </span>
-        </motion.h1>
+          <span
+            ref={letterARef}
+            className="sa-letter sa-letter-a text-[30vw] md:text-[25vw] select-none"
+            style={{ transformOrigin: 'center' }}
+          >
+            A
+          </span>
+        </div>
+      </div>
 
-        {/* Subtitle */}
-        <motion.p
-          className="text-lg md:text-xl lg:text-2xl text-white/60 font-light mb-3 md:mb-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          Software <span className="text-blue font-medium">Architect</span> & <span className="text-orange font-medium">Engineering Leader</span>
-        </motion.p>
+      {/* Content below SA */}
+      <div ref={contentRef} className="absolute inset-0 flex items-center justify-center pt-[35vh]">
+        <div className="text-center px-6 max-w-4xl">
+          <h1 className="text-2xl md:text-4xl font-display text-white mb-4">
+            SUGANTHAN <span className="gradient-text">ARULVELAN</span>
+          </h1>
+          <p className="text-lg md:text-xl text-silver mb-8">
+            Associate Director • Software Architect • Engineering Leader
+          </p>
 
-        <motion.p
-          className="text-sm md:text-base text-white/40 max-w-2xl mx-auto mb-8 md:mb-12 leading-relaxed px-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-        >
-          7+ years crafting enterprise systems with zero production incidents.
-          Scaling teams from 0 to 20. Building what others say can&apos;t be done.
-        </motion.p>
-
-        {/* Stats */}
-        <motion.div
-          className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-8 md:mb-12 px-2"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-        >
-          {[
-            { value: '7+', label: 'Years' },
-            { value: '0', label: 'Incidents' },
-            { value: '99.9%', label: 'Uptime' },
-            { value: '20+', label: 'Engineers' },
-          ].map((stat, i) => (
-            <div key={i} className="p-3 md:p-4 bg-white/5 rounded-xl md:rounded-2xl border border-white/10">
-              <div
-                className="text-xl md:text-2xl lg:text-3xl font-black text-transparent bg-clip-text"
-                style={{ backgroundImage: 'linear-gradient(135deg, #3B82F6, #F97316)' }}
-              >
-                {stat.value}
+          {/* Quick stats */}
+          <div className="flex flex-wrap justify-center gap-6 md:gap-12 text-sm">
+            {[
+              { value: '7+', label: 'Years' },
+              { value: '0', label: 'Incidents' },
+              { value: '99.9%', label: 'Uptime' },
+              { value: '20+', label: 'Engineers' },
+            ].map((stat, i) => (
+              <div key={i} className="text-center">
+                <div className="text-2xl md:text-3xl font-display gradient-text">{stat.value}</div>
+                <div className="text-silver text-xs mt-1">{stat.label}</div>
               </div>
-              <div className="text-xs md:text-sm text-white/40 mt-1">{stat.label}</div>
-            </div>
-          ))}
-        </motion.div>
-
-        {/* CTAs */}
-        <motion.div
-          className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 px-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-        >
-          <button
-            onClick={() => document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' })}
-            className="w-full sm:w-auto group px-6 md:px-8 py-3 md:py-4 font-bold rounded-full flex items-center justify-center gap-3"
-            style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316)' }}
-          >
-            Explore Experience
-            <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </button>
-          <a
-            href="/Suganthan_Arulvelan_Resume.html"
-            target="_blank"
-            className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 border border-white/20 text-white font-medium rounded-full hover:bg-white/5 transition-colors text-center"
-          >
-            View Resume
-          </a>
-        </motion.div>
-      </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* Scroll indicator */}
       <motion.div
-        className="absolute bottom-6 md:bottom-12 left-1/2 -translate-x-1/2"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
         animate={{ y: [0, 10, 0] }}
-        transition={{ repeat: Infinity, duration: 1.5 }}
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
+        transition={{ repeat: Infinity, duration: 2 }}
       >
-        <svg className="w-6 h-6 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-        </svg>
+        <div className="w-6 h-10 border-2 border-silver/30 rounded-full flex justify-center pt-2">
+          <div className="w-1.5 h-1.5 bg-ember rounded-full animate-bounce" />
+        </div>
       </motion.div>
+    </section>
+  )
+}
+
+// ============ ABOUT SECTION (CODE STYLE) ============
+const AboutSection = () => {
+  const sectionRef = useRef(null)
+
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.about-code',
+        { y: 100, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.about-code',
+            start: 'top 80%',
+            end: 'top 50%',
+            toggleActions: 'play none none reverse'
+          }
+        }
+      )
+
+      // Stagger code lines
+      gsap.fromTo('.code-line',
+        { x: -50, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          stagger: 0.05,
+          duration: 0.6,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: '.about-code',
+            start: 'top 70%',
+            toggleActions: 'play none none reverse'
+          }
+        }
+      )
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
+
+  return (
+    <section ref={sectionRef} id="about" className="py-32 px-6 bg-obsidian relative">
+      {/* Background accent */}
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-ember/5 to-transparent" />
+
+      <div className="max-w-6xl mx-auto relative">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left: Text */}
+          <div>
+            <motion.span
+              className="text-ember font-mono text-sm tracking-widest"
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              // ABOUT
+            </motion.span>
+            <motion.h2
+              className="text-4xl md:text-5xl font-display text-white mt-4 mb-6"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+            >
+              Building the <span className="gradient-text">Future</span>
+            </motion.h2>
+            <motion.p
+              className="text-silver text-lg leading-relaxed"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              7+ years crafting enterprise systems with zero production incidents.
+              From embedded systems to cloud architecture, I build what others
+              say can&apos;t be done.
+            </motion.p>
+          </div>
+
+          {/* Right: Code Block */}
+          <div className="about-code code-window">
+            <div className="code-header">
+              <div className="code-dot red" />
+              <div className="code-dot yellow" />
+              <div className="code-dot green" />
+              <span className="ml-3 text-silver text-xs font-mono">suganthan.ts</span>
+            </div>
+            <div className="code-content">
+              <div className="code-line"><span className="syntax-comment">// Building the future of healthcare tech</span></div>
+              <div className="code-line mt-3">
+                <span className="syntax-keyword">const</span>{' '}
+                <span className="syntax-property">suganthan</span>{' '}
+                <span className="syntax-operator">=</span> {'{'}
+              </div>
+              <div className="code-line ml-4">
+                <span className="syntax-property">role</span>:{' '}
+                <span className="syntax-string">&quot;Associate Director&quot;</span>,
+              </div>
+              <div className="code-line ml-4">
+                <span className="syntax-property">company</span>:{' '}
+                <span className="syntax-string">&quot;Syneos Health&quot;</span>,
+              </div>
+              <div className="code-line ml-4">
+                <span className="syntax-property">teamSize</span>:{' '}
+                <span className="syntax-number">20</span>,
+                <span className="syntax-comment"> // engineers</span>
+              </div>
+              <div className="code-line ml-4">
+                <span className="syntax-property">uptime</span>:{' '}
+                <span className="syntax-string">&quot;99.99%&quot;</span>,
+              </div>
+              <div className="code-line ml-4">
+                <span className="syntax-property">incidents</span>:{' '}
+                <span className="syntax-number">0</span>,
+                <span className="syntax-comment"> // production</span>
+              </div>
+              <div className="code-line ml-4">
+                <span className="syntax-property">passion</span>: [
+                <span className="syntax-string">&quot;scale&quot;</span>,{' '}
+                <span className="syntax-string">&quot;AI&quot;</span>,{' '}
+                <span className="syntax-string">&quot;clean code&quot;</span>]
+              </div>
+              <div className="code-line">{'}'}</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   )
 }
 
 // ============ EXPERIENCE SECTION ============
 const ExperienceSection = () => {
+  const sectionRef = useRef(null)
   const experiences = [
     {
       period: '2025 - Present',
       role: 'Associate Director',
       company: 'Syneos Health',
-      description: 'Leading 20+ engineers. Enterprise architecture. AI integration.',
-      tech: ['Azure', 'Kubernetes', 'OpenAI', 'Leadership'],
-      color: '#3B82F6'
+      code: `class AssociateDirector : ILeader {
+  TeamSize => 20;
+  Growth => "1600%";
+  Stack => ["Azure", "K8s", "AI"];
+}`
     },
     {
       period: '2024 - 2025',
       role: 'Principal Engineer',
       company: 'Syneos Health',
-      description: '30-day platform migration. KEDA autoscaling. Zero downtime.',
-      tech: ['Svelte', '.NET Core', 'Snowflake', 'KEDA'],
-      color: '#F97316'
+      code: `class PrincipalEngineer : IArchitect {
+  Migration => 30; // days
+  Uptime => "99.9%";
+  Stack => ["Svelte", ".NET", "KEDA"];
+}`
     },
     {
       period: '2023 - 2024',
       role: 'Senior Full Stack',
       company: 'Syneos Health',
-      description: 'Desktop apps. Excel add-ins. Visualization dashboards.',
-      tech: ['WPF', 'Excel-DNA', 'Plotly', 'Syncfusion'],
-      color: '#EC4899'
+      code: `class SeniorDev : IBuilder {
+  Projects => ["KDB IDE", "DEI Tool"];
+  Stack => ["WPF", "Excel-DNA"];
+}`
     },
     {
       period: '2018 - 2021',
       role: 'Embedded Engineer',
       company: 'SUGUS',
-      description: 'Industrial IoT. Automotive clients. HMI systems.',
-      tech: ['Embedded C', 'MicroPython', 'IoT', 'Bosch'],
-      color: '#3B82F6'
+      code: `class EmbeddedEngineer : IIoT {
+  Clients => ["Bosch", "TVS"];
+  Stack => ["C", "Python", "HMI"];
+}`
     },
   ]
 
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const ctx = gsap.context(() => {
+      gsap.utils.toArray('.exp-card').forEach((card, i) => {
+        gsap.fromTo(card,
+          { x: i % 2 === 0 ? -100 : 100, opacity: 0 },
+          {
+            x: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 85%',
+              toggleActions: 'play none none reverse'
+            }
+          }
+        )
+      })
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
+
   return (
-    <section id="experience" className="py-20 md:py-32 px-4 md:px-6 relative">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-blue/5 rounded-full blur-[100px] md:blur-[150px]" />
-        <div className="absolute bottom-1/4 right-0 w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-orange/5 rounded-full blur-[80px] md:blur-[120px]" />
-      </div>
+    <section ref={sectionRef} id="experience" className="py-32 px-6 bg-void relative">
+      {/* Decorative elements */}
+      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-px h-1/2 bg-gradient-to-b from-transparent via-ember to-transparent" />
 
-      <div className="relative z-10 max-w-4xl mx-auto">
-        <AnimatedSection className="text-center mb-12 md:mb-16">
-          <span className="text-blue text-xs md:text-sm font-mono tracking-wider mb-3 md:mb-4 block">// EXPERIENCE</span>
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight">
-            <span className="text-white">Career </span>
-            <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #3B82F6, #F97316)' }}>Journey</span>
-          </h2>
-        </AnimatedSection>
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-16">
+          <motion.span
+            className="text-ember font-mono text-sm tracking-widest"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            // EXPERIENCE
+          </motion.span>
+          <motion.h2
+            className="text-4xl md:text-5xl font-display text-white mt-4"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
+            Career <span className="gradient-text">Journey</span>
+          </motion.h2>
+        </div>
 
-        <div className="space-y-4 md:space-y-6">
+        <div className="space-y-8">
           {experiences.map((exp, i) => (
-            <AnimatedSection key={i} delay={i * 0.1}>
-              <motion.div
-                className="p-4 md:p-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl md:rounded-2xl relative overflow-hidden group"
-                whileHover={{ borderColor: exp.color + '50' }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="absolute top-0 left-0 w-1 h-full" style={{ background: exp.color }} />
-
-                <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 pl-3 md:pl-4">
-                  <div className="md:w-36 flex-shrink-0">
-                    <span className="font-mono text-xs md:text-sm" style={{ color: exp.color }}>{exp.period}</span>
+            <div key={i} className="exp-card code-window">
+              <div className="code-header">
+                <div className="code-dot red" />
+                <div className="code-dot yellow" />
+                <div className="code-dot green" />
+                <span className="ml-3 text-silver text-xs font-mono">{exp.role.replace(/\s+/g, '')}.cs</span>
+                <span className="ml-auto text-ember text-xs font-mono">{exp.period}</span>
+              </div>
+              <div className="p-6">
+                <div className="flex flex-col md:flex-row gap-6">
+                  <div className="md:w-1/3">
+                    <h3 className="text-xl font-display text-white">{exp.role}</h3>
+                    <p className="text-ember">{exp.company}</p>
                   </div>
-                  <div className="flex-grow">
-                    <h3 className="text-lg md:text-xl font-bold text-white">{exp.role}</h3>
-                    <p className="text-white/40 text-sm">{exp.company}</p>
-                    <p className="text-white/60 mt-1 md:mt-2 text-sm md:text-base">{exp.description}</p>
-                    <div className="flex flex-wrap gap-2 mt-2 md:mt-3">
-                      {exp.tech.map((t, j) => (
-                        <span key={j} className="px-2 py-1 bg-white/5 rounded-md text-xs text-white/60">
-                          {t}
-                        </span>
-                      ))}
-                    </div>
+                  <div className="md:w-2/3">
+                    <pre className="font-mono text-sm text-silver leading-relaxed whitespace-pre-wrap">
+                      <code dangerouslySetInnerHTML={{
+                        __html: exp.code
+                          .replace(/(class|public|string|int)/g, '<span class="syntax-keyword">$1</span>')
+                          .replace(/(\w+)\s*=>/g, '<span class="syntax-property">$1</span> =>')
+                          .replace(/"([^"]*)"/g, '<span class="syntax-string">"$1"</span>')
+                          .replace(/(\d+)/g, '<span class="syntax-number">$1</span>')
+                          .replace(/\/\/.*/g, '<span class="syntax-comment">$&</span>')
+                          .replace(/(:\s*)(I\w+)/g, '$1<span class="syntax-type">$2</span>')
+                      }} />
+                    </pre>
                   </div>
                 </div>
-              </motion.div>
-            </AnimatedSection>
+              </div>
+            </div>
           ))}
         </div>
       </div>
@@ -534,52 +549,89 @@ const ExperienceSection = () => {
 
 // ============ SKILLS SECTION ============
 const SkillsSection = () => {
-  const skillGroups = [
-    { name: 'Backend', skills: ['.NET Core', 'Python', 'Node.js'], color: '#3B82F6' },
-    { name: 'Cloud', skills: ['Azure', 'Kubernetes', 'KEDA'], color: '#F97316' },
-    { name: 'Data', skills: ['Snowflake', 'KDB+', 'Databricks'], color: '#EC4899' },
-    { name: 'Frontend', skills: ['Svelte', 'React', 'WPF'], color: '#3B82F6' },
-    { name: 'AI', skills: ['OpenAI', 'GPT-4', 'LangChain'], color: '#F97316' },
-    { name: 'DevOps', skills: ['Azure DevOps', 'Docker', 'CI/CD'], color: '#EC4899' },
+  const sectionRef = useRef(null)
+  const skills = [
+    { category: 'Backend', items: ['.NET Core', 'Python', 'Node.js'], color: 'ember' },
+    { category: 'Cloud', items: ['Azure', 'Kubernetes', 'KEDA'], color: 'gold' },
+    { category: 'Data', items: ['Snowflake', 'KDB+', 'Databricks'], color: 'cyan' },
+    { category: 'Frontend', items: ['Svelte', 'React', 'WPF'], color: 'ember' },
+    { category: 'AI/ML', items: ['OpenAI', 'GPT-4o', 'LangChain'], color: 'gold' },
+    { category: 'DevOps', items: ['Azure DevOps', 'Docker', 'CI/CD'], color: 'cyan' },
   ]
 
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.skill-card',
+        { y: 80, opacity: 0, rotateY: 15 },
+        {
+          y: 0,
+          opacity: 1,
+          rotateY: 0,
+          stagger: 0.1,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.skills-grid',
+            start: 'top 80%',
+            toggleActions: 'play none none reverse'
+          }
+        }
+      )
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
+
   return (
-    <section id="skills" className="py-20 md:py-32 px-4 md:px-6 relative">
+    <section ref={sectionRef} id="skills" className="py-32 px-6 bg-obsidian relative">
+      {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: 'radial-gradient(rgba(59, 130, 246, 0.4) 1px, transparent 1px)',
-            backgroundSize: '24px 24px',
+            backgroundImage: 'radial-gradient(rgba(255,77,0,0.5) 1px, transparent 1px)',
+            backgroundSize: '40px 40px'
           }}
         />
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto">
-        <AnimatedSection className="text-center mb-12 md:mb-16">
-          <span className="text-orange text-xs md:text-sm font-mono tracking-wider mb-3 md:mb-4 block">// SKILLS</span>
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight">
-            <span className="text-white">Tech </span>
-            <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #3B82F6, #F97316, #EC4899)' }}>Arsenal</span>
-          </h2>
-        </AnimatedSection>
+      <div className="max-w-6xl mx-auto relative">
+        <div className="text-center mb-16">
+          <motion.span
+            className="text-gold font-mono text-sm tracking-widest"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            // SKILLS
+          </motion.span>
+          <motion.h2
+            className="text-4xl md:text-5xl font-display text-white mt-4"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
+            Tech <span className="gradient-text">Arsenal</span>
+          </motion.h2>
+        </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
-          {skillGroups.map((group, i) => (
-            <AnimatedSection key={group.name} delay={i * 0.08}>
-              <motion.div
-                className="p-4 md:p-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl md:rounded-2xl text-center h-full"
-                whileHover={{ borderColor: group.color + '50', y: -5 }}
-                transition={{ duration: 0.3 }}
-              >
-                <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: group.color }}>{group.name}</h3>
-                <div className="space-y-1 md:space-y-2">
-                  {group.skills.map((skill, j) => (
-                    <div key={j} className="text-white/60 text-xs md:text-sm">{skill}</div>
-                  ))}
-                </div>
-              </motion.div>
-            </AnimatedSection>
+        <div className="skills-grid grid grid-cols-2 md:grid-cols-3 gap-6" style={{ perspective: '1000px' }}>
+          {skills.map((skill, i) => (
+            <div
+              key={i}
+              className="skill-card glass rounded-2xl p-6 text-center card-hover"
+              style={{ transformStyle: 'preserve-3d' }}
+            >
+              <h3 className={`text-lg font-display text-${skill.color} mb-4`}>{skill.category}</h3>
+              <div className="space-y-2">
+                {skill.items.map((item, j) => (
+                  <div key={j} className="text-silver text-sm">{item}</div>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </div>
@@ -587,188 +639,212 @@ const SkillsSection = () => {
   )
 }
 
-// ============ ACHIEVEMENTS SECTION ============
-const AchievementsSection = () => {
-  const achievements = [
-    { metric: '1600%', label: 'User Growth', desc: 'Scaled platform to 150+ users', color: '#3B82F6' },
-    { metric: '30', suffix: 'days', label: 'Migration', desc: 'Node.js to .NET Core', color: '#F97316' },
-    { metric: 'GPT-4', label: 'AI Integration', desc: 'Enterprise-grade processing', color: '#EC4899' },
-    { metric: '99.9%', label: 'Uptime', desc: 'Production SLA maintained', color: '#3B82F6' },
-  ]
-
-  return (
-    <section id="impact" className="py-20 md:py-32 px-4 md:px-6 relative">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-orange/5 rounded-full blur-[150px] md:blur-[200px]" />
-      </div>
-
-      <div className="relative z-10 max-w-5xl mx-auto">
-        <AnimatedSection className="text-center mb-12 md:mb-16">
-          <span className="text-pink text-xs md:text-sm font-mono tracking-wider mb-3 md:mb-4 block">// IMPACT</span>
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight">
-            <span className="text-white">What I </span>
-            <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #3B82F6, #F97316, #EC4899)' }}>Delivered</span>
-          </h2>
-        </AnimatedSection>
-
-        <div className="grid md:grid-cols-2 gap-4 md:gap-6">
-          {achievements.map((item, i) => (
-            <AnimatedSection key={i} delay={i * 0.1}>
-              <motion.div
-                className="p-6 md:p-8 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl md:rounded-3xl h-full"
-                whileHover={{ y: -10, borderColor: 'rgba(255,255,255,0.2)' }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="mb-3 md:mb-4">
-                  <span
-                    className="text-4xl md:text-5xl lg:text-6xl font-black text-transparent bg-clip-text"
-                    style={{ backgroundImage: `linear-gradient(135deg, ${item.color}, ${item.color === '#3B82F6' ? '#F97316' : item.color === '#F97316' ? '#EC4899' : '#3B82F6'})` }}
-                  >
-                    {item.metric}
-                  </span>
-                  {item.suffix && <span className="text-xl md:text-2xl text-white/40 ml-2">{item.suffix}</span>}
-                </div>
-                <h3 className="text-lg md:text-xl font-bold text-white mb-1 md:mb-2">{item.label}</h3>
-                <p className="text-white/40 text-sm md:text-base">{item.desc}</p>
-              </motion.div>
-            </AnimatedSection>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ============ CONNECT SECTION ============
-const ConnectSection = () => {
+// ============ CONTACT SECTION (SQL STYLE) ============
+const ContactSection = () => {
+  const sectionRef = useRef(null)
   const [formData, setFormData] = useState({ name: '', email: '', message: '' })
-  const [status, setStatus] = useState('idle')
+  const [sending, setSending] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setStatus('sending')
+    setSending(true)
     await new Promise(r => setTimeout(r, 1500))
-    setStatus('sent')
+    setSending(false)
     setFormData({ name: '', email: '', message: '' })
-    setTimeout(() => setStatus('idle'), 3000)
+    alert('Message sent!')
   }
 
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.contact-block',
+        { y: 60, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          stagger: 0.2,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.contact-container',
+            start: 'top 75%',
+            toggleActions: 'play none none reverse'
+          }
+        }
+      )
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
+
   return (
-    <section id="connect" className="py-20 md:py-32 px-4 md:px-6 relative">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 right-1/4 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-orange/5 rounded-full blur-[150px] md:blur-[200px]" />
-        <div className="absolute bottom-1/4 left-1/4 w-[350px] md:w-[500px] h-[350px] md:h-[500px] bg-blue/5 rounded-full blur-[120px] md:blur-[180px]" />
-      </div>
+    <section ref={sectionRef} id="contact" className="py-32 px-6 bg-void relative">
+      {/* Glow effect */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-ember/10 rounded-full blur-[200px]" />
 
-      <div className="relative z-10 max-w-4xl mx-auto">
-        <AnimatedSection className="text-center mb-10 md:mb-12">
-          <span className="text-blue text-xs md:text-sm font-mono tracking-wider mb-3 md:mb-4 block">// CONNECT</span>
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight mb-3 md:mb-4">
-            <span className="text-white">Let&apos;s Build </span>
-            <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #3B82F6, #F97316, #EC4899)' }}>Together</span>
-          </h2>
-        </AnimatedSection>
+      <div className="max-w-5xl mx-auto relative contact-container">
+        <div className="text-center mb-16">
+          <motion.span
+            className="text-cyan font-mono text-sm tracking-widest"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            // CONTACT
+          </motion.span>
+          <motion.h2
+            className="text-4xl md:text-5xl font-display text-white mt-4"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
+            Let&apos;s <span className="gradient-text">Connect</span>
+          </motion.h2>
+        </div>
 
-        <div className="grid md:grid-cols-2 gap-6 md:gap-8">
-          <AnimatedSection delay={0.1}>
-            <div className="space-y-3 md:space-y-4">
-              {[
-                { icon: '📧', label: 'Email', value: 'suganthan94@yahoo.com', href: 'mailto:suganthan94@yahoo.com' },
-                { icon: '💼', label: 'LinkedIn', value: 'Connect', href: 'https://www.linkedin.com/in/suganthan-arulvelan-a9356073/' },
-                { icon: '🐙', label: 'GitHub', value: 'Code', href: 'https://github.com/shuganth' },
-              ].map((item, i) => (
-                <motion.a
-                  key={i}
-                  href={item.href}
-                  target={item.href.startsWith('http') ? '_blank' : undefined}
-                  rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                  className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl hover:border-blue/50 transition-colors"
-                  whileHover={{ x: 5 }}
-                >
-                  <span className="text-xl md:text-2xl">{item.icon}</span>
-                  <div>
-                    <div className="text-white/40 text-xs">{item.label}</div>
-                    <div className="text-white text-sm md:text-base">{item.value}</div>
-                  </div>
-                </motion.a>
-              ))}
+        <div className="grid lg:grid-cols-2 gap-12">
+          {/* SQL Code Block */}
+          <div className="contact-block code-window">
+            <div className="code-header">
+              <div className="code-dot red" />
+              <div className="code-dot yellow" />
+              <div className="code-dot green" />
+              <span className="ml-3 text-silver text-xs font-mono">contact.sql</span>
             </div>
-          </AnimatedSection>
+            <div className="code-content">
+              <div><span className="syntax-comment">-- Let&apos;s build something great</span></div>
+              <div className="mt-3">
+                <span className="syntax-keyword">SELECT</span> * <span className="syntax-keyword">FROM</span>{' '}
+                <span className="syntax-type">Suganthan</span>
+              </div>
+              <div>
+                <span className="syntax-keyword">WHERE</span>{' '}
+                <span className="syntax-property">Status</span> ={' '}
+                <span className="syntax-string">&apos;Open&apos;</span>
+              </div>
+              <div className="mt-4">
+                <span className="syntax-keyword">INSERT INTO</span>{' '}
+                <span className="syntax-type">Contact</span>
+              </div>
+              <div><span className="syntax-keyword">VALUES</span></div>
+              <a href="mailto:suganthan94@yahoo.com" className="block ml-4 hover:text-ember transition-colors">
+                (<span className="syntax-string">&apos;Email&apos;</span>,{' '}
+                <span className="syntax-string">&apos;suganthan94@yahoo.com&apos;</span>),
+              </a>
+              <a href="https://linkedin.com/in/suganthan-arulvelan-a9356073" target="_blank" rel="noopener noreferrer" className="block ml-4 hover:text-ember transition-colors">
+                (<span className="syntax-string">&apos;LinkedIn&apos;</span>,{' '}
+                <span className="syntax-string">&apos;/suganthan-arulvelan&apos;</span>),
+              </a>
+              <a href="https://github.com/shuganth" target="_blank" rel="noopener noreferrer" className="block ml-4 hover:text-ember transition-colors">
+                (<span className="syntax-string">&apos;GitHub&apos;</span>,{' '}
+                <span className="syntax-string">&apos;/shuganth&apos;</span>);
+              </a>
+              <div className="mt-4">
+                <span className="syntax-comment">-- Response: &lt;24 hours</span>
+              </div>
+            </div>
+          </div>
 
-          <AnimatedSection delay={0.2}>
-            <form onSubmit={handleSubmit} className="p-4 md:p-6 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl">
-              <div className="space-y-3 md:space-y-4">
+          {/* Contact Form */}
+          <div className="contact-block">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
                 <input
                   type="text"
                   placeholder="Name"
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 md:px-4 py-2.5 md:py-3 bg-white/5 border border-white/10 rounded-lg md:rounded-xl text-white text-sm placeholder:text-white/30 focus:border-blue focus:outline-none"
+                  className="w-full px-4 py-3 bg-obsidian border border-white/10 rounded-xl text-white placeholder:text-silver focus:border-ember focus:outline-none transition-colors"
                 />
+              </div>
+              <div>
                 <input
                   type="email"
                   placeholder="Email"
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-3 md:px-4 py-2.5 md:py-3 bg-white/5 border border-white/10 rounded-lg md:rounded-xl text-white text-sm placeholder:text-white/30 focus:border-blue focus:outline-none"
+                  className="w-full px-4 py-3 bg-obsidian border border-white/10 rounded-xl text-white placeholder:text-silver focus:border-ember focus:outline-none transition-colors"
                 />
+              </div>
+              <div>
                 <textarea
                   placeholder="Message"
+                  rows={4}
                   required
-                  rows={3}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full px-3 md:px-4 py-2.5 md:py-3 bg-white/5 border border-white/10 rounded-lg md:rounded-xl text-white text-sm placeholder:text-white/30 focus:border-blue focus:outline-none resize-none"
+                  className="w-full px-4 py-3 bg-obsidian border border-white/10 rounded-xl text-white placeholder:text-silver focus:border-ember focus:outline-none transition-colors resize-none"
                 />
-                <motion.button
-                  type="submit"
-                  disabled={status !== 'idle'}
-                  className="w-full py-3 md:py-4 font-bold rounded-lg md:rounded-xl disabled:opacity-50 text-sm md:text-base"
-                  style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316)' }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {status === 'sending' ? 'Sending...' : status === 'sent' ? '✓ Sent!' : 'Send Message'}
-                </motion.button>
               </div>
+              <button
+                type="submit"
+                disabled={sending}
+                className="w-full py-4 rounded-xl gradient-ember text-void font-semibold hover:scale-[1.02] transition-transform disabled:opacity-50"
+              >
+                {sending ? 'Sending...' : 'Send Message'}
+              </button>
             </form>
-          </AnimatedSection>
+          </div>
         </div>
-
-        <AnimatedSection delay={0.3} className="mt-12 md:mt-16 text-center text-white/20 text-xs md:text-sm">
-          © {new Date().getFullYear()} Suganthan Arulvelan
-        </AnimatedSection>
       </div>
     </section>
   )
 }
 
+// ============ FOOTER ============
+const Footer = () => (
+  <footer className="py-12 px-6 bg-obsidian border-t border-white/5">
+    <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="text-2xl font-display gradient-text">SA</div>
+      <p className="text-silver text-sm">
+        &copy; {new Date().getFullYear()} Suganthan Arulvelan. All rights reserved.
+      </p>
+      <div className="flex gap-6">
+        <a href="https://github.com/shuganth" target="_blank" rel="noopener noreferrer" className="text-silver hover:text-ember transition-colors">
+          GitHub
+        </a>
+        <a href="https://linkedin.com/in/suganthan-arulvelan-a9356073" target="_blank" rel="noopener noreferrer" className="text-silver hover:text-ember transition-colors">
+          LinkedIn
+        </a>
+      </div>
+    </div>
+  </footer>
+)
+
 // ============ MAIN COMPONENT ============
 export default function Home() {
-  const [showIntro, setShowIntro] = useState(true)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // Register ScrollTo plugin
+    gsap.registerPlugin(ScrollTrigger)
+    if (gsap.plugins?.scrollTo) {
+      gsap.registerPlugin(gsap.plugins.scrollTo)
+    }
+  }, [])
 
   return (
-    <div className="bg-black text-white min-h-screen">
+    <main className="bg-void text-white min-h-screen">
       <AnimatePresence mode="wait">
-        {showIntro && <SARevealIntro key="intro" onComplete={() => setShowIntro(false)} />}
+        {loading && <Preloader key="preloader" onComplete={() => setLoading(false)} />}
       </AnimatePresence>
 
-      {!showIntro && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <FloatingNav />
-          <HeroSection />
+      {!loading && (
+        <>
+          <div className="grain" />
+          <Navigation />
+          <SAHero />
+          <AboutSection />
           <ExperienceSection />
           <SkillsSection />
-          <AchievementsSection />
-          <ConnectSection />
-        </motion.div>
+          <ContactSection />
+          <Footer />
+        </>
       )}
-    </div>
+    </main>
   )
 }
