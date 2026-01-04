@@ -14,16 +14,18 @@ export const metadata = {
     title: 'Suganthan Arulvelan | Healthcare Analytics & AI',
     description: 'Associate Director at Syneos Health | Building Healthcare Analytics Platforms',
     type: 'website',
+    url: 'https://www.shuganth.com',
   },
+  metadataBase: new URL('https://www.shuganth.com'),
 }
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
-        <div className="grain" />
-        {children}
-      </body>
+      <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+      </head>
+      <body>{children}</body>
     </html>
   )
 }
