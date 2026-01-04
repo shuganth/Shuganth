@@ -1,12 +1,16 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion'
+import { useState, useEffect, useRef, useLayoutEffect } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import anime from 'animejs'
+
+gsap.registerPlugin(ScrollTrigger)
 
 // ============ SA REVEAL INTRO ============
 const SARevealIntro = ({ onComplete }) => {
   const [phase, setPhase] = useState('logo')
+  const progressRef = useRef(null)
 
   useEffect(() => {
     const timeline = anime.timeline({ easing: 'easeOutExpo' })
@@ -58,17 +62,20 @@ const SARevealIntro = ({ onComplete }) => {
       complete: () => setTimeout(onComplete, 100),
     }, '+=400')
 
+    // Progress bar animation
+    gsap.to(progressRef.current, {
+      width: '100%',
+      duration: 2.5,
+      ease: 'power2.inOut'
+    })
+
     return () => timeline.pause()
   }, [onComplete])
 
   const words = ['.NET', 'Azure', 'Kubernetes', 'AI', 'Leadership', 'Svelte', 'Architecture']
 
   return (
-    <motion.div
-      className="fixed inset-0 z-[200] bg-black flex items-center justify-center overflow-hidden"
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.4 }}
-    >
+    <div className="fixed inset-0 z-[200] bg-black flex items-center justify-center overflow-hidden intro-overlay">
       <div className="absolute inset-0 opacity-10" style={{
         backgroundImage: 'linear-gradient(rgba(59,130,246,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.3) 1px, transparent 1px)',
         backgroundSize: '50px 50px'
@@ -108,49 +115,75 @@ const SARevealIntro = ({ onComplete }) => {
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
         <div className="w-32 h-0.5 bg-white/10 rounded-full overflow-hidden">
-          <motion.div className="h-full rounded-full" style={{ background: 'linear-gradient(90deg, #3B82F6, #F97316, #EC4899)' }}
-            initial={{ width: '0%' }} animate={{ width: '100%' }} transition={{ duration: 2.5, ease: 'easeInOut' }} />
+          <div ref={progressRef} className="h-full rounded-full w-0" style={{ background: 'linear-gradient(90deg, #3B82F6, #F97316, #EC4899)' }} />
         </div>
         <p className="text-white/30 text-xs mt-2 text-center font-mono">
           {phase === 'logo' ? 'Loading...' : phase === 'split' ? 'Building experience...' : 'Welcome'}
         </p>
       </div>
-    </motion.div>
+    </div>
   )
 }
 
-// ============ ANIMATED WRAPPER ============
-const AnimatedSection = ({ children, className = '', delay = 0 }) => {
+// ============ GSAP ANIMATED SECTION ============
+const AnimatedSection = ({ children, className = '' }) => {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-50px' })
+
+  useLayoutEffect(() => {
+    const el = ref.current
+    gsap.fromTo(el,
+      { opacity: 0, y: 50 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 85%',
+          toggleActions: 'play none none none'
+        }
+      }
+    )
+  }, [])
+
   return (
-    <motion.div ref={ref} className={className}
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay, ease: [0.25, 0.1, 0.25, 1] }}>
+    <div ref={ref} className={className}>
       {children}
-    </motion.div>
+    </div>
   )
 }
 
 // ============ SKILL BAR CHART ============
 const SkillBar = ({ name, level, color, delay = 0 }) => {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true })
+  const barRef = useRef(null)
+  const containerRef = useRef(null)
+
+  useLayoutEffect(() => {
+    gsap.fromTo(barRef.current,
+      { width: '0%' },
+      {
+        width: `${level}%`,
+        duration: 1.2,
+        delay,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top 90%',
+          toggleActions: 'play none none none'
+        }
+      }
+    )
+  }, [level, delay])
+
   return (
-    <div ref={ref} className="mb-3">
+    <div ref={containerRef} className="mb-3">
       <div className="flex justify-between text-sm mb-1">
         <span className="text-white/80">{name}</span>
         <span className="text-white/40">{level}%</span>
       </div>
       <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-        <motion.div
-          className="h-full rounded-full"
-          style={{ background: color }}
-          initial={{ width: 0 }}
-          animate={isInView ? { width: `${level}%` } : {}}
-          transition={{ duration: 1, delay, ease: 'easeOut' }}
-        />
+        <div ref={barRef} className="h-full rounded-full" style={{ background: color, width: 0 }} />
       </div>
     </div>
   )
@@ -159,10 +192,26 @@ const SkillBar = ({ name, level, color, delay = 0 }) => {
 // ============ EXPANDABLE CARD ============
 const ExpandableCard = ({ title, subtitle, period, color, children, defaultOpen = false }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen)
+  const contentRef = useRef(null)
+  const cardRef = useRef(null)
+
+  useEffect(() => {
+    if (contentRef.current) {
+      if (isOpen) {
+        gsap.fromTo(contentRef.current,
+          { height: 0, opacity: 0 },
+          { height: 'auto', opacity: 1, duration: 0.4, ease: 'power2.out' }
+        )
+      } else {
+        gsap.to(contentRef.current, { height: 0, opacity: 0, duration: 0.3, ease: 'power2.in' })
+      }
+    }
+  }, [isOpen])
+
   return (
-    <motion.div
-      className="bg-white/5 border border-white/10 rounded-xl overflow-hidden"
-      whileHover={{ borderColor: color + '40' }}
+    <div ref={cardRef} className="bg-white/5 border border-white/10 rounded-xl overflow-hidden card-hover"
+      onMouseEnter={() => gsap.to(cardRef.current, { borderColor: color + '40', duration: 0.3 })}
+      onMouseLeave={() => gsap.to(cardRef.current, { borderColor: 'rgba(255,255,255,0.1)', duration: 0.3 })}
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -178,70 +227,68 @@ const ExpandableCard = ({ title, subtitle, period, color, children, defaultOpen 
             <span className="text-xs font-mono px-3 py-1 rounded-full bg-white/5 self-start" style={{ color }}>{period}</span>
           </div>
         </div>
-        <motion.div
-          className="text-white/40 flex-shrink-0 mt-2"
-          animate={{ rotate: isOpen ? 180 : 0 }}
-        >
+        <div className="text-white/40 flex-shrink-0 mt-2 transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
-        </motion.div>
+        </div>
       </button>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="overflow-hidden"
-          >
-            <div className="px-4 md:px-5 pb-5 pl-8 md:pl-10 border-t border-white/5 pt-4">
-              {children}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+      <div ref={contentRef} className="overflow-hidden" style={{ height: defaultOpen ? 'auto' : 0, opacity: defaultOpen ? 1 : 0 }}>
+        <div className="px-4 md:px-5 pb-5 pl-8 md:pl-10 border-t border-white/5 pt-4">
+          {children}
+        </div>
+      </div>
+    </div>
   )
 }
 
 // ============ STAT CARD ============
 const StatCard = ({ value, label, suffix = '', color }) => {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true })
-  const [count, setCount] = useState(0)
+  const countRef = useRef(null)
+  const [hasAnimated, setHasAnimated] = useState(false)
 
-  useEffect(() => {
-    if (isInView && typeof value === 'number') {
-      const duration = 2000
-      const steps = 60
-      const increment = value / steps
-      let current = 0
-      const timer = setInterval(() => {
-        current += increment
-        if (current >= value) {
-          setCount(value)
-          clearInterval(timer)
-        } else {
-          setCount(Math.floor(current))
+  useLayoutEffect(() => {
+    if (typeof value !== 'number') return
+
+    const trigger = ScrollTrigger.create({
+      trigger: ref.current,
+      start: 'top 90%',
+      onEnter: () => {
+        if (!hasAnimated) {
+          setHasAnimated(true)
+          gsap.fromTo(countRef.current,
+            { innerText: 0 },
+            {
+              innerText: value,
+              duration: 2,
+              ease: 'power2.out',
+              snap: { innerText: 1 },
+              onUpdate: function() {
+                if (countRef.current) {
+                  countRef.current.innerText = Math.round(gsap.getProperty(countRef.current, 'innerText'))
+                }
+              }
+            }
+          )
         }
-      }, duration / steps)
-      return () => clearInterval(timer)
-    }
-  }, [isInView, value])
+      }
+    })
+    return () => trigger.kill()
+  }, [value, hasAnimated])
 
   return (
-    <motion.div
+    <div
       ref={ref}
-      className="p-4 md:p-6 bg-white/5 border border-white/10 rounded-xl text-center"
-      whileHover={{ y: -5, borderColor: color + '40' }}
+      className="p-4 md:p-6 bg-white/5 border border-white/10 rounded-xl text-center stat-card"
+      onMouseEnter={(e) => gsap.to(e.currentTarget, { y: -5, borderColor: color + '40', duration: 0.3 })}
+      onMouseLeave={(e) => gsap.to(e.currentTarget, { y: 0, borderColor: 'rgba(255,255,255,0.1)', duration: 0.3 })}
     >
       <div className="text-3xl md:text-4xl font-black mb-1" style={{ color }}>
-        {typeof value === 'number' ? count : value}{suffix}
+        {typeof value === 'number' ? <><span ref={countRef}>0</span>{suffix}</> : value}
       </div>
       <div className="text-white/40 text-sm">{label}</div>
-    </motion.div>
+    </div>
   )
 }
 
@@ -249,24 +296,43 @@ const StatCard = ({ value, label, suffix = '', color }) => {
 const Navigation = () => {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const navRef = useRef(null)
+  const mobileMenuRef = useRef(null)
+
+  useEffect(() => {
+    gsap.from(navRef.current, { y: -100, duration: 0.6, delay: 0.3, ease: 'power3.out' })
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 100)
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  useEffect(() => {
+    if (mobileMenuRef.current) {
+      if (mobileOpen) {
+        gsap.fromTo(mobileMenuRef.current,
+          { height: 0, opacity: 0 },
+          { height: 'auto', opacity: 1, duration: 0.3, ease: 'power2.out' }
+        )
+      } else {
+        gsap.to(mobileMenuRef.current, { height: 0, opacity: 0, duration: 0.2, ease: 'power2.in' })
+      }
+    }
+  }, [mobileOpen])
+
   const scrollTo = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+    gsap.to(window, { duration: 1, scrollTo: { y: `#${id}`, offsetY: 70 }, ease: 'power3.inOut' })
     setMobileOpen(false)
   }
 
   const links = ['about', 'experience', 'skills', 'achievements', 'education', 'contact']
 
   return (
-    <motion.nav
+    <nav
+      ref={navRef}
       className={`fixed top-0 left-0 right-0 z-50 px-4 md:px-6 py-3 transition-all duration-300 ${scrolled ? 'bg-black/90 backdrop-blur-xl border-b border-white/5' : ''}`}
-      initial={{ y: -100 }} animate={{ y: 0 }} transition={{ delay: 0.3 }}
     >
       <div className="max-w-6xl mx-auto flex items-center justify-between">
         <button onClick={() => scrollTo('hero')} className="text-xl font-black">
@@ -290,71 +356,111 @@ const Navigation = () => {
         </button>
       </div>
 
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden mt-4 pb-4 border-t border-white/10 pt-4"
-          >
-            {links.map(link => (
-              <button key={link} onClick={() => scrollTo(link)} className="block w-full text-left py-2 text-white/60 hover:text-white capitalize">{link}</button>
-            ))}
-            <button onClick={() => scrollTo('contact')} className="mt-3 w-full py-3 text-sm font-bold rounded-full" style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316)' }}>
-              Let&apos;s Talk
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.nav>
+      <div ref={mobileMenuRef} className="md:hidden overflow-hidden" style={{ height: 0, opacity: 0 }}>
+        <div className="mt-4 pb-4 border-t border-white/10 pt-4">
+          {links.map(link => (
+            <button key={link} onClick={() => scrollTo(link)} className="block w-full text-left py-2 text-white/60 hover:text-white capitalize">{link}</button>
+          ))}
+          <button onClick={() => scrollTo('contact')} className="mt-3 w-full py-3 text-sm font-bold rounded-full" style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316)' }}>
+            Let&apos;s Talk
+          </button>
+        </div>
+      </div>
+    </nav>
   )
 }
 
 // ============ HERO SECTION ============
 const HeroSection = () => {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], [0, 150])
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+  const sectionRef = useRef(null)
+  const contentRef = useRef(null)
+  const orb1Ref = useRef(null)
+  const orb2Ref = useRef(null)
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      // Parallax effect
+      gsap.to(contentRef.current, {
+        y: 150,
+        opacity: 0,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true
+        }
+      })
+
+      // Floating orbs
+      gsap.to(orb1Ref.current, {
+        x: 30, y: 20,
+        duration: 8,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut'
+      })
+      gsap.to(orb2Ref.current, {
+        x: -20, y: -15,
+        duration: 6,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut'
+      })
+
+      // Staggered entrance
+      const tl = gsap.timeline({ delay: 0.2 })
+      tl.from('.hero-photo', { scale: 0.8, opacity: 0, duration: 0.6, ease: 'back.out(1.5)' })
+        .from('.hero-status', { y: 20, opacity: 0, duration: 0.4 }, '-=0.2')
+        .from('.hero-title', { y: 20, opacity: 0, duration: 0.5 }, '-=0.2')
+        .from('.hero-subtitle', { opacity: 0, duration: 0.4 }, '-=0.2')
+        .from('.hero-desc', { opacity: 0, duration: 0.4 }, '-=0.2')
+        .from('.hero-buttons', { y: 20, opacity: 0, duration: 0.4 }, '-=0.2')
+        .from('.hero-social', { opacity: 0, duration: 0.4 }, '-=0.2')
+        .from('.hero-scroll', { opacity: 0, duration: 0.4 }, '-=0.2')
+
+      // Bounce scroll indicator
+      gsap.to('.hero-scroll', { y: 8, duration: 0.75, repeat: -1, yoyo: true, ease: 'sine.inOut' })
+
+    }, sectionRef)
+    return () => ctx.revert()
+  }, [])
 
   return (
-    <section id="hero" ref={ref} className="min-h-screen flex items-center justify-center relative overflow-hidden px-4 pt-20">
+    <section id="hero" ref={sectionRef} className="min-h-screen flex items-center justify-center relative overflow-hidden px-4 pt-20">
       <div className="absolute inset-0">
-        <motion.div className="absolute w-[400px] h-[400px] rounded-full blur-[120px] opacity-20" style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.6), transparent)', top: '10%', left: '10%' }}
-          animate={{ x: [0, 30, 0], y: [0, 20, 0] }} transition={{ duration: 8, repeat: Infinity }} />
-        <motion.div className="absolute w-[350px] h-[350px] rounded-full blur-[100px] opacity-20" style={{ background: 'radial-gradient(circle, rgba(249,115,22,0.6), transparent)', bottom: '20%', right: '10%' }}
-          animate={{ x: [0, -20, 0], y: [0, -15, 0] }} transition={{ duration: 6, repeat: Infinity }} />
+        <div ref={orb1Ref} className="absolute w-[400px] h-[400px] rounded-full blur-[120px] opacity-20" style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.6), transparent)', top: '10%', left: '10%' }} />
+        <div ref={orb2Ref} className="absolute w-[350px] h-[350px] rounded-full blur-[100px] opacity-20" style={{ background: 'radial-gradient(circle, rgba(249,115,22,0.6), transparent)', bottom: '20%', right: '10%' }} />
       </div>
 
-      <motion.div className="relative z-10 text-center max-w-4xl" style={{ y, opacity }}>
-        <motion.div className="mb-6" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }}>
+      <div ref={contentRef} className="relative z-10 text-center max-w-4xl">
+        <div className="hero-photo mb-6">
           <div className="w-32 h-32 md:w-40 md:h-40 mx-auto rounded-full overflow-hidden border-4 border-white/10 shadow-2xl">
             <img src="/profile.jpg" alt="Suganthan Arulvelan" className="w-full h-full object-cover" />
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div className="inline-flex items-center gap-2 px-4 py-2 mb-4 bg-white/5 border border-white/10 rounded-full" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+        <div className="hero-status inline-flex items-center gap-2 px-4 py-2 mb-4 bg-white/5 border border-white/10 rounded-full">
           <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
           <span className="text-xs md:text-sm text-white/60 font-mono">Available for opportunities</span>
-        </motion.div>
+        </div>
 
-        <motion.h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+        <h1 className="hero-title text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-4">
           <span className="text-white">SUGANTHAN</span><br />
           <span style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316, #EC4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>ARULVELAN</span>
-        </motion.h1>
+        </h1>
 
-        <motion.p className="text-lg md:text-xl text-white/60 mb-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+        <p className="hero-subtitle text-lg md:text-xl text-white/60 mb-2">
           <span className="text-blue font-semibold">Associate Director</span> at Syneos Health
-        </motion.p>
+        </p>
 
-        <motion.p className="text-sm md:text-base text-white/40 max-w-2xl mx-auto mb-8 leading-relaxed" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
+        <p className="hero-desc text-sm md:text-base text-white/40 max-w-2xl mx-auto mb-8 leading-relaxed">
           Building Healthcare Analytics Platforms • Enterprise Architecture & AI Integration<br />
           Leading 20+ Engineers • 8+ Years Experience • Zero Production Incidents
-        </motion.p>
+        </p>
 
-        <motion.div className="flex flex-wrap justify-center gap-3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}>
-          <button onClick={() => document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' })}
+        <div className="hero-buttons flex flex-wrap justify-center gap-3">
+          <button onClick={() => gsap.to(window, { duration: 1, scrollTo: '#experience', ease: 'power3.inOut' })}
             className="px-6 py-3 font-bold rounded-full flex items-center gap-2" style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316)' }}>
             Explore My Journey
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
@@ -362,9 +468,9 @@ const HeroSection = () => {
           <a href="/Suganthan_Arulvelan_Resume.html" target="_blank" className="px-6 py-3 border border-white/20 text-white font-medium rounded-full hover:bg-white/5 transition-colors">
             View Resume
           </a>
-        </motion.div>
+        </div>
 
-        <motion.div className="flex justify-center gap-4 mt-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
+        <div className="hero-social flex justify-center gap-4 mt-8">
           {[
             { icon: '💼', href: 'https://www.linkedin.com/in/suganthan-arulvelan-a9356073/', label: 'LinkedIn' },
             { icon: '🐙', href: 'https://github.com/shuganth', label: 'GitHub' },
@@ -375,12 +481,12 @@ const HeroSection = () => {
               {item.icon}
             </a>
           ))}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
-      <motion.div className="absolute bottom-8 left-1/2 -translate-x-1/2" animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
+      <div className="hero-scroll absolute bottom-8 left-1/2 -translate-x-1/2">
         <span className="text-white/30 text-xs font-mono">SCROLL</span>
-      </motion.div>
+      </div>
     </section>
   )
 }
@@ -399,7 +505,7 @@ const AboutSection = () => {
         </AnimatedSection>
 
         <div className="grid md:grid-cols-2 gap-8 items-center">
-          <AnimatedSection delay={0.1}>
+          <AnimatedSection>
             <div className="relative">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-white/10">
                 <img src="/photo2.jpg" alt="Suganthan" className="w-full h-full object-cover" />
@@ -410,7 +516,7 @@ const AboutSection = () => {
             </div>
           </AnimatedSection>
 
-          <AnimatedSection delay={0.2}>
+          <AnimatedSection>
             <div className="space-y-4 text-white/70 leading-relaxed">
               <p className="text-lg">
                 From programming <span className="text-orange font-semibold">microcontrollers</span> to leading <span className="text-blue font-semibold">enterprise platform teams</span>—my journey has been about solving progressively harder problems.
@@ -571,7 +677,7 @@ const ExperienceSection = () => {
 
         <div className="space-y-4">
           {experiences.map((exp, i) => (
-            <AnimatedSection key={i} delay={i * 0.1}>
+            <AnimatedSection key={i}>
               <ExpandableCard title={exp.title} subtitle={exp.company} period={exp.period} color={exp.color} defaultOpen={i === 0}>
                 <p className="text-white/60 mb-4 italic">{exp.summary}</p>
                 <ul className="space-y-2 mb-4">
@@ -658,7 +764,7 @@ const SkillsSection = () => {
 
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           {skillCategories.map((category, i) => (
-            <AnimatedSection key={category.name} delay={i * 0.1}>
+            <AnimatedSection key={category.name}>
               <div className="p-5 bg-white/5 border border-white/10 rounded-xl h-full">
                 <h3 className="text-lg font-bold mb-4" style={{ color: category.color }}>{category.name}</h3>
                 {category.skills.map((skill, j) => (
@@ -669,18 +775,18 @@ const SkillsSection = () => {
           ))}
         </div>
 
-        <AnimatedSection delay={0.3}>
+        <AnimatedSection>
           <div className="p-5 bg-white/5 border border-white/10 rounded-xl">
             <h3 className="text-lg font-bold text-white mb-4 text-center">Tools, Patterns & Technologies</h3>
             <div className="flex flex-wrap justify-center gap-2">
               {toolsAndPatterns.map((tool, i) => (
-                <motion.span
+                <span
                   key={tool}
-                  className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-sm text-white/70"
-                  whileHover={{ scale: 1.05, borderColor: i % 3 === 0 ? '#3B82F640' : i % 3 === 1 ? '#F9731640' : '#EC489940' }}
+                  className="tool-tag px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-sm text-white/70 cursor-default transition-all hover:scale-105"
+                  style={{ '--hover-color': i % 3 === 0 ? '#3B82F640' : i % 3 === 1 ? '#F9731640' : '#EC489940' }}
                 >
                   {tool}
-                </motion.span>
+                </span>
               ))}
             </div>
           </div>
@@ -725,7 +831,7 @@ const AchievementsSection = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12">
           {achievements.map((item, i) => (
-            <AnimatedSection key={i} delay={i * 0.08}>
+            <AnimatedSection key={i}>
               <StatCard value={item.value} suffix={item.suffix} label={item.label} color={item.color} />
             </AnimatedSection>
           ))}
@@ -733,10 +839,11 @@ const AchievementsSection = () => {
 
         <div className="grid md:grid-cols-2 gap-4">
           {highlights.map((item, i) => (
-            <AnimatedSection key={i} delay={0.3 + i * 0.1}>
-              <motion.div
-                className="p-5 bg-white/5 border border-white/10 rounded-xl"
-                whileHover={{ borderColor: i % 2 === 0 ? '#3B82F640' : '#F9731640' }}
+            <AnimatedSection key={i}>
+              <div
+                className="highlight-card p-5 bg-white/5 border border-white/10 rounded-xl transition-all"
+                onMouseEnter={(e) => gsap.to(e.currentTarget, { borderColor: i % 2 === 0 ? '#3B82F640' : '#F9731640', duration: 0.3 })}
+                onMouseLeave={(e) => gsap.to(e.currentTarget, { borderColor: 'rgba(255,255,255,0.1)', duration: 0.3 })}
               >
                 <div className="flex items-start gap-4">
                   <span className="text-3xl">{item.icon}</span>
@@ -745,7 +852,7 @@ const AchievementsSection = () => {
                     <p className="text-white/60 text-sm">{item.desc}</p>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </AnimatedSection>
           ))}
         </div>
@@ -778,10 +885,11 @@ const EducationSection = () => {
 
         <div className="space-y-4">
           {education.map((edu, i) => (
-            <AnimatedSection key={i} delay={i * 0.1}>
-              <motion.div
-                className="p-5 bg-white/5 border border-white/10 rounded-xl flex flex-col md:flex-row md:items-center gap-4"
-                whileHover={{ borderColor: edu.color + '40' }}
+            <AnimatedSection key={i}>
+              <div
+                className="edu-card p-5 bg-white/5 border border-white/10 rounded-xl flex flex-col md:flex-row md:items-center gap-4"
+                onMouseEnter={(e) => gsap.to(e.currentTarget, { borderColor: edu.color + '40', duration: 0.3 })}
+                onMouseLeave={(e) => gsap.to(e.currentTarget, { borderColor: 'rgba(255,255,255,0.1)', duration: 0.3 })}
               >
                 <div className="w-1 md:w-1 md:h-20 h-1 rounded-full flex-shrink-0" style={{ background: edu.color }} />
                 <div className="flex-grow">
@@ -790,14 +898,14 @@ const EducationSection = () => {
                   <p className="text-white/60 text-sm mt-1">{edu.details}</p>
                 </div>
                 <span className="text-sm font-mono px-3 py-1 bg-white/5 rounded-full self-start" style={{ color: edu.color }}>{edu.year}</span>
-              </motion.div>
+              </div>
             </AnimatedSection>
           ))}
         </div>
 
-        <AnimatedSection delay={0.4} className="mt-8">
+        <AnimatedSection className="mt-8">
           <div className="p-5 bg-white/5 border border-white/10 rounded-xl">
-            <h3 className="text-lg font-bold text-white mb-3">🏆 Honors & Awards</h3>
+            <h3 className="text-lg font-bold text-white mb-3">Honors & Awards</h3>
             <div className="flex items-center gap-3">
               <span className="text-2xl">🎓</span>
               <div>
@@ -816,6 +924,7 @@ const EducationSection = () => {
 const ContactSection = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' })
   const [status, setStatus] = useState('idle')
+  const buttonRef = useRef(null)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -844,7 +953,7 @@ const ContactSection = () => {
         </AnimatedSection>
 
         <div className="grid md:grid-cols-2 gap-8">
-          <AnimatedSection delay={0.1}>
+          <AnimatedSection>
             <div className="space-y-4">
               {[
                 { icon: '📧', label: 'Email', value: 'suganthan94@yahoo.com', href: 'mailto:suganthan94@yahoo.com' },
@@ -853,25 +962,26 @@ const ContactSection = () => {
                 { icon: '🐙', label: 'GitHub', value: 'shuganth', href: 'https://github.com/shuganth' },
                 { icon: '📍', label: 'Location', value: 'Salem, Tamil Nadu, India', href: '#' },
               ].map((item, i) => (
-                <motion.a
+                <a
                   key={i}
                   href={item.href}
                   target={item.href.startsWith('http') ? '_blank' : undefined}
                   rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-xl hover:border-blue/50 transition-all"
-                  whileHover={{ x: 5 }}
+                  className="contact-link flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-xl hover:border-blue/50 transition-all"
+                  onMouseEnter={(e) => gsap.to(e.currentTarget, { x: 5, duration: 0.3 })}
+                  onMouseLeave={(e) => gsap.to(e.currentTarget, { x: 0, duration: 0.3 })}
                 >
                   <span className="text-2xl">{item.icon}</span>
                   <div>
                     <div className="text-white/40 text-xs">{item.label}</div>
                     <div className="text-white">{item.value}</div>
                   </div>
-                </motion.a>
+                </a>
               ))}
             </div>
           </AnimatedSection>
 
-          <AnimatedSection delay={0.2}>
+          <AnimatedSection>
             <form onSubmit={handleSubmit} className="p-5 bg-white/5 border border-white/10 rounded-xl">
               <h3 className="text-lg font-bold text-white mb-4">Send a Message</h3>
               <div className="space-y-4">
@@ -884,20 +994,25 @@ const ContactSection = () => {
                 <textarea placeholder="Your Message" required rows={4} value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder:text-white/30 focus:border-blue focus:outline-none resize-none" />
-                <motion.button type="submit" disabled={status !== 'idle'}
-                  className="w-full py-3 font-bold rounded-lg disabled:opacity-50"
+                <button
+                  ref={buttonRef}
+                  type="submit"
+                  disabled={status !== 'idle'}
+                  className="w-full py-3 font-bold rounded-lg disabled:opacity-50 transition-transform active:scale-95"
                   style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316)' }}
-                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  onMouseEnter={(e) => gsap.to(e.currentTarget, { scale: 1.02, duration: 0.2 })}
+                  onMouseLeave={(e) => gsap.to(e.currentTarget, { scale: 1, duration: 0.2 })}
+                >
                   {status === 'sending' ? 'Sending...' : status === 'sent' ? '✓ Message Sent!' : 'Send Message'}
-                </motion.button>
+                </button>
               </div>
             </form>
           </AnimatedSection>
         </div>
 
-        <AnimatedSection delay={0.4} className="mt-16 text-center">
+        <AnimatedSection className="mt-16 text-center">
           <div className="text-white/20 text-sm">
-            © {new Date().getFullYear()} Suganthan Arulvelan • Built with Next.js & Framer Motion
+            © {new Date().getFullYear()} Suganthan Arulvelan • Built with Next.js & GSAP
           </div>
         </AnimatedSection>
       </div>
@@ -908,15 +1023,30 @@ const ContactSection = () => {
 // ============ MAIN COMPONENT ============
 export default function Home() {
   const [showIntro, setShowIntro] = useState(true)
+  const mainRef = useRef(null)
+
+  useEffect(() => {
+    // Register ScrollTo plugin
+    gsap.registerPlugin(ScrollTrigger)
+
+    // Load ScrollTo plugin dynamically
+    import('gsap/ScrollToPlugin').then(({ ScrollToPlugin }) => {
+      gsap.registerPlugin(ScrollToPlugin)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (!showIntro && mainRef.current) {
+      gsap.from(mainRef.current, { opacity: 0, duration: 0.5 })
+    }
+  }, [showIntro])
 
   return (
     <div className="bg-black text-white min-h-screen">
-      <AnimatePresence mode="wait">
-        {showIntro && <SARevealIntro key="intro" onComplete={() => setShowIntro(false)} />}
-      </AnimatePresence>
+      {showIntro && <SARevealIntro onComplete={() => setShowIntro(false)} />}
 
       {!showIntro && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+        <div ref={mainRef}>
           <Navigation />
           <HeroSection />
           <AboutSection />
@@ -925,7 +1055,7 @@ export default function Home() {
           <AchievementsSection />
           <EducationSection />
           <ContactSection />
-        </motion.div>
+        </div>
       )}
     </div>
   )
