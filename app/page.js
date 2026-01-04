@@ -1,760 +1,932 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion'
+import anime from 'animejs'
 
-gsap.registerPlugin(ScrollTrigger)
-
-export default function Home() {
-  const [mounted, setMounted] = useState(false)
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
-  const [cursorVariant, setCursorVariant] = useState('default')
-  const cursorRef = useRef(null)
-  const cursorDotRef = useRef(null)
-  const containerRef = useRef(null)
-  const heroRef = useRef(null)
-  const aboutRef = useRef(null)
-  const workRef = useRef(null)
-  const techRef = useRef(null)
-  const contactRef = useRef(null)
+// ============ SA REVEAL INTRO ============
+const SARevealIntro = ({ onComplete }) => {
+  const [phase, setPhase] = useState('logo')
 
   useEffect(() => {
-    setMounted(true)
+    const timeline = anime.timeline({ easing: 'easeOutExpo' })
 
-    // Custom cursor movement
-    const handleMouseMove = (e) => {
-      setMousePos({ x: e.clientX, y: e.clientY })
-
-      // GSAP cursor animation
-      if (cursorRef.current && cursorDotRef.current) {
-        gsap.to(cursorRef.current, {
-          x: e.clientX - 20,
-          y: e.clientY - 20,
-          duration: 0.5,
-          ease: 'power2.out'
-        })
-        gsap.to(cursorDotRef.current, {
-          x: e.clientX - 4,
-          y: e.clientY - 4,
-          duration: 0.1
-        })
-      }
-    }
-
-    window.addEventListener('mousemove', handleMouseMove)
-
-    // GSAP Animations - with delay to ensure DOM is ready
-    const ctx = gsap.context(() => {
-      // Set initial states
-      gsap.set('.hero-title', { y: 50, opacity: 0 })
-      gsap.set('.hero-subtitle', { y: 30, opacity: 0 })
-      gsap.set('.hero-stats', { y: 20, opacity: 0 })
-      gsap.set('.magnetic-btn', { y: 20, opacity: 0 })
-
-      // Hero section animations with timeline
-      const tl = gsap.timeline({ delay: 0.2 })
-
-      tl.to('.hero-title', {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        ease: 'power3.out',
-        stagger: 0.15
-      })
-      .to('.hero-subtitle', {
-        y: 0,
-        opacity: 1,
-        duration: 0.6,
-        ease: 'power3.out'
-      }, '-=0.4')
-      .to('.hero-stats', {
-        y: 0,
-        opacity: 1,
-        duration: 0.5,
-        stagger: 0.1,
-        ease: 'power2.out'
-      }, '-=0.3')
-      .to('.magnetic-btn', {
-        y: 0,
-        opacity: 1,
-        duration: 0.5,
-        stagger: 0.1,
-        ease: 'power2.out'
-      }, '-=0.3')
-
-      // Floating SA watermark
-      gsap.to('.floating-sa', {
-        y: -50,
-        duration: 3,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut'
-      })
-
-      // Gradient orbs animation
-      gsap.to('.gradient-orb-1', {
-        x: 100,
-        y: -50,
-        duration: 8,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut'
-      })
-
-      gsap.to('.gradient-orb-2', {
-        x: -80,
-        y: 60,
-        duration: 6,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut'
-      })
-
-      // Scroll-triggered animations
-      // About section
-      gsap.from('.about-image', {
-        scrollTrigger: {
-          trigger: aboutRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse'
-        },
-        scale: 0.8,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out'
-      })
-
-      gsap.from('.about-content', {
-        scrollTrigger: {
-          trigger: aboutRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse'
-        },
-        x: 100,
-        opacity: 0,
-        duration: 1,
-        delay: 0.3,
-        ease: 'power3.out'
-      })
-
-      // Work section - cards stagger
-      gsap.from('.work-card', {
-        scrollTrigger: {
-          trigger: workRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse'
-        },
-        y: 100,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: 'power3.out'
-      })
-
-      // Tech icons
-      gsap.from('.tech-icon', {
-        scrollTrigger: {
-          trigger: techRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse'
-        },
-        scale: 0,
-        opacity: 0,
-        duration: 0.5,
-        stagger: 0.05,
-        ease: 'back.out(1.7)'
-      })
-
-      // Contact section
-      gsap.from('.contact-content', {
-        scrollTrigger: {
-          trigger: contactRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse'
-        },
-        y: 80,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out'
-      })
-
-      // Parallax effect on scroll
-      gsap.to('.parallax-bg', {
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: 1
-        },
-        y: 300,
-        ease: 'none'
-      })
-
-    }, containerRef)
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove)
-      ctx.revert()
-    }
-  }, [])
-
-  // Magnetic effect for buttons
-  const handleMagneticMove = (e, element) => {
-    const rect = element.getBoundingClientRect()
-    const x = e.clientX - rect.left - rect.width / 2
-    const y = e.clientY - rect.top - rect.height / 2
-
-    gsap.to(element, {
-      x: x * 0.3,
-      y: y * 0.3,
-      duration: 0.3,
-      ease: 'power2.out'
+    timeline.add({
+      targets: '.sa-letter',
+      scale: [0, 1],
+      opacity: [0, 1],
+      duration: 800,
+      delay: anime.stagger(150),
+      easing: 'easeOutElastic(1, .5)',
     })
-  }
 
-  const handleMagneticLeave = (element) => {
-    gsap.to(element, {
-      x: 0,
-      y: 0,
-      duration: 0.5,
-      ease: 'elastic.out(1, 0.3)'
-    })
-  }
+    timeline.add({
+      targets: '.sa-glow',
+      opacity: [0, 0.6],
+      scale: [0.8, 1.2],
+      duration: 800,
+    }, '-=400')
 
-  const techStack = [
-    { name: 'Azure', color: '#0078D4' },
-    { name: 'Kubernetes', color: '#326CE5' },
-    { name: 'Docker', color: '#2496ED' },
-    { name: 'React', color: '#61DAFB' },
-    { name: 'Python', color: '#3776AB' },
-    { name: 'Snowflake', color: '#29B5E8' },
-    { name: '.NET', color: '#512BD4' },
-    { name: 'Svelte', color: '#FF3E00' },
-    { name: 'OpenAI', color: '#00A67E' },
-    { name: 'TypeScript', color: '#3178C6' },
-    { name: 'Auth0', color: '#EB5424' },
-    { name: 'SQL Server', color: '#CC2927' },
-    { name: 'Git', color: '#F05032' },
-    { name: 'Databricks', color: '#FF3621' },
-  ]
+    timeline.add({
+      targets: '.letter-s',
+      translateX: [0, -100],
+      duration: 600,
+      begin: () => setPhase('split'),
+    }, '+=300')
+
+    timeline.add({
+      targets: '.letter-a',
+      translateX: [0, 100],
+      duration: 600,
+    }, '-=600')
+
+    timeline.add({
+      targets: '.exp-word',
+      translateY: [0, (el, i) => (i % 2 === 0 ? -60 - i * 15 : 60 + i * 15)],
+      translateX: () => anime.random(-120, 120),
+      opacity: [0, 1],
+      duration: 600,
+      delay: anime.stagger(50),
+      begin: () => setPhase('reveal'),
+    }, '-=200')
+
+    timeline.add({
+      targets: ['.sa-letter', '.exp-word', '.sa-glow'],
+      opacity: 0,
+      scale: 0.8,
+      duration: 400,
+      complete: () => setTimeout(onComplete, 100),
+    }, '+=400')
+
+    return () => timeline.pause()
+  }, [onComplete])
+
+  const words = ['.NET', 'Azure', 'Kubernetes', 'AI', 'Leadership', 'Svelte', 'Architecture']
 
   return (
-    <div ref={containerRef} className="bg-black text-white overflow-hidden relative">
-      {/* Custom Cursor */}
-      {mounted && (
-        <>
-          <div
-            ref={cursorRef}
-            className={`fixed w-10 h-10 border-2 rounded-full pointer-events-none z-[9999] mix-blend-difference transition-transform duration-200 ${
-              cursorVariant === 'hover' ? 'scale-150 border-orange-500 bg-orange-500/20' : 'border-white'
-            }`}
-            style={{ left: 0, top: 0 }}
-          />
-          <div
-            ref={cursorDotRef}
-            className="fixed w-2 h-2 bg-orange-500 rounded-full pointer-events-none z-[9999]"
-            style={{ left: 0, top: 0 }}
-          />
-        </>
-      )}
-
-      {/* Gradient Orbs - Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="gradient-orb-1 absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-full blur-[120px]" />
-        <div className="gradient-orb-2 absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-gradient-to-r from-amber-500/15 to-orange-500/15 rounded-full blur-[100px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-orange-600/10 to-transparent rounded-full blur-[150px]" />
-      </div>
-
-      {/* Floating SA Watermark */}
-      <div className="floating-sa fixed inset-0 flex items-center justify-center pointer-events-none z-0">
-        <span className="text-[40vw] font-black text-white/[0.02] select-none leading-none tracking-tighter">
-          SA
-        </span>
-      </div>
-
-      {/* Grid Pattern Overlay */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.02]" style={{
-        backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+    <motion.div
+      className="fixed inset-0 z-[200] bg-black flex items-center justify-center overflow-hidden"
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <div className="absolute inset-0 opacity-10" style={{
+        backgroundImage: 'linear-gradient(rgba(59,130,246,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.3) 1px, transparent 1px)',
         backgroundSize: '50px 50px'
       }} />
 
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-6">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <a
-            href="#"
-            className="group relative"
-            onMouseEnter={() => setCursorVariant('hover')}
-            onMouseLeave={() => setCursorVariant('default')}
-          >
-            <span className="text-2xl font-black bg-gradient-to-r from-orange-500 via-amber-400 to-orange-500 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
-              SA
-            </span>
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-amber-400 group-hover:w-full transition-all duration-300" />
-          </a>
+      <div className="sa-glow absolute w-[300px] h-[300px] md:w-[500px] md:h-[500px] rounded-full opacity-0"
+        style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.4) 0%, rgba(249,115,22,0.2) 50%, transparent 70%)' }}
+      />
 
-          <div className="flex items-center gap-8">
-            {['About', 'Work', 'Tech', 'Contact'].map((item, i) => (
-              <a
-                key={i}
-                href={`#${item.toLowerCase()}`}
-                className="relative group text-sm font-medium text-gray-400 hover:text-white transition-colors"
-                onMouseEnter={() => setCursorVariant('hover')}
-                onMouseLeave={() => setCursorVariant('default')}
-              >
-                {item}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-500 group-hover:w-full transition-all duration-300" />
-              </a>
-            ))}
-          </div>
+      <div className="relative flex items-center justify-center" style={{ perspective: '1000px' }}>
+        <div className="letter-s sa-letter">
+          <span className="text-[20vw] md:text-[12vw] font-black" style={{
+            background: 'linear-gradient(135deg, #3B82F6, #F97316)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            filter: 'drop-shadow(0 0 30px rgba(59,130,246,0.5))'
+          }}>S</span>
         </div>
-      </nav>
-
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      {/* HERO SECTION */}
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      <section ref={heroRef} className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-24 relative pt-24">
-        <div className="max-w-7xl mx-auto w-full relative z-10">
-          {/* Overline with animation */}
-          <div className="flex items-center gap-4 mb-8 hero-title">
-            <div className="w-12 h-px bg-gradient-to-r from-orange-500 to-transparent" />
-            <span className="text-orange-500 text-sm font-medium tracking-wider uppercase">Associate Director @ Syneos Health</span>
-          </div>
-
-          {/* Main Title */}
-          <h1 className="mb-8">
-            <span className="hero-title block text-[12vw] md:text-[10vw] lg:text-[8vw] font-black leading-[0.85] tracking-tight text-white">
-              Suganthan
-            </span>
-            <span className="hero-title block text-[12vw] md:text-[10vw] lg:text-[8vw] font-black leading-[0.85] tracking-tight bg-gradient-to-r from-orange-500 via-amber-400 to-red-500 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
-              Arulvelan
-            </span>
-          </h1>
-
-          {/* Tagline */}
-          <p className="hero-subtitle text-xl md:text-2xl lg:text-3xl text-gray-400 max-w-3xl leading-relaxed mb-12">
-            I architect <span className="text-white font-medium">healthcare platforms</span> that scale to
-            thousands with <span className="text-orange-500 font-medium">zero incidents</span>.
-            From embedded systems to enterprise cloud.
-          </p>
-
-          {/* Stats */}
-          <div className="flex flex-wrap gap-12 md:gap-20">
-            {[
-              { num: '1,600%', label: 'User Growth', color: 'from-orange-500 to-amber-400' },
-              { num: '20+', label: 'Engineers Led', color: 'from-amber-400 to-yellow-300' },
-              { num: '99.9%', label: 'Uptime SLA', color: 'from-red-500 to-orange-500' },
-            ].map((stat, i) => (
-              <div
-                key={i}
-                className="hero-stats group cursor-default"
-                onMouseEnter={() => setCursorVariant('hover')}
-                onMouseLeave={() => setCursorVariant('default')}
-              >
-                <div className={`text-4xl md:text-5xl font-black bg-gradient-to-r ${stat.color} bg-clip-text text-transparent group-hover:scale-110 transition-transform`}>
-                  {stat.num}
-                </div>
-                <div className="text-sm text-gray-500 mt-1 group-hover:text-gray-300 transition-colors">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* CTA Buttons */}
-          <div className="flex gap-4 mt-12">
-            <a
-              href="mailto:suganthan94@yahoo.com"
-              className="magnetic-btn relative px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-black font-bold rounded-full overflow-hidden group"
-              onMouseEnter={(e) => { setCursorVariant('hover'); handleMagneticMove(e, e.currentTarget) }}
-              onMouseLeave={(e) => { setCursorVariant('default'); handleMagneticLeave(e.currentTarget) }}
-              onMouseMove={(e) => handleMagneticMove(e, e.currentTarget)}
-            >
-              <span className="relative z-10">Get in Touch</span>
-              <div className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
-            </a>
-            <a
-              href="https://linkedin.com/in/suganthan-arulvelan-a9356073"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="magnetic-btn px-8 py-4 border-2 border-white/20 text-white font-bold rounded-full hover:border-orange-500 hover:text-orange-500 transition-all"
-              onMouseEnter={(e) => { setCursorVariant('hover'); handleMagneticMove(e, e.currentTarget) }}
-              onMouseLeave={(e) => { setCursorVariant('default'); handleMagneticLeave(e.currentTarget) }}
-              onMouseMove={(e) => handleMagneticMove(e, e.currentTarget)}
-            >
-              LinkedIn
-            </a>
-          </div>
+        <div className="letter-a sa-letter">
+          <span className="text-[20vw] md:text-[12vw] font-black" style={{
+            background: 'linear-gradient(135deg, #F97316, #EC4899)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            filter: 'drop-shadow(0 0 30px rgba(249,115,22,0.5))'
+          }}>A</span>
         </div>
+      </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-          <span className="text-xs text-gray-600 uppercase tracking-widest">Scroll</span>
-          <div className="w-6 h-10 border-2 border-gray-600 rounded-full flex justify-center pt-2">
-            <div className="w-1 h-3 bg-orange-500 rounded-full animate-bounce" />
-          </div>
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        {words.map((word, i) => (
+          <span key={word} className="exp-word absolute text-xs md:text-base font-bold opacity-0"
+            style={{ color: i % 3 === 0 ? '#3B82F6' : i % 3 === 1 ? '#F97316' : '#EC4899', textShadow: '0 0 15px currentColor' }}>
+            {word}
+          </span>
+        ))}
+      </div>
+
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
+        <div className="w-32 h-0.5 bg-white/10 rounded-full overflow-hidden">
+          <motion.div className="h-full rounded-full" style={{ background: 'linear-gradient(90deg, #3B82F6, #F97316, #EC4899)' }}
+            initial={{ width: '0%' }} animate={{ width: '100%' }} transition={{ duration: 2.5, ease: 'easeInOut' }} />
         </div>
-      </section>
+        <p className="text-white/30 text-xs mt-2 text-center font-mono">
+          {phase === 'logo' ? 'Loading...' : phase === 'split' ? 'Building experience...' : 'Welcome'}
+        </p>
+      </div>
+    </motion.div>
+  )
+}
 
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      {/* ABOUT SECTION */}
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      <section id="about" ref={aboutRef} className="min-h-screen py-32 px-6 md:px-12 lg:px-24 relative">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Image Side */}
-            <div className="about-image relative group">
-              {/* Decorative elements */}
-              <div className="absolute -inset-4 bg-gradient-to-r from-orange-500 to-amber-500 rounded-3xl blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
-              <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-amber-500 rounded-3xl opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+// ============ ANIMATED WRAPPER ============
+const AnimatedSection = ({ children, className = '', delay = 0 }) => {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, margin: '-50px' })
+  return (
+    <motion.div ref={ref} className={className}
+      initial={{ opacity: 0, y: 40 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, delay, ease: [0.25, 0.1, 0.25, 1] }}>
+      {children}
+    </motion.div>
+  )
+}
 
-              {/* Main image container */}
-              <div className="relative rounded-2xl overflow-hidden bg-zinc-900">
-                <img
-                  src="/profile.jpg"
-                  alt="Suganthan Arulvelan"
-                  className="w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                {/* Overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+// ============ SKILL BAR CHART ============
+const SkillBar = ({ name, level, color, delay = 0 }) => {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true })
+  return (
+    <div ref={ref} className="mb-3">
+      <div className="flex justify-between text-sm mb-1">
+        <span className="text-white/80">{name}</span>
+        <span className="text-white/40">{level}%</span>
+      </div>
+      <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+        <motion.div
+          className="h-full rounded-full"
+          style={{ background: color }}
+          initial={{ width: 0 }}
+          animate={isInView ? { width: `${level}%` } : {}}
+          transition={{ duration: 1, delay, ease: 'easeOut' }}
+        />
+      </div>
+    </div>
+  )
+}
 
-                {/* Glitch effect on hover */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 mix-blend-color-dodge">
-                  <div className="absolute inset-0 bg-orange-500/20 animate-pulse" />
-                </div>
-              </div>
-
-              {/* Floating badge */}
-              <div className="absolute -bottom-6 -right-6 bg-gradient-to-r from-orange-500 to-amber-500 text-black px-6 py-3 rounded-2xl font-bold shadow-2xl shadow-orange-500/30">
-                <span className="text-2xl">10+</span>
-                <span className="text-sm ml-1">Years</span>
-              </div>
-
-              {/* Corner accents */}
-              <div className="absolute -top-4 -left-4 w-8 h-8 border-l-4 border-t-4 border-orange-500" />
-              <div className="absolute -bottom-4 -right-4 w-8 h-8 border-r-4 border-b-4 border-orange-500" />
+// ============ EXPANDABLE CARD ============
+const ExpandableCard = ({ title, subtitle, period, color, children, defaultOpen = false }) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen)
+  return (
+    <motion.div
+      className="bg-white/5 border border-white/10 rounded-xl overflow-hidden"
+      whileHover={{ borderColor: color + '40' }}
+    >
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full p-4 md:p-5 text-left flex items-start gap-4"
+      >
+        <div className="w-1 h-full min-h-[60px] rounded-full flex-shrink-0" style={{ background: color }} />
+        <div className="flex-grow">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-1">
+            <div>
+              <h3 className="text-lg md:text-xl font-bold text-white">{title}</h3>
+              <p className="text-white/50 text-sm">{subtitle}</p>
             </div>
+            <span className="text-xs font-mono px-3 py-1 rounded-full bg-white/5 self-start" style={{ color }}>{period}</span>
+          </div>
+        </div>
+        <motion.div
+          className="text-white/40 flex-shrink-0 mt-2"
+          animate={{ rotate: isOpen ? 180 : 0 }}
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </motion.div>
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 md:px-5 pb-5 pl-8 md:pl-10 border-t border-white/5 pt-4">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  )
+}
 
-            {/* Content Side */}
-            <div className="about-content">
-              <span className="text-orange-500 text-sm font-medium tracking-wider uppercase mb-4 block">The Journey</span>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-8">
-                From <span className="text-gradient">microcontrollers</span><br/>
-                to enterprise scale
-              </h2>
-              <p className="text-gray-400 text-lg leading-relaxed mb-8">
-                Started programming embedded systems for <span className="text-white">Bosch</span> and <span className="text-white">TVS</span>.
-                Led engineering teams at Syneos Health building platforms that process
-                <span className="text-orange-500"> millions of healthcare data points</span> daily.
+// ============ STAT CARD ============
+const StatCard = ({ value, label, suffix = '', color }) => {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true })
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    if (isInView && typeof value === 'number') {
+      const duration = 2000
+      const steps = 60
+      const increment = value / steps
+      let current = 0
+      const timer = setInterval(() => {
+        current += increment
+        if (current >= value) {
+          setCount(value)
+          clearInterval(timer)
+        } else {
+          setCount(Math.floor(current))
+        }
+      }, duration / steps)
+      return () => clearInterval(timer)
+    }
+  }, [isInView, value])
+
+  return (
+    <motion.div
+      ref={ref}
+      className="p-4 md:p-6 bg-white/5 border border-white/10 rounded-xl text-center"
+      whileHover={{ y: -5, borderColor: color + '40' }}
+    >
+      <div className="text-3xl md:text-4xl font-black mb-1" style={{ color }}>
+        {typeof value === 'number' ? count : value}{suffix}
+      </div>
+      <div className="text-white/40 text-sm">{label}</div>
+    </motion.div>
+  )
+}
+
+// ============ NAVIGATION ============
+const Navigation = () => {
+  const [scrolled, setScrolled] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 100)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const scrollTo = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+    setMobileOpen(false)
+  }
+
+  const links = ['about', 'experience', 'skills', 'achievements', 'education', 'contact']
+
+  return (
+    <motion.nav
+      className={`fixed top-0 left-0 right-0 z-50 px-4 md:px-6 py-3 transition-all duration-300 ${scrolled ? 'bg-black/90 backdrop-blur-xl border-b border-white/5' : ''}`}
+      initial={{ y: -100 }} animate={{ y: 0 }} transition={{ delay: 0.3 }}
+    >
+      <div className="max-w-6xl mx-auto flex items-center justify-between">
+        <button onClick={() => scrollTo('hero')} className="text-xl font-black">
+          <span style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>SA</span>
+        </button>
+
+        <div className="hidden md:flex items-center gap-6">
+          {links.map(link => (
+            <button key={link} onClick={() => scrollTo(link)} className="text-sm text-white/60 hover:text-white transition-colors capitalize">{link}</button>
+          ))}
+        </div>
+
+        <button onClick={() => scrollTo('contact')} className="hidden md:block px-5 py-2 text-sm font-bold rounded-full" style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316)' }}>
+          Let&apos;s Talk
+        </button>
+
+        <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden text-white p-2">
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            {mobileOpen ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /> : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />}
+          </svg>
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden mt-4 pb-4 border-t border-white/10 pt-4"
+          >
+            {links.map(link => (
+              <button key={link} onClick={() => scrollTo(link)} className="block w-full text-left py-2 text-white/60 hover:text-white capitalize">{link}</button>
+            ))}
+            <button onClick={() => scrollTo('contact')} className="mt-3 w-full py-3 text-sm font-bold rounded-full" style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316)' }}>
+              Let&apos;s Talk
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
+  )
+}
+
+// ============ HERO SECTION ============
+const HeroSection = () => {
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
+  const y = useTransform(scrollYProgress, [0, 1], [0, 150])
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+
+  return (
+    <section id="hero" ref={ref} className="min-h-screen flex items-center justify-center relative overflow-hidden px-4 pt-20">
+      <div className="absolute inset-0">
+        <motion.div className="absolute w-[400px] h-[400px] rounded-full blur-[120px] opacity-20" style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.6), transparent)', top: '10%', left: '10%' }}
+          animate={{ x: [0, 30, 0], y: [0, 20, 0] }} transition={{ duration: 8, repeat: Infinity }} />
+        <motion.div className="absolute w-[350px] h-[350px] rounded-full blur-[100px] opacity-20" style={{ background: 'radial-gradient(circle, rgba(249,115,22,0.6), transparent)', bottom: '20%', right: '10%' }}
+          animate={{ x: [0, -20, 0], y: [0, -15, 0] }} transition={{ duration: 6, repeat: Infinity }} />
+      </div>
+
+      <motion.div className="relative z-10 text-center max-w-4xl" style={{ y, opacity }}>
+        <motion.div className="mb-6" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }}>
+          <div className="w-32 h-32 md:w-40 md:h-40 mx-auto rounded-full overflow-hidden border-4 border-white/10 shadow-2xl">
+            <img src="/profile.jpg" alt="Suganthan Arulvelan" className="w-full h-full object-cover" />
+          </div>
+        </motion.div>
+
+        <motion.div className="inline-flex items-center gap-2 px-4 py-2 mb-4 bg-white/5 border border-white/10 rounded-full" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+          <span className="text-xs md:text-sm text-white/60 font-mono">Available for opportunities</span>
+        </motion.div>
+
+        <motion.h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+          <span className="text-white">SUGANTHAN</span><br />
+          <span style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316, #EC4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>ARULVELAN</span>
+        </motion.h1>
+
+        <motion.p className="text-lg md:text-xl text-white/60 mb-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+          <span className="text-blue font-semibold">Associate Director</span> at Syneos Health
+        </motion.p>
+
+        <motion.p className="text-sm md:text-base text-white/40 max-w-2xl mx-auto mb-8 leading-relaxed" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
+          Building Healthcare Analytics Platforms • Enterprise Architecture & AI Integration<br />
+          Leading 20+ Engineers • 8+ Years Experience • Zero Production Incidents
+        </motion.p>
+
+        <motion.div className="flex flex-wrap justify-center gap-3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}>
+          <button onClick={() => document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' })}
+            className="px-6 py-3 font-bold rounded-full flex items-center gap-2" style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316)' }}>
+            Explore My Journey
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+          </button>
+          <a href="/Suganthan_Arulvelan_Resume.html" target="_blank" className="px-6 py-3 border border-white/20 text-white font-medium rounded-full hover:bg-white/5 transition-colors">
+            View Resume
+          </a>
+        </motion.div>
+
+        <motion.div className="flex justify-center gap-4 mt-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
+          {[
+            { icon: '💼', href: 'https://www.linkedin.com/in/suganthan-arulvelan-a9356073/', label: 'LinkedIn' },
+            { icon: '🐙', href: 'https://github.com/shuganth', label: 'GitHub' },
+            { icon: '📧', href: 'mailto:suganthan94@yahoo.com', label: 'Email' },
+          ].map((item, i) => (
+            <a key={i} href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer"
+              className="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:border-blue/50 transition-colors text-lg">
+              {item.icon}
+            </a>
+          ))}
+        </motion.div>
+      </motion.div>
+
+      <motion.div className="absolute bottom-8 left-1/2 -translate-x-1/2" animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
+        <span className="text-white/30 text-xs font-mono">SCROLL</span>
+      </motion.div>
+    </section>
+  )
+}
+
+// ============ ABOUT SECTION ============
+const AboutSection = () => {
+  return (
+    <section id="about" className="py-20 md:py-28 px-4">
+      <div className="max-w-6xl mx-auto">
+        <AnimatedSection className="text-center mb-12">
+          <span className="text-blue text-sm font-mono mb-3 block">// ABOUT ME</span>
+          <h2 className="text-3xl md:text-5xl font-black">
+            <span className="text-white">My </span>
+            <span style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Story</span>
+          </h2>
+        </AnimatedSection>
+
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          <AnimatedSection delay={0.1}>
+            <div className="relative">
+              <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-white/10">
+                <img src="/photo2.jpg" alt="Suganthan" className="w-full h-full object-cover" />
+              </div>
+              <div className="absolute -bottom-4 -right-4 w-24 h-24 rounded-xl overflow-hidden border-4 border-black">
+                <img src="/photo3.jpg" alt="Suganthan casual" className="w-full h-full object-cover" />
+              </div>
+            </div>
+          </AnimatedSection>
+
+          <AnimatedSection delay={0.2}>
+            <div className="space-y-4 text-white/70 leading-relaxed">
+              <p className="text-lg">
+                From programming <span className="text-orange font-semibold">microcontrollers</span> to leading <span className="text-blue font-semibold">enterprise platform teams</span>—my journey has been about solving progressively harder problems.
+              </p>
+              <p>
+                Today, as Associate Director at Syneos Health, I lead <span className="text-pink font-semibold">20+ engineers</span> building healthcare analytics platforms used by pharmaceutical companies worldwide. Our work sits at the intersection of complex medical data, enterprise architecture, and emerging AI capabilities.
+              </p>
+              <p>
+                I care deeply about craft—clean architecture, proper abstractions, systems that don&apos;t break at 2 AM. Equally passionate about people—helping engineers grow from writing code to thinking in systems.
               </p>
 
-              {/* Timeline */}
-              <div className="space-y-6">
-                {[
-                  { year: '2025', title: 'Associate Director', company: 'Syneos Health' },
-                  { year: '2024', title: 'Principal Engineer', company: '30-day AIP Migration' },
-                  { year: '2019', title: 'Senior Engineer', company: 'Platform Architecture' },
-                ].map((item, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-4 group cursor-default"
-                    onMouseEnter={() => setCursorVariant('hover')}
-                    onMouseLeave={() => setCursorVariant('default')}
-                  >
-                    <div className="w-16 text-orange-500 font-mono font-bold group-hover:scale-110 transition-transform">{item.year}</div>
-                    <div className="w-2 h-2 bg-orange-500 rounded-full group-hover:scale-150 transition-transform" />
-                    <div>
-                      <div className="font-bold text-white group-hover:text-orange-500 transition-colors">{item.title}</div>
-                      <div className="text-sm text-gray-500">{item.company}</div>
-                    </div>
-                  </div>
-                ))}
+              <div className="grid grid-cols-2 gap-4 pt-4">
+                <div className="p-3 bg-white/5 rounded-lg">
+                  <div className="text-blue font-mono text-sm">Location</div>
+                  <div className="text-white">Salem, Tamil Nadu</div>
+                </div>
+                <div className="p-3 bg-white/5 rounded-lg">
+                  <div className="text-orange font-mono text-sm">Languages</div>
+                  <div className="text-white">English, Tamil, French</div>
+                </div>
+                <div className="p-3 bg-white/5 rounded-lg">
+                  <div className="text-pink font-mono text-sm">Phone</div>
+                  <div className="text-white">+91 9080704073</div>
+                </div>
+                <div className="p-3 bg-white/5 rounded-lg">
+                  <div className="text-blue font-mono text-sm">Email</div>
+                  <div className="text-white text-sm">suganthan94@yahoo.com</div>
+                </div>
               </div>
             </div>
-          </div>
+          </AnimatedSection>
         </div>
-      </section>
+      </div>
+    </section>
+  )
+}
 
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      {/* WORK SECTION */}
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      <section id="work" ref={workRef} className="py-32 px-6 md:px-12 lg:px-24 relative">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-end justify-between mb-16">
-            <div>
-              <span className="text-orange-500 text-sm font-medium tracking-wider uppercase">Featured Work</span>
-              <h2 className="text-5xl md:text-6xl lg:text-7xl font-black mt-4">
-                Impact<span className="text-orange-500">.</span>
-              </h2>
-            </div>
-          </div>
+// ============ EXPERIENCE SECTION ============
+const ExperienceSection = () => {
+  const experiences = [
+    {
+      title: 'Associate Director',
+      company: 'Syneos Health',
+      period: 'Nov 2025 - Present',
+      color: '#3B82F6',
+      summary: 'Leading 20+ engineers across UI, middleware, data, and QA disciplines',
+      details: [
+        'Leading team of 20 engineers across UI, middleware, data, and QA disciplines in Technical Delivery Center',
+        'Spearheading development of healthcare analytics platforms including Precision Targeting, KOL Analytics, and AIP systems',
+        'Delivered Precision Targeting Phase 1 with 1,600% user growth and 3,001% login engagement increase',
+        'Led AIP platform modernization from Node.js to .NET Core, achieving 30% performance improvement',
+        'Established enterprise architecture standards and AI integration capabilities using internal OpenAI services',
+        'Maintained zero production incidents across all platform releases',
+      ],
+      tech: ['Azure Kubernetes', '.NET Core', 'Snowflake', 'Azure Service Bus', 'KEDA', 'OpenAI']
+    },
+    {
+      title: 'Principal Engineer',
+      company: 'Syneos Health',
+      period: 'Jul 2024 - Nov 2025',
+      color: '#F97316',
+      summary: '8-10 engineers, three major healthcare platforms, zero production incidents',
+      details: [
+        'Led 8-10 engineers delivering three major healthcare analytics platforms with zero production incidents and 99.9%+ uptime',
+        'Precision Targeting Platform: First fully enterprise-standard application built end-to-end by TDC team, 1,600% user growth, serving 150+ users',
+        'AIP Platform Modernization: Rewrote Node.js to .NET Core in 30 days with 30% performance gain, zero downtime migration',
+        'KOL Analytics Platform: Architected distributed processing for 1-4 hour analytical queries with Kubernetes workers and KEDA autoscaling',
+        'Integrated GPT-4o mini for medical terminology and ICD-10 validation',
+        'Pioneered AI integration using Syneos internal OpenAI service',
+        'Established reusable .NET Core patterns reducing future dev time by 30-40%',
+      ],
+      tech: ['Svelte', '.NET Core', 'Snowflake', 'Auth0', 'Azure', 'GPT-4o', 'KEDA']
+    },
+    {
+      title: 'Senior Full Stack Developer',
+      company: 'Syneos Health',
+      period: 'Jun 2023 - Jun 2024',
+      color: '#EC4899',
+      summary: 'KDB IDE, Excel Add-ins, Diversity Equity reporting tools',
+      details: [
+        'Developed unique KDB IDE—native desktop app with spreadsheet functionality, SSH views, autocomplete using .NET Framework and Windows Forms',
+        'Successfully deployed to production with SSO enabled',
+        'Spearheaded Diversity Equity Index reports tool in .NET Core, using Plotly and Syncfusion for automated PowerPoint presentations',
+        'Designed Excel add-in using Excel-DNA, enhancing Excel with API interactions and complex logical operations',
+        'Drove software development projects and managed server-side operations',
+        'Directed API deployment strategies enhancing availability and interoperability',
+      ],
+      tech: ['WPF', 'WinForms', 'Excel-DNA', 'Plotly', 'Syncfusion', '.NET Core']
+    },
+    {
+      title: 'Senior Software Engineer',
+      company: 'Syneos Health',
+      period: 'Aug 2022 - Jun 2023',
+      color: '#3B82F6',
+      summary: 'Software development and server-side operations',
+      details: [
+        'Designed innovative software programs, websites, and applications using .NET Framework, .NET Core, API, JS, Python',
+        'Developed WPF and WinForm applications',
+        'Created Excel Add-ins and VBA macros',
+        'Provided hands-on direction for junior developers\' tasks including coding, testing, debugging',
+        'Maintained high-level software system reviews',
+        'Wrote comprehensive development reports and technical documents',
+      ],
+      tech: ['.NET Framework', '.NET Core', 'WPF', 'VBA', 'Python', 'JavaScript']
+    },
+    {
+      title: 'Project Development Engineer',
+      company: 'Open Systems International',
+      period: 'Mar 2021 - Jul 2022',
+      color: '#F97316',
+      summary: 'SCADA systems, database migration, industrial automation',
+      details: [
+        'Engineered C-based solutions for alarm handling and circuit breaking within SCADA Monarch system',
+        'Spearheaded migration of databases to Cassandra using C#, ensuring data integrity',
+        'Decoded binary files and transformed them into SCADA Monarch-compatible display files',
+        'Innovated solution to integrate ODBC support with DevExpress',
+        'Developed Web Forms using ASP.NET Controls, CSS, and HTML',
+        'Converted codes from F# to C#',
+      ],
+      tech: ['C', 'C#', 'Cassandra', 'ASP.NET', 'SCADA', 'F#']
+    },
+    {
+      title: 'Embedded Design Engineer',
+      company: 'SUGUS Private Limited',
+      period: 'Jul 2018 - Mar 2021',
+      color: '#EC4899',
+      summary: 'IoT, HMI automation, embedded systems for Bosch and TVS',
+      details: [
+        'Revised and modularized legacy codebases to modern development standards',
+        'Developed Offline GPS Recorder with advanced tracking capabilities',
+        'Designed intuitive GUIs using serial communications and database design',
+        'Designed hardware for home security systems',
+        'Developed TDS Meter for Bosch Groups and counter meter for TVS Tires',
+        'Individually developed complete HMI automation device for RO plants using Python',
+        'Pioneered breakthrough: condensed 2-month development into 90-minute process through intensive R&D',
+        'Delivered critical project solution within 3 days that team couldn\'t resolve over 6 months',
+      ],
+      tech: ['Embedded C', 'MicroPython', 'Python', 'IoT', 'HMI', 'GPS']
+    },
+  ]
 
-          <div className="space-y-8">
-            {[
-              {
-                num: '01',
-                title: 'Precision Targeting Platform',
-                desc: 'Enterprise analytics platform serving 8,000+ users. First to meet company-wide security and performance standards.',
-                metric: '1,600%',
-                metricLabel: 'User Growth',
-                tech: ['Svelte', '.NET Core', 'Snowflake', 'Azure'],
-                gradient: 'from-orange-500 to-red-500'
-              },
-              {
-                num: '02',
-                title: 'AIP Modernization',
-                desc: 'Complete backend rewrite enabling multi-database architecture. Zero downtime during migration.',
-                metric: '30 days',
-                metricLabel: 'Migration Time',
-                tech: ['.NET Core', 'KDB+', 'Databricks', 'SQL Server'],
-                gradient: 'from-amber-500 to-orange-500'
-              },
-              {
-                num: '03',
-                title: 'KOL Analytics Engine',
-                desc: 'Distributed processing with KEDA auto-scaling. GPT-4o powered insights for healthcare professionals.',
-                metric: 'AI-Powered',
-                metricLabel: 'Analytics',
-                tech: ['Kubernetes', 'Azure', 'OpenAI', 'Python'],
-                gradient: 'from-yellow-500 to-amber-500'
-              },
-            ].map((project, i) => (
-              <div
-                key={i}
-                className="work-card group relative p-8 md:p-12 rounded-3xl bg-zinc-900/50 border border-white/10 hover:border-orange-500/50 transition-all duration-500 overflow-hidden cursor-default"
-                onMouseEnter={() => setCursorVariant('hover')}
-                onMouseLeave={() => setCursorVariant('default')}
-              >
-                {/* Background gradient on hover */}
-                <div className={`absolute inset-0 bg-gradient-to-r ${project.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+  return (
+    <section id="experience" className="py-20 md:py-28 px-4 relative">
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 left-0 w-[400px] h-[400px] bg-blue/5 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/4 right-0 w-[300px] h-[300px] bg-orange/5 rounded-full blur-[120px]" />
+      </div>
 
-                {/* Background Number */}
-                <div className="absolute -right-8 -top-8 text-[15rem] font-black text-white/[0.02] select-none leading-none group-hover:text-orange-500/[0.05] transition-colors duration-500">
-                  {project.num}
-                </div>
+      <div className="max-w-4xl mx-auto relative z-10">
+        <AnimatedSection className="text-center mb-12">
+          <span className="text-orange text-sm font-mono mb-3 block">// EXPERIENCE</span>
+          <h2 className="text-3xl md:text-5xl font-black">
+            <span className="text-white">Career </span>
+            <span style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Journey</span>
+          </h2>
+          <p className="text-white/40 mt-3">Click each role to see detailed achievements</p>
+        </AnimatedSection>
 
-                <div className="relative flex flex-col md:flex-row md:items-center gap-8">
-                  <div className="flex-1">
-                    <span className={`text-transparent bg-gradient-to-r ${project.gradient} bg-clip-text font-mono text-sm font-bold`}>{project.num}</span>
-                    <h3 className="text-3xl md:text-4xl font-bold text-white mt-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-orange-500 group-hover:to-amber-500 group-hover:bg-clip-text transition-all duration-300">
-                      {project.title}
-                    </h3>
-                    <p className="text-gray-400 mt-3 text-lg">{project.desc}</p>
-
-                    {/* Tech tags */}
-                    <div className="flex flex-wrap gap-2 mt-4">
-                      {project.tech.map((tech, j) => (
-                        <span key={j} className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-gray-400 group-hover:border-orange-500/30 group-hover:text-orange-400 transition-all">
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="md:text-right">
-                    <div className={`text-4xl md:text-5xl font-black bg-gradient-to-r ${project.gradient} bg-clip-text text-transparent`}>
-                      {project.metric}
-                    </div>
-                    <div className="text-sm text-gray-500 mt-1">{project.metricLabel}</div>
-                  </div>
-                </div>
-
-                {/* Hover line */}
-                <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-orange-500 to-amber-500 group-hover:w-full transition-all duration-500" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      {/* TECH STACK SECTION */}
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      <section id="tech" ref={techRef} className="py-32 px-6 md:px-12 lg:px-24 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <span className="text-orange-500 text-sm font-medium tracking-wider uppercase">Arsenal</span>
-            <h2 className="text-5xl md:text-6xl font-black mt-4">
-              Tech Stack<span className="text-orange-500">.</span>
-            </h2>
-          </div>
-
-          {/* Tech Grid with Color */}
-          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
-            {techStack.map((tech, i) => (
-              <div
-                key={i}
-                className="tech-icon group relative flex flex-col items-center justify-center p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-transparent transition-all duration-300 cursor-default overflow-hidden"
-                onMouseEnter={() => setCursorVariant('hover')}
-                onMouseLeave={() => setCursorVariant('default')}
-                style={{ '--tech-color': tech.color }}
-              >
-                {/* Glow effect */}
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-xl"
-                  style={{ backgroundColor: tech.color }}
-                />
-
-                {/* Border glow */}
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"
-                  style={{ boxShadow: `inset 0 0 0 2px ${tech.color}` }}
-                />
-
-                {/* Tech initial as icon */}
-                <div
-                  className="text-4xl font-black text-gray-600 group-hover:text-white transition-colors duration-300"
-                  style={{ '--hover-color': tech.color }}
-                >
-                  {tech.name.charAt(0)}
-                </div>
-
-                <span
-                  className="mt-2 text-xs font-medium text-gray-500 group-hover:text-white transition-colors duration-300"
-                >
-                  {tech.name}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {/* Skill Categories */}
-          <div className="grid md:grid-cols-3 gap-8 mt-16">
-            {[
-              { title: 'Cloud & DevOps', icon: '☁️', color: 'from-blue-500 to-cyan-500', items: ['Azure Kubernetes', 'Docker', 'KEDA', 'Service Bus', 'CI/CD'] },
-              { title: 'Backend & Data', icon: '⚡', color: 'from-purple-500 to-pink-500', items: ['.NET Core', 'Python', 'Snowflake', 'KDB+', 'SQL Server'] },
-              { title: 'Frontend & AI', icon: '🧠', color: 'from-orange-500 to-red-500', items: ['Svelte', 'React', 'OpenAI GPT-4', 'Auth0', 'TypeScript'] },
-            ].map((group, i) => (
-              <div
-                key={i}
-                className="group p-8 rounded-3xl bg-zinc-900/50 border border-white/10 hover:border-white/30 transition-all duration-300"
-                onMouseEnter={() => setCursorVariant('hover')}
-                onMouseLeave={() => setCursorVariant('default')}
-              >
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="text-3xl">{group.icon}</span>
-                  <h3 className={`text-xl font-bold bg-gradient-to-r ${group.color} bg-clip-text text-transparent`}>{group.title}</h3>
-                </div>
+        <div className="space-y-4">
+          {experiences.map((exp, i) => (
+            <AnimatedSection key={i} delay={i * 0.1}>
+              <ExpandableCard title={exp.title} subtitle={exp.company} period={exp.period} color={exp.color} defaultOpen={i === 0}>
+                <p className="text-white/60 mb-4 italic">{exp.summary}</p>
+                <ul className="space-y-2 mb-4">
+                  {exp.details.map((detail, j) => (
+                    <li key={j} className="flex items-start gap-2 text-white/70 text-sm">
+                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: exp.color }} />
+                      {detail}
+                    </li>
+                  ))}
+                </ul>
                 <div className="flex flex-wrap gap-2">
-                  {group.items.map((item, j) => (
-                    <span
-                      key={j}
-                      className="px-4 py-2 bg-white/5 rounded-lg text-sm text-gray-400 border border-white/10 hover:bg-white/10 hover:text-white transition-all cursor-default"
-                    >
-                      {item}
-                    </span>
+                  {exp.tech.map((t, j) => (
+                    <span key={j} className="px-2 py-1 bg-white/5 rounded text-xs text-white/60">{t}</span>
                   ))}
                 </div>
-              </div>
-            ))}
-          </div>
+              </ExpandableCard>
+            </AnimatedSection>
+          ))}
         </div>
-      </section>
+      </div>
+    </section>
+  )
+}
 
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      {/* CONTACT SECTION */}
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      <section id="contact" ref={contactRef} className="min-h-screen flex items-center justify-center px-6 md:px-12 lg:px-24 relative">
-        <div className="contact-content text-center max-w-4xl relative z-10">
-          <span className="text-orange-500 text-sm font-medium tracking-wider uppercase">Let's Connect</span>
-          <h2 className="text-5xl md:text-7xl lg:text-8xl font-black mt-6 mb-8">
-            Build something<br/>
-            <span className="bg-gradient-to-r from-orange-500 via-amber-400 to-red-500 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
-              extraordinary
-            </span>
+// ============ SKILLS SECTION ============
+const SkillsSection = () => {
+  const skillCategories = [
+    {
+      name: 'Languages & Frameworks',
+      color: '#3B82F6',
+      skills: [
+        { name: 'C# / .NET Core', level: 95 },
+        { name: 'JavaScript / Node.js', level: 85 },
+        { name: 'Python', level: 80 },
+        { name: 'Svelte', level: 85 },
+        { name: 'Embedded C', level: 75 },
+      ]
+    },
+    {
+      name: 'Cloud & DevOps',
+      color: '#F97316',
+      skills: [
+        { name: 'Microsoft Azure', level: 90 },
+        { name: 'Azure Kubernetes (AKS)', level: 88 },
+        { name: 'Azure DevOps / CI-CD', level: 85 },
+        { name: 'Docker', level: 82 },
+        { name: 'KEDA Autoscaling', level: 80 },
+      ]
+    },
+    {
+      name: 'Data & AI',
+      color: '#EC4899',
+      skills: [
+        { name: 'Snowflake', level: 88 },
+        { name: 'OpenAI / GPT Integration', level: 85 },
+        { name: 'KDB+', level: 75 },
+        { name: 'Databricks', level: 70 },
+        { name: 'SQL / Database Design', level: 90 },
+      ]
+    },
+  ]
+
+  const toolsAndPatterns = [
+    'Event Sourcing', 'Domain Driven Design', 'Clean Architecture', 'Microservices',
+    'REST APIs', 'GraphQL', 'Auth0', 'Azure Service Bus', 'WPF', 'WinForms',
+    'Excel-DNA', 'Blazor', 'MAUI', 'Git/GitHub', 'Cassandra', 'Redis'
+  ]
+
+  return (
+    <section id="skills" className="py-20 md:py-28 px-4 relative">
+      <div className="absolute inset-0 opacity-5" style={{
+        backgroundImage: 'radial-gradient(rgba(59,130,246,0.4) 1px, transparent 1px)',
+        backgroundSize: '20px 20px'
+      }} />
+
+      <div className="max-w-6xl mx-auto relative z-10">
+        <AnimatedSection className="text-center mb-12">
+          <span className="text-pink text-sm font-mono mb-3 block">// SKILLS</span>
+          <h2 className="text-3xl md:text-5xl font-black">
+            <span className="text-white">Technical </span>
+            <span style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316, #EC4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Arsenal</span>
           </h2>
-          <p className="text-xl text-gray-400 mb-12 max-w-xl mx-auto">
-            Healthcare tech, distributed systems, or enterprise architecture—let's create something remarkable together.
-          </p>
+        </AnimatedSection>
 
-          <a
-            href="mailto:suganthan94@yahoo.com"
-            className="magnetic-btn group inline-flex items-center gap-4 text-2xl md:text-3xl font-bold text-white hover:text-orange-500 transition-colors"
-            onMouseEnter={(e) => { setCursorVariant('hover'); handleMagneticMove(e, e.currentTarget) }}
-            onMouseLeave={(e) => { setCursorVariant('default'); handleMagneticLeave(e.currentTarget) }}
-            onMouseMove={(e) => handleMagneticMove(e, e.currentTarget)}
-          >
-            <span className="relative">
-              suganthan94@yahoo.com
-              <span className="absolute -bottom-2 left-0 w-full h-0.5 bg-gradient-to-r from-orange-500 to-amber-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
-            </span>
-            <svg className="w-8 h-8 group-hover:translate-x-2 group-hover:text-orange-500 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </a>
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
+          {skillCategories.map((category, i) => (
+            <AnimatedSection key={category.name} delay={i * 0.1}>
+              <div className="p-5 bg-white/5 border border-white/10 rounded-xl h-full">
+                <h3 className="text-lg font-bold mb-4" style={{ color: category.color }}>{category.name}</h3>
+                {category.skills.map((skill, j) => (
+                  <SkillBar key={skill.name} name={skill.name} level={skill.level} color={category.color} delay={j * 0.1} />
+                ))}
+              </div>
+            </AnimatedSection>
+          ))}
+        </div>
 
-          <div className="flex justify-center gap-8 mt-16 text-gray-500">
-            <a
-              href="https://linkedin.com/in/suganthan-arulvelan-a9356073"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-orange-500 transition-colors"
-              onMouseEnter={() => setCursorVariant('hover')}
-              onMouseLeave={() => setCursorVariant('default')}
-            >
-              LinkedIn
-            </a>
-            <span>•</span>
-            <span>Salem, India</span>
-            <span>•</span>
-            <span>+91 9080704073</span>
+        <AnimatedSection delay={0.3}>
+          <div className="p-5 bg-white/5 border border-white/10 rounded-xl">
+            <h3 className="text-lg font-bold text-white mb-4 text-center">Tools, Patterns & Technologies</h3>
+            <div className="flex flex-wrap justify-center gap-2">
+              {toolsAndPatterns.map((tool, i) => (
+                <motion.span
+                  key={tool}
+                  className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-sm text-white/70"
+                  whileHover={{ scale: 1.05, borderColor: i % 3 === 0 ? '#3B82F640' : i % 3 === 1 ? '#F9731640' : '#EC489940' }}
+                >
+                  {tool}
+                </motion.span>
+              ))}
+            </div>
           </div>
+        </AnimatedSection>
+      </div>
+    </section>
+  )
+}
+
+// ============ ACHIEVEMENTS SECTION ============
+const AchievementsSection = () => {
+  const achievements = [
+    { value: 1600, suffix: '%', label: 'User Growth', desc: 'Precision Targeting Platform', color: '#3B82F6' },
+    { value: 3001, suffix: '%', label: 'Engagement Increase', desc: 'Login activity boost', color: '#F97316' },
+    { value: 30, suffix: ' days', label: 'Platform Migration', desc: 'Node.js to .NET Core', color: '#EC4899' },
+    { value: 99.9, suffix: '%', label: 'Uptime', desc: 'Production SLA maintained', color: '#3B82F6' },
+    { value: 0, suffix: '', label: 'Production Incidents', desc: 'Across all releases', color: '#F97316' },
+    { value: 20, suffix: '+', label: 'Team Size', desc: 'Engineers led', color: '#EC4899' },
+  ]
+
+  const highlights = [
+    { title: 'R&D Breakthrough', desc: 'Condensed 2-month development into 90-minute process through intensive R&D and innovative engineering', icon: '🚀' },
+    { title: '3-Day Miracle', desc: 'Delivered critical project solution within 3 days that a dedicated team couldn\'t resolve over 6 months', icon: '⚡' },
+    { title: 'AI Pioneer', desc: 'First to integrate GPT-4o mini for medical terminology and ICD-10 validation at Syneos', icon: '🤖' },
+    { title: 'Pattern Setter', desc: 'Established reusable .NET Core patterns reducing future development time by 30-40%', icon: '📐' },
+  ]
+
+  return (
+    <section id="achievements" className="py-20 md:py-28 px-4 relative">
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-orange/5 rounded-full blur-[180px]" />
+      </div>
+
+      <div className="max-w-6xl mx-auto relative z-10">
+        <AnimatedSection className="text-center mb-12">
+          <span className="text-blue text-sm font-mono mb-3 block">// IMPACT</span>
+          <h2 className="text-3xl md:text-5xl font-black">
+            <span className="text-white">Key </span>
+            <span style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316, #EC4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Achievements</span>
+          </h2>
+        </AnimatedSection>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12">
+          {achievements.map((item, i) => (
+            <AnimatedSection key={i} delay={i * 0.08}>
+              <StatCard value={item.value} suffix={item.suffix} label={item.label} color={item.color} />
+            </AnimatedSection>
+          ))}
         </div>
 
-        {/* Background SA */}
-        <div className="absolute bottom-0 right-0 text-[30vw] font-black text-white/[0.02] select-none leading-none pointer-events-none">
-          SA
+        <div className="grid md:grid-cols-2 gap-4">
+          {highlights.map((item, i) => (
+            <AnimatedSection key={i} delay={0.3 + i * 0.1}>
+              <motion.div
+                className="p-5 bg-white/5 border border-white/10 rounded-xl"
+                whileHover={{ borderColor: i % 2 === 0 ? '#3B82F640' : '#F9731640' }}
+              >
+                <div className="flex items-start gap-4">
+                  <span className="text-3xl">{item.icon}</span>
+                  <div>
+                    <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
+                    <p className="text-white/60 text-sm">{item.desc}</p>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatedSection>
+          ))}
         </div>
-      </section>
+      </div>
+    </section>
+  )
+}
 
-      {/* Footer */}
-      <footer className="py-8 px-6 border-t border-white/5">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
-          <span>© {new Date().getFullYear()} Suganthan Arulvelan</span>
-          <span className="flex items-center gap-2">
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            Available for opportunities
-          </span>
-          <span>English • Tamil • French</span>
+// ============ EDUCATION SECTION ============
+const EducationSection = () => {
+  const education = [
+    { degree: 'Machine Learning Engineer Nanodegree', school: 'Udacity', year: '2020', color: '#3B82F6',
+      details: 'TensorFlow, scikit-learn, Pandas, NumPy. Hands-on projects applying ML to real-world problems.' },
+    { degree: 'Master of Engineering - Control Systems', school: 'Mahendra Engineering College', year: '2016-2018', color: '#F97316',
+      details: 'Graduated Top 2% of the Class. Advanced control theory, automation systems.' },
+    { degree: 'Bachelor of Engineering - EEE', school: 'Mahendra Engineering College', year: '2012-2016', color: '#EC4899',
+      details: 'Electrical and Electronics Engineering. Foundation in embedded systems and programming.' },
+  ]
+
+  return (
+    <section id="education" className="py-20 md:py-28 px-4">
+      <div className="max-w-4xl mx-auto">
+        <AnimatedSection className="text-center mb-12">
+          <span className="text-orange text-sm font-mono mb-3 block">// EDUCATION</span>
+          <h2 className="text-3xl md:text-5xl font-black">
+            <span className="text-white">Learning </span>
+            <span style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Journey</span>
+          </h2>
+        </AnimatedSection>
+
+        <div className="space-y-4">
+          {education.map((edu, i) => (
+            <AnimatedSection key={i} delay={i * 0.1}>
+              <motion.div
+                className="p-5 bg-white/5 border border-white/10 rounded-xl flex flex-col md:flex-row md:items-center gap-4"
+                whileHover={{ borderColor: edu.color + '40' }}
+              >
+                <div className="w-1 md:w-1 md:h-20 h-1 rounded-full flex-shrink-0" style={{ background: edu.color }} />
+                <div className="flex-grow">
+                  <h3 className="text-lg font-bold text-white">{edu.degree}</h3>
+                  <p className="text-white/50">{edu.school}</p>
+                  <p className="text-white/60 text-sm mt-1">{edu.details}</p>
+                </div>
+                <span className="text-sm font-mono px-3 py-1 bg-white/5 rounded-full self-start" style={{ color: edu.color }}>{edu.year}</span>
+              </motion.div>
+            </AnimatedSection>
+          ))}
         </div>
-      </footer>
 
-      {/* Styles */}
-      <style jsx global>{`
-        @keyframes gradient {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-        .animate-gradient {
-          animation: gradient 3s ease infinite;
-          -webkit-background-clip: text !important;
-          -webkit-text-fill-color: transparent !important;
-          background-clip: text !important;
-        }
-        .text-gradient {
-          background: linear-gradient(to right, #f97316, #fbbf24);
-          -webkit-background-clip: text !important;
-          -webkit-text-fill-color: transparent !important;
-          background-clip: text !important;
-        }
+        <AnimatedSection delay={0.4} className="mt-8">
+          <div className="p-5 bg-white/5 border border-white/10 rounded-xl">
+            <h3 className="text-lg font-bold text-white mb-3">🏆 Honors & Awards</h3>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🎓</span>
+              <div>
+                <p className="text-white font-medium">Student of the Year</p>
+                <p className="text-white/50 text-sm">Academic excellence recognition</p>
+              </div>
+            </div>
+          </div>
+        </AnimatedSection>
+      </div>
+    </section>
+  )
+}
 
-        /* Ensure gradient text works */
-        .bg-clip-text {
-          -webkit-background-clip: text !important;
-          background-clip: text !important;
-        }
-        .text-transparent {
-          -webkit-text-fill-color: transparent !important;
-          color: transparent !important;
-        }
+// ============ CONTACT SECTION ============
+const ContactSection = () => {
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' })
+  const [status, setStatus] = useState('idle')
 
-        /* Hide cursor on mobile */
-        @media (max-width: 768px) {
-          .fixed.w-10,
-          .fixed.w-2 {
-            display: none;
-          }
-        }
-      `}</style>
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setStatus('sending')
+    await new Promise(r => setTimeout(r, 1500))
+    setStatus('sent')
+    setFormData({ name: '', email: '', message: '' })
+    setTimeout(() => setStatus('idle'), 3000)
+  }
+
+  return (
+    <section id="contact" className="py-20 md:py-28 px-4 relative">
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-orange/5 rounded-full blur-[180px]" />
+        <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-blue/5 rounded-full blur-[150px]" />
+      </div>
+
+      <div className="max-w-4xl mx-auto relative z-10">
+        <AnimatedSection className="text-center mb-12">
+          <span className="text-pink text-sm font-mono mb-3 block">// CONTACT</span>
+          <h2 className="text-3xl md:text-5xl font-black">
+            <span className="text-white">Let&apos;s </span>
+            <span style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316, #EC4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Connect</span>
+          </h2>
+          <p className="text-white/40 mt-3">Always happy to discuss healthcare tech, distributed systems, or AI integration</p>
+        </AnimatedSection>
+
+        <div className="grid md:grid-cols-2 gap-8">
+          <AnimatedSection delay={0.1}>
+            <div className="space-y-4">
+              {[
+                { icon: '📧', label: 'Email', value: 'suganthan94@yahoo.com', href: 'mailto:suganthan94@yahoo.com' },
+                { icon: '📱', label: 'Phone', value: '+91 9080704073', href: 'tel:+919080704073' },
+                { icon: '💼', label: 'LinkedIn', value: 'suganthan-arulvelan', href: 'https://www.linkedin.com/in/suganthan-arulvelan-a9356073/' },
+                { icon: '🐙', label: 'GitHub', value: 'shuganth', href: 'https://github.com/shuganth' },
+                { icon: '📍', label: 'Location', value: 'Salem, Tamil Nadu, India', href: '#' },
+              ].map((item, i) => (
+                <motion.a
+                  key={i}
+                  href={item.href}
+                  target={item.href.startsWith('http') ? '_blank' : undefined}
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-xl hover:border-blue/50 transition-all"
+                  whileHover={{ x: 5 }}
+                >
+                  <span className="text-2xl">{item.icon}</span>
+                  <div>
+                    <div className="text-white/40 text-xs">{item.label}</div>
+                    <div className="text-white">{item.value}</div>
+                  </div>
+                </motion.a>
+              ))}
+            </div>
+          </AnimatedSection>
+
+          <AnimatedSection delay={0.2}>
+            <form onSubmit={handleSubmit} className="p-5 bg-white/5 border border-white/10 rounded-xl">
+              <h3 className="text-lg font-bold text-white mb-4">Send a Message</h3>
+              <div className="space-y-4">
+                <input type="text" placeholder="Your Name" required value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder:text-white/30 focus:border-blue focus:outline-none" />
+                <input type="email" placeholder="Your Email" required value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder:text-white/30 focus:border-blue focus:outline-none" />
+                <textarea placeholder="Your Message" required rows={4} value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder:text-white/30 focus:border-blue focus:outline-none resize-none" />
+                <motion.button type="submit" disabled={status !== 'idle'}
+                  className="w-full py-3 font-bold rounded-lg disabled:opacity-50"
+                  style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316)' }}
+                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  {status === 'sending' ? 'Sending...' : status === 'sent' ? '✓ Message Sent!' : 'Send Message'}
+                </motion.button>
+              </div>
+            </form>
+          </AnimatedSection>
+        </div>
+
+        <AnimatedSection delay={0.4} className="mt-16 text-center">
+          <div className="text-white/20 text-sm">
+            © {new Date().getFullYear()} Suganthan Arulvelan • Built with Next.js & Framer Motion
+          </div>
+        </AnimatedSection>
+      </div>
+    </section>
+  )
+}
+
+// ============ MAIN COMPONENT ============
+export default function Home() {
+  const [showIntro, setShowIntro] = useState(true)
+
+  return (
+    <div className="bg-black text-white min-h-screen">
+      <AnimatePresence mode="wait">
+        {showIntro && <SARevealIntro key="intro" onComplete={() => setShowIntro(false)} />}
+      </AnimatePresence>
+
+      {!showIntro && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+          <Navigation />
+          <HeroSection />
+          <AboutSection />
+          <ExperienceSection />
+          <SkillsSection />
+          <AchievementsSection />
+          <EducationSection />
+          <ContactSection />
+        </motion.div>
+      )}
     </div>
   )
 }
