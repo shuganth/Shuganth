@@ -6,12 +6,9 @@ export const metadata = {
   keywords: ['Associate Director', 'Healthcare Analytics', 'Enterprise Architecture', 'AI Integration', 'Azure Kubernetes', 'Snowflake', '.NET Core', 'Svelte'],
   authors: [{ name: 'Suganthan Arulvelan' }],
   icons: {
-    icon: [
-      { url: '/favicon.svg', type: 'image/svg+xml' },
-      { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
-    ],
+    icon: '/favicon.svg',
     shortcut: '/favicon.svg',
-    apple: '/apple-touch-icon.png',
+    apple: '/favicon.svg',
   },
   openGraph: {
     title: 'Suganthan Arulvelan | Healthcare Analytics & AI',
@@ -27,7 +24,6 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="alternate icon" href="/favicon.ico" sizes="any" />
       </head>
       <body>{children}</body>
     </html>
