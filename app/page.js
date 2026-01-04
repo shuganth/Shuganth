@@ -44,33 +44,44 @@ export default function Home() {
 
     window.addEventListener('mousemove', handleMouseMove)
 
-    // GSAP Animations
+    // GSAP Animations - with delay to ensure DOM is ready
     const ctx = gsap.context(() => {
-      // Hero section animations
-      gsap.from('.hero-title', {
-        y: 100,
-        opacity: 0,
-        duration: 1.2,
-        ease: 'power4.out',
-        stagger: 0.2
-      })
+      // Set initial states
+      gsap.set('.hero-title', { y: 50, opacity: 0 })
+      gsap.set('.hero-subtitle', { y: 30, opacity: 0 })
+      gsap.set('.hero-stats', { y: 20, opacity: 0 })
+      gsap.set('.magnetic-btn', { y: 20, opacity: 0 })
 
-      gsap.from('.hero-subtitle', {
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        delay: 0.5,
-        ease: 'power3.out'
-      })
+      // Hero section animations with timeline
+      const tl = gsap.timeline({ delay: 0.2 })
 
-      gsap.from('.hero-stats', {
-        y: 30,
-        opacity: 0,
+      tl.to('.hero-title', {
+        y: 0,
+        opacity: 1,
         duration: 0.8,
-        delay: 0.8,
+        ease: 'power3.out',
+        stagger: 0.15
+      })
+      .to('.hero-subtitle', {
+        y: 0,
+        opacity: 1,
+        duration: 0.6,
+        ease: 'power3.out'
+      }, '-=0.4')
+      .to('.hero-stats', {
+        y: 0,
+        opacity: 1,
+        duration: 0.5,
         stagger: 0.1,
         ease: 'power2.out'
-      })
+      }, '-=0.3')
+      .to('.magnetic-btn', {
+        y: 0,
+        opacity: 1,
+        duration: 0.5,
+        stagger: 0.1,
+        ease: 'power2.out'
+      }, '-=0.3')
 
       // Floating SA watermark
       gsap.to('.floating-sa', {
@@ -708,18 +719,32 @@ export default function Home() {
       </footer>
 
       {/* Styles */}
-      <style jsx>{`
+      <style jsx global>{`
         @keyframes gradient {
           0%, 100% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
         }
         .animate-gradient {
           animation: gradient 3s ease infinite;
+          -webkit-background-clip: text !important;
+          -webkit-text-fill-color: transparent !important;
+          background-clip: text !important;
         }
         .text-gradient {
           background: linear-gradient(to right, #f97316, #fbbf24);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text !important;
+          -webkit-text-fill-color: transparent !important;
+          background-clip: text !important;
+        }
+
+        /* Ensure gradient text works */
+        .bg-clip-text {
+          -webkit-background-clip: text !important;
+          background-clip: text !important;
+        }
+        .text-transparent {
+          -webkit-text-fill-color: transparent !important;
+          color: transparent !important;
         }
 
         /* Hide cursor on mobile */

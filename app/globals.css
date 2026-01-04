@@ -112,3 +112,21 @@ a {
     font-size: 2rem !important;
   }
 }
+
+/* WebKit gradient text fix */
+.bg-clip-text {
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+}
+
+.text-transparent {
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* Ensure animations don't hide content */
+.hero-title,
+.hero-subtitle,
+.hero-stats,
+.magnetic-btn {
+  will-change: transform, opacity;
+}
