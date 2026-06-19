@@ -72,7 +72,7 @@ const SARevealIntro = ({ onComplete }) => {
     return () => timeline.pause()
   }, [onComplete])
 
-  const words = ['.NET', 'Azure', 'Kubernetes', 'AI', 'Leadership', 'Svelte', 'Architecture']
+  const words = ['Claude', 'RAG', 'Multi-Agent', 'Evals', 'Gemini', 'LLM', 'Architecture']
 
   return (
     <div className="fixed inset-0 z-[200] bg-black flex items-center justify-center overflow-hidden intro-overlay">
@@ -327,7 +327,15 @@ const Navigation = () => {
     setMobileOpen(false)
   }
 
-  const links = ['about', 'experience', 'skills', 'achievements', 'education', 'contact']
+  const links = [
+    { id: 'about', label: 'About' },
+    { id: 'experience', label: 'Experience' },
+    { id: 'ai', label: 'AI Work' },
+    { id: 'skills', label: 'Skills' },
+    { id: 'impact', label: 'Impact' },
+    { id: 'education', label: 'Education' },
+    { id: 'contact', label: 'Contact' },
+  ]
 
   return (
     <nav
@@ -341,7 +349,7 @@ const Navigation = () => {
 
         <div className="hidden md:flex items-center gap-6">
           {links.map(link => (
-            <button key={link} onClick={() => scrollTo(link)} className="text-sm text-white/60 hover:text-white transition-colors capitalize">{link}</button>
+            <button key={link.id} onClick={() => scrollTo(link.id)} className="text-sm text-white/60 hover:text-white transition-colors">{link.label}</button>
           ))}
         </div>
 
@@ -359,7 +367,7 @@ const Navigation = () => {
       <div ref={mobileMenuRef} className="md:hidden overflow-hidden" style={{ height: 0, opacity: 0 }}>
         <div className="mt-4 pb-4 border-t border-white/10 pt-4">
           {links.map(link => (
-            <button key={link} onClick={() => scrollTo(link)} className="block w-full text-left py-2 text-white/60 hover:text-white capitalize">{link}</button>
+            <button key={link.id} onClick={() => scrollTo(link.id)} className="block w-full text-left py-2 text-white/60 hover:text-white">{link.label}</button>
           ))}
           <button onClick={() => scrollTo('contact')} className="mt-3 w-full py-3 text-sm font-bold rounded-full" style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316)' }}>
             Let&apos;s Talk
@@ -442,7 +450,7 @@ const HeroSection = () => {
 
         <div className="hero-status inline-flex items-center gap-2 px-4 py-2 mb-4 bg-white/5 border border-white/10 rounded-full">
           <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-          <span className="text-xs md:text-sm text-white/60 font-mono">Available for opportunities</span>
+          <span className="text-xs md:text-sm text-white/60 font-mono">Open to Applied AI Architect roles</span>
         </div>
 
         <h1 className="hero-title text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-4">
@@ -451,13 +459,19 @@ const HeroSection = () => {
         </h1>
 
         <p className="hero-subtitle text-lg md:text-xl text-white/60 mb-2">
-          <span className="text-blue font-semibold">Associate Director</span> at Syneos Health
+          <span className="text-blue font-semibold">Applied AI Architect</span> • Enterprise LLM Solutions &amp; Client Advisory
         </p>
 
-        <p className="hero-desc text-sm md:text-base text-white/40 max-w-2xl mx-auto mb-8 leading-relaxed">
-          Building Healthcare Analytics Platforms • Enterprise Architecture & AI Integration<br />
-          Leading 20+ Engineers • 8+ Years Experience • Zero Production Incidents
+        <p className="hero-desc text-sm md:text-base text-white/40 max-w-2xl mx-auto mb-6 leading-relaxed">
+          Designing &amp; shipping production LLM systems — RAG, agentic &amp; multi-agent pipelines, evals at scale<br />
+          Pre-Sales Technical Lead • 2M+ Documents in Production • Zero Production Incidents
         </p>
+
+        <div className="hero-desc flex flex-wrap justify-center gap-2 mb-8">
+          {['Claude (API & for Work)', 'Google Gemini', 'Azure OpenAI'].map((m) => (
+            <span key={m} className="px-3 py-1.5 text-xs font-mono rounded-full bg-white/5 border border-white/10 text-white/70">{m}</span>
+          ))}
+        </div>
 
         <div className="hero-buttons flex flex-wrap justify-center gap-3">
           <button onClick={() => gsap.to(window, { duration: 1, scrollTo: '#experience', ease: 'power3.inOut' })}
@@ -519,19 +533,19 @@ const AboutSection = () => {
           <AnimatedSection>
             <div className="space-y-4 text-white/70 leading-relaxed">
               <p className="text-lg">
-                From programming <span className="text-orange font-semibold">microcontrollers</span> to leading <span className="text-blue font-semibold">enterprise platform teams</span>—my journey has been about solving progressively harder problems.
+                I design and ship <span className="text-blue font-semibold">production LLM systems</span> for global pharmaceutical clients — and act as the <span className="text-orange font-semibold">trusted technical advisor</span> across C-suite, engineering, and IT stakeholders.
               </p>
               <p>
-                Today, as Associate Director at Syneos Health, I lead <span className="text-pink font-semibold">20+ engineers</span> building healthcare analytics platforms used by pharmaceutical companies worldwide. Our work sits at the intersection of complex medical data, enterprise architecture, and emerging AI capabilities.
+                I&apos;m hands-on across the modern LLM stack — <span className="text-pink font-semibold">Claude (API &amp; Claude for Work)</span>, Google Gemini, and Azure OpenAI — with production-validated depth in RAG, agentic &amp; multi-agent pipelines, prompt engineering, and evaluation frameworks <span className="text-blue font-semibold">validated across 2M+ documents</span>.
               </p>
               <p>
-                I care deeply about craft—clean architecture, proper abstractions, systems that don&apos;t break at 2 AM. Equally passionate about people—helping engineers grow from writing code to thinking in systems.
+                My edge is range: I translate ambiguous business problems into scalable, secure, compliant cloud architectures, then prove value through <span className="text-orange font-semibold">live executive demonstrations</span> — pairing genuine engineering credibility with the communication and mentoring to carry diverse audiences from discovery to deployment.
               </p>
 
               <div className="grid grid-cols-2 gap-4 pt-4">
                 <div className="p-3 bg-white/5 rounded-lg">
                   <div className="text-blue font-mono text-sm">Location</div>
-                  <div className="text-white">Salem, Tamil Nadu</div>
+                  <div className="text-white">Salem / Bengaluru, India</div>
                 </div>
                 <div className="p-3 bg-white/5 rounded-lg">
                   <div className="text-orange font-mono text-sm">Languages</div>
@@ -539,7 +553,7 @@ const AboutSection = () => {
                 </div>
                 <div className="p-3 bg-white/5 rounded-lg">
                   <div className="text-pink font-mono text-sm">Phone</div>
-                  <div className="text-white">+91 9080704073</div>
+                  <div className="text-white">+91 90807 04073</div>
                 </div>
                 <div className="p-3 bg-white/5 rounded-lg">
                   <div className="text-blue font-mono text-sm">Email</div>
@@ -549,6 +563,28 @@ const AboutSection = () => {
             </div>
           </AnimatedSection>
         </div>
+
+        <AnimatedSection className="mt-14">
+          <h3 className="text-center text-white/40 text-sm font-mono mb-6">// CORE STRENGTHS FOR APPLIED AI ARCHITECTURE</h3>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { t: 'Trusted Technical Advisor', d: 'Primary technical voice on high-priority initiatives — guiding stakeholders from discovery and evaluation through architecture to production.', c: '#3B82F6' },
+              { t: 'Audience-Range Communication', d: 'From value-focused C-suite readouts and live demos to deep technical sessions for engineering teams — cited as a model for enterprise AI adoption.', c: '#F97316' },
+              { t: 'LLM Solution Design', d: 'RAG, multi-agent, and high-throughput systems on Claude, Gemini, and Azure OpenAI, integrated into existing enterprise stacks.', c: '#EC4899' },
+              { t: 'Evaluation Frameworks', d: 'Structured-output prompting with confidence scoring, evidence extraction, and hallucination controls — evals validated across 2M+ documents.', c: '#3B82F6' },
+              { t: 'India / APAC Delivery', d: 'Lead engineering for global pharma clients from India across distributed, cross-time-zone, multi-stakeholder teams.', c: '#F97316' },
+              { t: 'Teaching & Mentoring', d: 'Scaled a cross-discipline team from 10 to 20 engineers with zero attrition; established architecture standards and mentorship.', c: '#EC4899' },
+            ].map((s) => (
+              <div key={s.t} className="p-5 bg-white/5 border border-white/10 rounded-xl h-full transition-colors hover:border-white/20"
+                onMouseEnter={(e) => gsap.to(e.currentTarget, { borderColor: s.c + '40', y: -4, duration: 0.3 })}
+                onMouseLeave={(e) => gsap.to(e.currentTarget, { borderColor: 'rgba(255,255,255,0.1)', y: 0, duration: 0.3 })}
+              >
+                <h4 className="font-bold mb-2" style={{ color: s.c }}>{s.t}</h4>
+                <p className="text-white/60 text-sm leading-relaxed">{s.d}</p>
+              </div>
+            ))}
+          </div>
+        </AnimatedSection>
       </div>
     </section>
   )
@@ -558,103 +594,85 @@ const AboutSection = () => {
 const ExperienceSection = () => {
   const experiences = [
     {
-      title: 'Associate Director',
-      company: 'Syneos Health',
-      period: 'Nov 2025 - Present',
+      title: 'Director — Technical Delivery Center',
+      company: 'Syneos Health · Salem, India',
+      period: 'Jul 2026 - Present',
       color: '#3B82F6',
-      summary: 'Leading 20+ engineers across UI, middleware, data, and QA disciplines',
+      summary: 'Promoted to Director (effective 1 July 2026), leading a 20-engineer organization across UI, middleware, data, and QA.',
       details: [
-        'Leading team of 20 engineers across UI, middleware, data, and QA disciplines in Technical Delivery Center',
-        'Spearheading development of healthcare analytics platforms including Precision Targeting, KOL Analytics, and AIP systems',
-        'Delivered Precision Targeting Phase 1 with 1,600% user growth and 3,001% login engagement increase',
-        'Led AIP platform modernization from Node.js to .NET Core, achieving 30% performance improvement',
-        'Established enterprise architecture standards and AI integration capabilities using internal OpenAI services',
-        'Maintained zero production incidents across all platform releases',
+        'Continuing to lead a 20-engineer organization across UI, middleware, data, and QA disciplines',
+        'Delivering enterprise healthcare-analytics and AI platforms for global pharmaceutical clients',
+        'Owning architecture standards, AI-first delivery approach, and executive technical advisory',
       ],
-      tech: ['Azure Kubernetes', '.NET Core', 'Snowflake', 'Azure Service Bus', 'KEDA', 'OpenAI']
+      tech: ['Leadership', 'Enterprise AI', 'Architecture', 'Client Advisory']
+    },
+    {
+      title: 'Associate Director — Technical Delivery Center',
+      company: 'Syneos Health · Salem, India',
+      period: 'Nov 2025 - Jun 2026',
+      color: '#F97316',
+      summary: 'Architected high-throughput LLM pipelines, RAG platforms, and multi-agent systems for global pharma clients.',
+      details: [
+        'Distributed AI classification pipeline: classified 2M+ legacy files with Gemini 2.0 Flash across Kubernetes workers and Azure Service Bus — 174K files/hour peak with adaptive concurrency throttling, plus real-time dashboard, prompt-validation playground, and role-based review app',
+        'Built a Proposal Generator using a Gemini-embedding RAG pipeline on Snowflake for intelligent document retrieval',
+        'Built Insights Studio, turning a natural-language prompt into complete interactive dashboards',
+        'Delivered Precision Targeting Phase 1 to 150+ users with 1,600% user growth and 3,001% login engagement; leading Phase 3',
+        'Designed KOL Analytics on Kubernetes/KEDA autoscaling for long-running (1–4 hr) analytical queries on an event-driven Azure Service Bus backbone',
+        'Led a Node.js → .NET Core migration of the AIP platform in 30 days — 30% performance gain, zero downtime, zero production incidents',
+      ],
+      tech: ['Gemini 2.0 Flash', 'RAG', 'Multi-Agent', 'Kubernetes', 'KEDA', 'Azure Service Bus', 'Snowflake', '.NET Core']
     },
     {
       title: 'Principal Engineer',
-      company: 'Syneos Health',
+      company: 'Syneos Health · Salem, India',
       period: 'Jul 2024 - Nov 2025',
-      color: '#F97316',
-      summary: '8-10 engineers, three major healthcare platforms, zero production incidents',
-      details: [
-        'Led 8-10 engineers delivering three major healthcare analytics platforms with zero production incidents and 99.9%+ uptime',
-        'Precision Targeting Platform: First fully enterprise-standard application built end-to-end by TDC team, 1,600% user growth, serving 150+ users',
-        'AIP Platform Modernization: Rewrote Node.js to .NET Core in 30 days with 30% performance gain, zero downtime migration',
-        'KOL Analytics Platform: Architected distributed processing for 1-4 hour analytical queries with Kubernetes workers and KEDA autoscaling',
-        'Integrated GPT-4o mini for medical terminology and ICD-10 validation',
-        'Pioneered AI integration using Syneos internal OpenAI service',
-        'Established reusable .NET Core patterns reducing future dev time by 30-40%',
-      ],
-      tech: ['Svelte', '.NET Core', 'Snowflake', 'Auth0', 'Azure', 'GPT-4o', 'KEDA']
-    },
-    {
-      title: 'Senior Full Stack Developer',
-      company: 'Syneos Health',
-      period: 'Jun 2023 - Jun 2024',
       color: '#EC4899',
-      summary: 'KDB IDE, Excel Add-ins, Diversity Equity reporting tools',
+      summary: 'Led 8–10 engineers across three concurrent healthcare-analytics platforms with zero production incidents and 99.9%+ uptime.',
       details: [
-        'Developed unique KDB IDE—native desktop app with spreadsheet functionality, SSH views, autocomplete using .NET Framework and Windows Forms',
-        'Successfully deployed to production with SSO enabled',
-        'Spearheaded Diversity Equity Index reports tool in .NET Core, using Plotly and Syncfusion for automated PowerPoint presentations',
-        'Designed Excel add-in using Excel-DNA, enhancing Excel with API interactions and complex logical operations',
-        'Drove software development projects and managed server-side operations',
-        'Directed API deployment strategies enhancing availability and interoperability',
+        'Led 8–10 engineers across three concurrent platforms with zero production incidents and 99.9%+ uptime',
+        'Pioneered LLM integration for medical-code lookup and ICD-10 validation',
+        'Built the GPU-server ROI case for an agentic AI code-generation pipeline',
+        'Established reusable .NET Core patterns, CI/CD, and compliance frameworks (GxP, HIPAA, SOX), cutting future build time 30–40%',
       ],
-      tech: ['WPF', 'WinForms', 'Excel-DNA', 'Plotly', 'Syncfusion', '.NET Core']
+      tech: ['LLM Integration', 'Agentic AI', '.NET Core', 'CI/CD', 'GxP / HIPAA / SOX']
     },
     {
-      title: 'Senior Software Engineer',
-      company: 'Syneos Health',
-      period: 'Aug 2022 - Jun 2023',
+      title: 'Senior Software Engineer → Senior Full-Stack Developer',
+      company: 'Syneos Health · Salem, India',
+      period: 'Aug 2022 - Jun 2024',
       color: '#3B82F6',
-      summary: 'Software development and server-side operations',
+      summary: 'Native desktop tooling, reporting automation, and advanced Excel integrations.',
       details: [
-        'Designed innovative software programs, websites, and applications using .NET Framework, .NET Core, API, JS, Python',
-        'Developed WPF and WinForm applications',
-        'Created Excel Add-ins and VBA macros',
-        'Provided hands-on direction for junior developers\' tasks including coding, testing, debugging',
-        'Maintained high-level software system reviews',
-        'Wrote comprehensive development reports and technical documents',
+        'Built a native KDB IDE desktop app (spreadsheet, SSH views, autocomplete)',
+        'Built a Diversity Equity Index reporting tool with automated PowerPoint generation',
+        'Created Excel add-ins (Excel-DNA) for advanced API integrations and complex business logic',
       ],
-      tech: ['.NET Framework', '.NET Core', 'WPF', 'VBA', 'Python', 'JavaScript']
+      tech: ['KDB+', 'Excel-DNA', '.NET Core', 'WPF', 'WinForms']
     },
     {
       title: 'Project Development Engineer',
-      company: 'Open Systems International',
+      company: 'Open Systems International · Bengaluru, India',
       period: 'Mar 2021 - Jul 2022',
       color: '#F97316',
-      summary: 'SCADA systems, database migration, industrial automation',
+      summary: 'Enterprise web applications with secure auth and an F# → C# migration.',
       details: [
-        'Engineered C-based solutions for alarm handling and circuit breaking within SCADA Monarch system',
-        'Spearheaded migration of databases to Cassandra using C#, ensuring data integrity',
-        'Decoded binary files and transformed them into SCADA Monarch-compatible display files',
-        'Innovated solution to integrate ODBC support with DevExpress',
-        'Developed Web Forms using ASP.NET Controls, CSS, and HTML',
-        'Converted codes from F# to C#',
+        'Developed enterprise ASP.NET / C# / ADO.NET web applications with secure auth and SQL stored procedures',
+        'Led an F# → C# migration with comprehensive unit testing',
       ],
-      tech: ['C', 'C#', 'Cassandra', 'ASP.NET', 'SCADA', 'F#']
+      tech: ['ASP.NET', 'C#', 'ADO.NET', 'SQL', 'F#']
     },
     {
       title: 'Embedded Design Engineer',
-      company: 'SUGUS Private Limited',
+      company: 'SUGUS (Clients: Bosch, TVS) · Salem, India',
       period: 'Jul 2018 - Mar 2021',
       color: '#EC4899',
-      summary: 'IoT, HMI automation, embedded systems for Bosch and TVS',
+      summary: 'IoT, instrumentation, and HMI automation for industrial clients.',
       details: [
-        'Revised and modularized legacy codebases to modern development standards',
-        'Developed Offline GPS Recorder with advanced tracking capabilities',
-        'Designed intuitive GUIs using serial communications and database design',
-        'Designed hardware for home security systems',
-        'Developed TDS Meter for Bosch Groups and counter meter for TVS Tires',
-        'Individually developed complete HMI automation device for RO plants using Python',
-        'Pioneered breakthrough: condensed 2-month development into 90-minute process through intensive R&D',
-        'Delivered critical project solution within 3 days that team couldn\'t resolve over 6 months',
+        'Built a TDS meter for Bosch and a counter meter for TVS',
+        'Developed an offline GPS recorder with advanced tracking',
+        'Built complete Python-based HMI automation for RO plants',
       ],
-      tech: ['Embedded C', 'MicroPython', 'Python', 'IoT', 'HMI', 'GPS']
+      tech: ['Embedded C', 'Python', 'IoT', 'HMI', 'GPS']
     },
   ]
 
@@ -678,7 +696,7 @@ const ExperienceSection = () => {
         <div className="space-y-4">
           {experiences.map((exp, i) => (
             <AnimatedSection key={i}>
-              <ExpandableCard title={exp.title} subtitle={exp.company} period={exp.period} color={exp.color} defaultOpen={i === 0}>
+              <ExpandableCard title={exp.title} subtitle={exp.company} period={exp.period} color={exp.color} defaultOpen={i === 0 || i === 1}>
                 <p className="text-white/60 mb-4 italic">{exp.summary}</p>
                 <ul className="space-y-2 mb-4">
                   {exp.details.map((detail, j) => (
@@ -702,48 +720,149 @@ const ExperienceSection = () => {
   )
 }
 
+// ============ AI INNOVATION SECTION ============
+const AIInnovationSection = () => {
+  const highlights = [
+    {
+      title: 'Multi-Model Production Pipelines',
+      desc: 'Gemini 2.0 Flash, Azure OpenAI GPT-4o, and Claude routed to classification, medical-terminology, and code-generation workloads respectively.',
+      icon: '🧠',
+      color: '#3B82F6',
+      tags: ['Claude', 'Gemini 2.0 Flash', 'GPT-4o', 'Routing'],
+    },
+    {
+      title: 'Prompt Engineering at Scale',
+      desc: 'Structured JSON outputs with confidence scoring, evidence extraction, and hallucination prevention — validated across 2M+ documents in production.',
+      icon: '🎯',
+      color: '#F97316',
+      tags: ['Structured Output', 'Confidence Scoring', 'Hallucination Controls'],
+    },
+    {
+      title: 'Adaptive Concurrency Throttling',
+      desc: 'Auto-scaling controller that backs off on 429 rate limits (75% steps) and recovers gradually, enabling stable high-throughput LLM processing across distributed workers.',
+      icon: '⚙️',
+      color: '#EC4899',
+      tags: ['Rate-Limit Backoff', 'Distributed Workers', '174K files/hr'],
+    },
+    {
+      title: 'AI-Augmented Development',
+      desc: 'Claude Code for scaffolding, Cortex for debugging, hand-authored architecture for security-sensitive code — cited by leadership as an organizational model.',
+      icon: '🤖',
+      color: '#3B82F6',
+      tags: ['Claude Code', 'Snowflake Cortex', 'Security-First'],
+    },
+  ]
+
+  const stack = [
+    { name: 'Claude', note: 'API & Claude for Work', color: '#F97316' },
+    { name: 'Google Gemini', note: 'Embeddings & 2.0 Flash', color: '#3B82F6' },
+    { name: 'Azure OpenAI', note: 'GPT-4o', color: '#EC4899' },
+    { name: 'RAG', note: 'Snowflake retrieval', color: '#3B82F6' },
+    { name: 'Multi-Agent', note: 'Agentic pipelines', color: '#F97316' },
+    { name: 'Evals', note: '2M+ docs validated', color: '#EC4899' },
+  ]
+
+  return (
+    <section id="ai" className="py-20 md:py-28 px-4 relative">
+      <div className="absolute inset-0 opacity-[0.07]" style={{
+        backgroundImage: 'linear-gradient(rgba(59,130,246,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(249,115,22,0.4) 1px, transparent 1px)',
+        backgroundSize: '40px 40px'
+      }} />
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/3 right-0 w-[450px] h-[450px] bg-pink/5 rounded-full blur-[160px]" />
+        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-blue/5 rounded-full blur-[150px]" />
+      </div>
+
+      <div className="max-w-6xl mx-auto relative z-10">
+        <AnimatedSection className="text-center mb-12">
+          <span className="text-blue text-sm font-mono mb-3 block">// AI INNOVATION HIGHLIGHTS</span>
+          <h2 className="text-3xl md:text-5xl font-black">
+            <span className="text-white">Production </span>
+            <span style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316, #EC4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>LLM Systems</span>
+          </h2>
+          <p className="text-white/40 mt-3">Real systems, real scale — across the modern LLM stack</p>
+        </AnimatedSection>
+
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          {stack.map((s) => (
+            <div key={s.name} className="px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-center transition-all"
+              onMouseEnter={(e) => gsap.to(e.currentTarget, { y: -4, borderColor: s.color + '50', duration: 0.3 })}
+              onMouseLeave={(e) => gsap.to(e.currentTarget, { y: 0, borderColor: 'rgba(255,255,255,0.1)', duration: 0.3 })}
+            >
+              <div className="font-bold" style={{ color: s.color }}>{s.name}</div>
+              <div className="text-white/40 text-xs mt-0.5">{s.note}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-5">
+          {highlights.map((h, i) => (
+            <AnimatedSection key={i}>
+              <div className="group h-full p-6 bg-white/5 border border-white/10 rounded-2xl transition-all"
+                onMouseEnter={(e) => gsap.to(e.currentTarget, { borderColor: h.color + '50', y: -5, duration: 0.3 })}
+                onMouseLeave={(e) => gsap.to(e.currentTarget, { borderColor: 'rgba(255,255,255,0.1)', y: 0, duration: 0.3 })}
+              >
+                <div className="flex items-start gap-4 mb-3">
+                  <span className="text-3xl flex-shrink-0">{h.icon}</span>
+                  <h3 className="text-lg md:text-xl font-bold text-white pt-1">{h.title}</h3>
+                </div>
+                <p className="text-white/60 text-sm leading-relaxed mb-4">{h.desc}</p>
+                <div className="flex flex-wrap gap-2">
+                  {h.tags.map((t) => (
+                    <span key={t} className="px-2.5 py-1 text-xs rounded-full bg-white/5 border border-white/10" style={{ color: h.color }}>{t}</span>
+                  ))}
+                </div>
+              </div>
+            </AnimatedSection>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 // ============ SKILLS SECTION ============
 const SkillsSection = () => {
   const skillCategories = [
     {
-      name: 'Languages & Frameworks',
+      name: 'AI & ML',
       color: '#3B82F6',
       skills: [
-        { name: 'C# / .NET Core', level: 95 },
-        { name: 'JavaScript / Node.js', level: 85 },
-        { name: 'Python', level: 80 },
-        { name: 'Svelte', level: 85 },
-        { name: 'Embedded C', level: 75 },
+        { name: 'Claude (API & for Work)', level: 92 },
+        { name: 'RAG & Multi-Agent Architecture', level: 90 },
+        { name: 'Prompt Engineering', level: 92 },
+        { name: 'Evaluation Frameworks & Evals', level: 88 },
+        { name: 'Embeddings & Vector Search', level: 85 },
       ]
     },
     {
-      name: 'Cloud & DevOps',
+      name: 'Cloud & Infra',
       color: '#F97316',
       skills: [
-        { name: 'Microsoft Azure', level: 90 },
-        { name: 'Azure Kubernetes (AKS)', level: 88 },
-        { name: 'Azure DevOps / CI-CD', level: 85 },
-        { name: 'Docker', level: 82 },
-        { name: 'KEDA Autoscaling', level: 80 },
+        { name: 'Azure (AKS, Service Bus, Key Vault)', level: 90 },
+        { name: 'Kubernetes & KEDA', level: 88 },
+        { name: 'Docker', level: 85 },
+        { name: 'CI/CD (GitHub Actions, Azure DevOps)', level: 85 },
+        { name: 'Event-Driven & Distributed Systems', level: 88 },
       ]
     },
     {
-      name: 'Data & AI',
+      name: 'Languages & Data',
       color: '#EC4899',
       skills: [
-        { name: 'Snowflake', level: 88 },
-        { name: 'OpenAI / GPT Integration', level: 85 },
-        { name: 'KDB+', level: 75 },
-        { name: 'Databricks', level: 70 },
+        { name: 'Python', level: 88 },
+        { name: 'C# / .NET Core', level: 95 },
+        { name: 'TypeScript / JavaScript', level: 85 },
+        { name: 'Snowflake (Cortex, embeddings)', level: 88 },
         { name: 'SQL / Database Design', level: 90 },
       ]
     },
   ]
 
   const toolsAndPatterns = [
-    'Event Sourcing', 'Domain Driven Design', 'Clean Architecture', 'Microservices',
-    'REST APIs', 'GraphQL', 'Auth0', 'Azure Service Bus', 'WPF', 'WinForms',
-    'Excel-DNA', 'Blazor', 'MAUI', 'Git/GitHub', 'Cassandra', 'Redis'
+    'Claude', 'Google Gemini', 'Azure OpenAI (GPT-4o)', 'OCR', 'NLP', 'Vector Search',
+    'React / Next.js', 'Svelte', 'Node.js', 'Entity Framework', 'REST APIs', 'Microservices',
+    'Auth0 RBAC', 'Azure Key Vault', 'GxP / HIPAA / SOX', 'PostgreSQL', 'KDB+', 'F#', 'Data Classification'
   ]
 
   return (
@@ -799,30 +918,30 @@ const SkillsSection = () => {
 // ============ ACHIEVEMENTS SECTION ============
 const AchievementsSection = () => {
   const achievements = [
-    { value: 1600, suffix: '%', label: 'User Growth', desc: 'Precision Targeting Platform', color: '#3B82F6' },
-    { value: 3001, suffix: '%', label: 'Engagement Increase', desc: 'Login activity boost', color: '#F97316' },
-    { value: 30, suffix: ' days', label: 'Platform Migration', desc: 'Node.js to .NET Core', color: '#EC4899' },
-    { value: 99.9, suffix: '%', label: 'Uptime', desc: 'Production SLA maintained', color: '#3B82F6' },
-    { value: 0, suffix: '', label: 'Production Incidents', desc: 'Across all releases', color: '#F97316' },
-    { value: 20, suffix: '+', label: 'Team Size', desc: 'Engineers led', color: '#EC4899' },
+    { value: 2, suffix: 'M+', label: 'Documents in Production', desc: 'Evals validated at scale', color: '#3B82F6' },
+    { value: 174, suffix: 'K/hr', label: 'Peak Throughput', desc: 'Files classified by LLM', color: '#F97316' },
+    { value: 1600, suffix: '%', label: 'User Growth', desc: 'Precision Targeting Phase 1', color: '#EC4899' },
+    { value: 3001, suffix: '%', label: 'Login Engagement', desc: 'Activity increase', color: '#3B82F6' },
+    { value: 30, suffix: ' days', label: 'Platform Migration', desc: 'Node.js → .NET Core, zero downtime', color: '#F97316' },
+    { value: 20, suffix: '', label: 'Engineers Led', desc: 'Scaled from 10, zero attrition', color: '#EC4899' },
   ]
 
   const highlights = [
-    { title: 'R&D Breakthrough', desc: 'Condensed 2-month development into 90-minute process through intensive R&D and innovative engineering', icon: '🚀' },
-    { title: '3-Day Miracle', desc: 'Delivered critical project solution within 3 days that a dedicated team couldn\'t resolve over 6 months', icon: '⚡' },
-    { title: 'AI Pioneer', desc: 'First to integrate GPT-4o mini for medical terminology and ICD-10 validation at Syneos', icon: '🤖' },
-    { title: 'Pattern Setter', desc: 'Established reusable .NET Core patterns reducing future development time by 30-40%', icon: '📐' },
+    { title: 'Repeated C-Suite Visibility', desc: 'Live demonstrations to executives for high-priority initiatives; commissioned to document the AI-first delivery approach as an organizational case study.', icon: '📊' },
+    { title: '“Strong Performance” — Top Tier', desc: '2025 performance review; 11 stakeholder feedbacks, all highly positive.', icon: '🏆' },
+    { title: 'Scaled the Team 10 → 20', desc: 'Grew a cross-functional team with zero attrition while establishing architecture standards and mentorship.', icon: '🌱' },
+    { title: 'The Testimonial', desc: '“Just give work to him and go to sleep — he will make things happen.”', icon: '💬' },
   ]
 
   return (
-    <section id="achievements" className="py-20 md:py-28 px-4 relative">
+    <section id="impact" className="py-20 md:py-28 px-4 relative">
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-orange/5 rounded-full blur-[180px]" />
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
         <AnimatedSection className="text-center mb-12">
-          <span className="text-blue text-sm font-mono mb-3 block">// IMPACT</span>
+          <span className="text-blue text-sm font-mono mb-3 block">// IMPACT &amp; RECOGNITION</span>
           <h2 className="text-3xl md:text-5xl font-black">
             <span className="text-white">Key </span>
             <span style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316, #EC4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Achievements</span>
@@ -864,12 +983,12 @@ const AchievementsSection = () => {
 // ============ EDUCATION SECTION ============
 const EducationSection = () => {
   const education = [
-    { degree: 'Machine Learning Engineer Nanodegree', school: 'Udacity', year: '2020', color: '#3B82F6',
-      details: 'TensorFlow, scikit-learn, Pandas, NumPy. Hands-on projects applying ML to real-world problems.' },
-    { degree: 'Master of Engineering - Control Systems', school: 'Mahendra Engineering College', year: '2016-2018', color: '#F97316',
-      details: 'Graduated Top 2% of the Class. Advanced control theory, automation systems.' },
-    { degree: 'Bachelor of Engineering - EEE', school: 'Mahendra Engineering College', year: '2012-2016', color: '#EC4899',
-      details: 'Electrical and Electronics Engineering. Foundation in embedded systems and programming.' },
+    { degree: 'Nanodegree — Machine Learning Engineer', school: 'Udacity', year: '2020', color: '#3B82F6',
+      details: 'Hands-on projects applying ML to real-world problems; foundation for production AI work.' },
+    { degree: 'M.S. — Control Systems', school: 'Mahendra Institutions', year: '2016-2018', color: '#F97316',
+      details: 'Advanced control theory and automation systems.' },
+    { degree: 'B.E. — Electrical & Electronics Engineering', school: 'Mahendra Institutions', year: '2012-2016', color: '#EC4899',
+      details: 'Foundation in embedded systems and programming.' },
   ]
 
   return (
@@ -905,13 +1024,21 @@ const EducationSection = () => {
 
         <AnimatedSection className="mt-8">
           <div className="p-5 bg-white/5 border border-white/10 rounded-xl">
-            <h3 className="text-lg font-bold text-white mb-3">Honors & Awards</h3>
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">🎓</span>
-              <div>
-                <p className="text-white font-medium">Student of the Year</p>
-                <p className="text-white/50 text-sm">Academic excellence recognition</p>
-              </div>
+            <h3 className="text-lg font-bold text-white mb-4">Languages</h3>
+            <div className="grid sm:grid-cols-3 gap-3">
+              {[
+                { lang: 'English', level: 'Professional', color: '#3B82F6' },
+                { lang: 'Tamil', level: 'Native', color: '#F97316' },
+                { lang: 'French', level: 'Elementary', color: '#EC4899' },
+              ].map((l) => (
+                <div key={l.lang} className="p-3 bg-white/5 rounded-lg flex items-center gap-3">
+                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: l.color }} />
+                  <div>
+                    <div className="text-white font-medium">{l.lang}</div>
+                    <div className="text-white/50 text-sm">{l.level}</div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </AnimatedSection>
@@ -949,7 +1076,7 @@ const ContactSection = () => {
             <span className="text-white">Let&apos;s </span>
             <span style={{ background: 'linear-gradient(135deg, #3B82F6, #F97316, #EC4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Connect</span>
           </h2>
-          <p className="text-white/40 mt-3">Always happy to discuss healthcare tech, distributed systems, or AI integration</p>
+          <p className="text-white/40 mt-3">Always happy to discuss applied AI, LLM architecture, RAG &amp; multi-agent systems, or enterprise delivery</p>
         </AnimatedSection>
 
         <div className="grid md:grid-cols-2 gap-8">
@@ -1051,6 +1178,7 @@ export default function Home() {
           <HeroSection />
           <AboutSection />
           <ExperienceSection />
+          <AIInnovationSection />
           <SkillsSection />
           <AchievementsSection />
           <EducationSection />
