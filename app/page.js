@@ -53,7 +53,7 @@ const Reveal = ({ children, className = '', y = 28, delay = 0, as: Tag = 'div' }
 }
 
 /* Stagger children entrance */
-const RevealGroup = ({ children, className = '', stagger = 0.08, selector = '> *' }) => {
+const RevealGroup = ({ children, className = '', stagger = 0.08, selector = ':scope > *' }) => {
   const ref = useRef(null)
   useIsoLayout(() => {
     const el = ref.current
