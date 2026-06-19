@@ -19,6 +19,12 @@ export const metadata = {
   metadataBase: new URL('https://www.shuganth.com'),
 }
 
+export const viewport = {
+  themeColor: '#08090d',
+  width: 'device-width',
+  initialScale: 1,
+}
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
